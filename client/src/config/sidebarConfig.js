@@ -6,7 +6,8 @@ import {
   FileText, 
   ClipboardCheck, 
   Settings, 
-  UserCircle 
+  UserCircle,
+  User
 } from 'lucide-react';
 
 export const sidebarMenus = {
@@ -15,17 +16,18 @@ export const sidebarMenus = {
     { label: 'Department', icon: Building2, path: '/hod/departments' },
     { label: 'Teachers', icon: Users, path: '/hod/teachers' },
     { label: 'Students', icon: GraduationCap, path: '/hod/students' },
-    { label: 'Reports', icon: FileText, path: '/hod/reports' },
-    { label: 'Attendance', icon: ClipboardCheck, path: '/hod/attendance' },
-    { label: 'Setting', icon: Settings, path: '/hod/settings' },
     { label: 'Profile', icon: UserCircle, path: '/hod/profile' },
   ],
   teacher: [
-    {label: 'Dashboard'},
-    {label: 'Manage Students'},
-    {label:'Attendance' },
-    {label:'Reports'},
-    {label:'Profile'},
+    { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
+    { label: "Manage Students", icon: Users, path: "/teacher/manage-students" },
+    { label: "Attendance", icon: ClipboardCheck, path: "/teacher/attendance" },
+    { label: "Reports", icon: FileText, path: "/teacher/reports" },
+    { label: "Profile", icon: User, path: "/teacher/profile" },
   ],
-  student: []
+  student: [
+    { label: 'Dashboard', icon: Home, path: '/student/dashboard' },
+    { label: 'Attendance', icon: ClipboardCheck, path: '/student/attendance' },
+    { label: 'Profile', icon: UserCircle, path: '/student/profile' },
+  ]
 };

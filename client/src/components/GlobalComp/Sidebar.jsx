@@ -22,10 +22,9 @@ const Sidebar = ({
 }) => {
   const navigate = useNavigate();
 
-  // Priority:
-  // 1. Custom items passed from another file
-  // 2. Otherwise get items according to role
-  const menuItems = items || sidebarMenus[role] || [];
+  // Resolve role dynamically and map config
+  const activeRole = (role || localStorage.getItem("role") || "student").toLowerCase();
+  const menuItems = items || sidebarMenus[activeRole] || [];
 
   const handleLogout = () => {
     localStorage.removeItem("token");
