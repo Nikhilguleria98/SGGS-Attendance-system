@@ -1,13 +1,19 @@
 import Navbar from './components/GlobalComp/Navbar'
-const App = () => {
+import { Routes, Route } from 'react-router-dom'
+import DashboardLayout from './components/GlobalComp/DashboardLayout'
+import HodDashboardPage from './Pages/ADMINpages/HodDashboardPage'
 
+const App = () => {
   return (
     <>
-    <Navbar />
-    {/* <Routes>
-
-    </Routes> */}
- 
+      <Routes>
+        <Route path="/hod" element={<DashboardLayout role="hod" />}>
+          <Route path="dashboard" element={<HodDashboardPage />} />
+        </Route>
+        
+        {/* Fallback route */}
+        <Route path="/" element={<Navbar />} />
+      </Routes>
     </>
   )
 }
