@@ -1,10 +1,11 @@
-import React from 'react'
+import HeroSection from '../../components/Default/Landingcomp/HeroSection'
+import Navbar from '../../components/GlobalComp/Navbar'
 
 const Landingpage = () => {
   return (
-    <div>
-      
-    </div>
+   <>
+    <HeroSection />
+   </>
   )
 }
 
