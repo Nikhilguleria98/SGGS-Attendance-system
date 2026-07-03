@@ -1,23 +1,54 @@
-import Navbar from './components/GlobalComp/Navbar'
-import { Routes, Route } from 'react-router-dom'
-import DashboardLayout from './components/GlobalComp/DashboardLayout'
-import HodDashboardPage from './Pages/ADMINpages/HodDashboardPage'
-import TeacherHome from './Pages/Teacherspages/TeacherHome'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+import DashboardLayout from './components/GlobalComp/DashboardLayout';
+import PublicLayout from './components/GlobalComp/PublicLayout';
+
+import HodDashboardPage from './Pages/ADMINpages/HodDashboardPage';
+import ManageTeachers from './Pages/ADMINpages/ManageTeachers';
+import CreateDepartment from './Pages/ADMINpages/createDepartment';
+
+import Landingpage from './Pages/Defaultpages/Landingpage';
+import Aboutuspage from './Pages/Defaultpages/Aboutuspage';
+import Contactuspage from './Pages/Defaultpages/Contactuspage';
+import TeacherHome from './Pages/Teacherspages/TeacherHome';
 
 const App = () => {
   return (
-    <>
-      <Routes>
-        <Route path="/hod" element={<DashboardLayout role="hod" />}>
-          <Route path="dashboard" element={<HodDashboardPage />} />
-        </Route>
-        <Route path='/teacherhome' element={<TeacherHome/>}/>
-        
-        {/* Fallback route */}
-        <Route path="/" element={<Navbar />} />
-      </Routes>
-    </>
-  )
-}
+    <Routes>
+      {/* HOD Routes */}
+      <Route path="/hod" element={<DashboardLayout role="hod" />}>
+        <Route path="dashboard"         element={<HodDashboardPage />} />
+        <Route path="teachers"          element={<ManageTeachers />} />
+        <Route path="departments"       element={<CreateDepartment />} />
+        <Route path="students"          element={<div className="p-8"><h1 className="text-2xl font-bold">Manage Students</h1><p className="text-gray-500 mt-2">Coming Soon</p></div>} />
+        <Route path="profile"           element={<div className="p-8"><h1 className="text-2xl font-bold">HOD Profile</h1><p className="text-gray-500 mt-2">Coming Soon</p></div>} />
+      </Route>
 
-export default App
+      {/* Teacher Routes */}
+      <Route path="/teacher" element={<DashboardLayout role="teacher" />}>
+        <Route path="dashboard"         element={<TeacherHome />} />
+        <Route path="manage-students"   element={<div className="p-8"><h1 className="text-2xl font-bold">Manage Students</h1></div>} />
+        <Route path="attendance"        element={<div className="p-8"><h1 className="text-2xl font-bold">Mark Attendance</h1></div>} />
+        <Route path="reports"           element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
+        <Route path="profile"           element={<div className="p-8"><h1 className="text-2xl font-bold">Teacher Profile</h1></div>} />
+      </Route>
+
+      {/* Student Routes */}
+      <Route path="/student" element={<DashboardLayout role="student" />}>
+        <Route path="dashboard"         element={<div className="p-8"><h1 className="text-2xl font-bold">Student Dashboard</h1></div>} />
+        <Route path="attendance"        element={<div className="p-8"><h1 className="text-2xl font-bold">My Attendance</h1></div>} />
+        <Route path="profile"           element={<div className="p-8"><h1 className="text-2xl font-bold">Student Profile</h1></div>} />
+      </Route>
+
+      {/* Public Routes */}
+      <Route element={<PublicLayout />}>
+        <Route path="/"           element={<Landingpage />} />
+        <Route path="/about-us"   element={<Aboutuspage />} />
+        <Route path="/contact-us" element={<Contactuspage />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default App;
