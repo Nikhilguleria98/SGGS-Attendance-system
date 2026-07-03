@@ -20,7 +20,7 @@ const Navbar = () => {
         <nav className="w-full mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
           
           {/* Logo */}
-          <div className="w-[10%] min-w-[120px] flex-shrink-0">
+          <div className="w-[10%] min-w-30 shrink-0">
             <NavLink to="/" className="flex items-center outline-none">
               <motion.div
                 whileHover={{ scale: 1.02 }}
