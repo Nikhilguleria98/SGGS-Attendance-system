@@ -14,6 +14,7 @@ import Contactuspage from './Pages/Defaultpages/Contactuspage';
 import TeacherHome from './Pages/Teacherspages/TeacherHome';
 import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
 import ProfilePage from './Pages/ADMINpages/ProfilePage';
+import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
 
 const App = () => {
   return (
