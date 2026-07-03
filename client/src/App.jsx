@@ -14,7 +14,7 @@ import Contactuspage from './Pages/Defaultpages/Contactuspage';
 import TeacherHome from './Pages/Teacherspages/TeacherHome';
 import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
 import ProfilePage from './Pages/ADMINpages/ProfilePage';
-import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
+import ManageStudentsPage from './Pages/ADMINpages/ManageStudentsPage';
 
 const App = () => {
   return (
@@ -24,7 +24,7 @@ const App = () => {
         <Route path="dashboard"         element={<HodDashboardPage />} />
         <Route path="teachers"          element={<ManageTeachers />} />
         <Route path="departments"       element={<CreateDepartment />} />
-        <Route path="students"          element={<div className="p-8"><h1 className="text-2xl font-bold">Manage Students</h1><p className="text-gray-500 mt-2">Coming Soon</p></div>} />
+        <Route path="manage-students"   element={<ManageStudentsPage />} />
         <Route path="profile"           element={<ProfilePage />} />
       </Route>
 

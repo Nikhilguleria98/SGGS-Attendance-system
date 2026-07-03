@@ -15,7 +15,7 @@ export const sidebarMenus = {
     { label: 'Dashboard', icon: Home, path: '/hod/dashboard' },
     { label: 'Department', icon: Building2, path: '/hod/departments' },
     { label: 'Teachers', icon: Users, path: '/hod/teachers' },
-    { label: 'Students', icon: GraduationCap, path: '/hod/students' },
+    { label: 'Students', icon: GraduationCap, path: '/hod/manage-students' },
     { label: 'Profile', icon: UserCircle, path: '/hod/profile' },
   ],
   teacher: [
