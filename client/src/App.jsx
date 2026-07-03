@@ -12,6 +12,7 @@ import Landingpage from './Pages/Defaultpages/Landingpage';
 import Aboutuspage from './Pages/Defaultpages/Aboutuspage';
 import Contactuspage from './Pages/Defaultpages/Contactuspage';
 import TeacherHome from './Pages/Teacherspages/TeacherHome';
+import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
 import ProfilePage from './Pages/ADMINpages/ProfilePage';
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
 
       {/* Teacher Routes */}
       <Route path="/teacher" element={<DashboardLayout role="teacher" />}>
+        <Route path="dashboard"         element={<TeacherDashboard />} />
         <Route path="managestudent"         element={<TeacherHome />} />
         <Route path="teacherdashboard"   element={<TeacherDashboard />} />
         <Route path="attendance"        element={<div className="p-8"><h1 className="text-2xl font-bold">Mark Attendance</h1></div>} />

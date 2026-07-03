@@ -1,9 +1,11 @@
+import AboutSection from "../../components/Default/aboutuscomp/AboutSection"
+
 const aboutuspage = () => {
-  return (
-    <div>
-      
-    </div>
-  )
+    return (
+        <div>
+            <AboutSection />
+        </div>
+    )
 }
 
 export default aboutuspage
