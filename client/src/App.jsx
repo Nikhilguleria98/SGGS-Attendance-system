@@ -1,10 +1,14 @@
-import React from 'react'
-
+import Navbar from './components/GlobalComp/Navbar'
 const App = () => {
+
   return (
-    <div className='bg-amber-300'>
-      hello
-    </div>
+    <>
+    <Navbar />
+    {/* <Routes>
+
+    </Routes> */}
+ 
+    </>
   )
 }
 
