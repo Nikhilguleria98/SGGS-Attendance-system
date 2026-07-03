@@ -1,10 +1,33 @@
 import { useState } from "react";
 import { X, User, Users, GraduationCap, Lock, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const LoginDrawer = ({ isOpen, onClose }) => {
   const [selectedRole, setSelectedRole] = useState("Student");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    
+    // Save credentials to localStorage
+    localStorage.setItem("role", selectedRole.toLowerCase());
+    localStorage.setItem("token", "dummy-jwt-token");
+    localStorage.setItem("user", JSON.stringify({ name: "SGGS User", role: selectedRole }));
+
+    // Close drawer
+    onClose();
+
+    // Navigate to appropriate role-based dashboard
+    if (selectedRole === "HOD") {
+      navigate("/hod/dashboard");
+    } else if (selectedRole === "Teacher") {
+      navigate("/teacher/dashboard");
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -98,13 +121,14 @@ const LoginDrawer = ({ isOpen, onClose }) => {
               </div>
 
               {/* Form Inputs */}
-              <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-5" onSubmit={handleLoginSubmit}>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
                     type="text"
+                    required
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all outline-none"
                     placeholder="Enter Email / ID"
                   />
@@ -116,6 +140,7 @@ const LoginDrawer = ({ isOpen, onClose }) => {
                   </div>
                   <input
                     type={showPassword ? "text" : "password"}
+                    required
                     className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all outline-none"
                     placeholder="Enter Password"
                   />
@@ -140,7 +165,7 @@ const LoginDrawer = ({ isOpen, onClose }) => {
 
                 <button
                   type="submit"
-                  className="w-full bg-[#6366f1] hover:bg-[#4f46e5] text-white font-bold py-3.5 rounded-lg shadow-md transition-colors mt-4"
+                  className="w-full bg-[#00529b] hover:bg-[#003d73] text-white font-bold py-3.5 rounded-lg shadow-md transition-colors mt-4 cursor-pointer"
                 >
                   Login
                 </button>
