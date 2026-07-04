@@ -16,6 +16,7 @@ import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
 import MarkAttendance from './components/TeachersComp/MarkAttendance/MarkAttendance';
 import ProfilePage from './Pages/ADMINpages/ProfilePage';
 import ManageStudentsPage from './Pages/ADMINpages/ManageStudentsPage';
+import TeacherProfile from './Pages/Teacherspages/TeacherProfile';
 
 const App = () => {
   return (
@@ -36,7 +37,7 @@ const App = () => {
         <Route path="teacherdashboard"   element={<TeacherDashboard />} />
         <Route path="mark-attendance"    element={<MarkAttendance />} />
         <Route path="reports"           element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
-        <Route path="profile"           element={<div className="p-8"><h1 className="text-2xl font-bold">Teacher Profile</h1></div>} />
+        <Route path="profile"           element={<TeacherProfile/>} />
       </Route>
 
       {/* Student Routes */}
