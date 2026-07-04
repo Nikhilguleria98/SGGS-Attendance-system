@@ -47,9 +47,9 @@ const StudentSearchFilter = ({
       <select
         className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 bg-white outline-none focus:border-[#162b4a] w-full sm:w-auto min-w-[150px]"
       >
-        <option value="">All Groups</option>
-        <option value="A">Group A</option>
-        <option value="B">Group B</option>
+        <option value="">All Sections</option>
+        <option value="A">Section A</option>
+        <option value="B">Section B</option>
       </select>
     </div>
   );
