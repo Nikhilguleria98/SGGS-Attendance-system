@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import StudentSearchFilter from "../../components/ADMINComp/ManageStudents.jsx/StudentSearchFilter";
-import StudentTable from "../../components/ADMINComp/ManageStudents.jsx/StudentTable";
-import ManageStudentsPagination from "../../components/ADMINComp/ManageStudents.jsx/ManageStudentsPagination";
-import ManageStudentsHeader from "../../components/ADMINComp/ManageStudents.jsx/ManageStudentsHeader";
+import StudentSearchFilter from "../../components/ADMINComp/ManageStudents/StudentSearchFilter";
+import StudentTable from "../../components/ADMINComp/ManageStudents/StudentTable";
+import ManageStudentsPagination from "../../components/ADMINComp/ManageStudents/ManageStudentsPagination";
+import ManageStudentsHeader from "../../components/ADMINComp/ManageStudents/ManageStudentsHeader";
 
 // Dummy Student Data
 const dummyStudents = [
@@ -50,6 +50,8 @@ const columns = [
   "Name",
   "rollNo",
   "Department",
+  "Batch",
+  "Group",
   "Phone",
   "Actions",
 ];

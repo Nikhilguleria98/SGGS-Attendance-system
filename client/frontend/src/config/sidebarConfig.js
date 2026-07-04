@@ -21,7 +21,7 @@ export const sidebarMenus = {
   teacher: [
     { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
     { label: "Manage Students", icon: Users, path: "/teacher/manage-students" },
-    { label: "Attendance", icon: ClipboardCheck, path: "/teacher/attendance" },
+    { label: "Mark Attendance", icon: ClipboardCheck, path: "/teacher/mark-attendance" },
     { label: "Reports", icon: FileText, path: "/teacher/reports" },
     { label: "Profile", icon: User, path: "/teacher/profile" },
   ],

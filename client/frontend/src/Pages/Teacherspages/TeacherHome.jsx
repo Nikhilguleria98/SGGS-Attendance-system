@@ -1,5 +1,5 @@
 import React from 'react'
-import StudentList from '../../components/TeachersComp/StudentList'
+import StudentList from '../../components/TeachersComp/ManageStudent/StudentList'
 
 const TeacherHome = () => {
   return (

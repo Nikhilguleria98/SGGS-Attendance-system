@@ -13,6 +13,7 @@ import Aboutuspage from './Pages/Defaultpages/Aboutuspage';
 import Contactuspage from './Pages/Defaultpages/Contactuspage';
 import TeacherHome from './Pages/Teacherspages/TeacherHome';
 import TeacherDashboard from './components/TeachersComp/TeacherDashboard';
+import MarkAttendance from './components/TeachersComp/MarkAttendance/MarkAttendance';
 import ProfilePage from './Pages/ADMINpages/ProfilePage';
 import ManageStudentsPage from './Pages/ADMINpages/ManageStudentsPage';
 
@@ -33,7 +34,7 @@ const App = () => {
         <Route path="dashboard"         element={<TeacherDashboard />} />
         <Route path="managestudent"         element={<TeacherHome />} />
         <Route path="teacherdashboard"   element={<TeacherDashboard />} />
-        <Route path="attendance"        element={<div className="p-8"><h1 className="text-2xl font-bold">Mark Attendance</h1></div>} />
+        <Route path="mark-attendance"    element={<MarkAttendance />} />
         <Route path="reports"           element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
         <Route path="profile"           element={<div className="p-8"><h1 className="text-2xl font-bold">Teacher Profile</h1></div>} />
       </Route>

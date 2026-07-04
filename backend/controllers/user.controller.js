@@ -48,7 +48,6 @@ exports.updateUser = asyncHandler(async (req, res) => {
         req.params.id,
         req.validatedData.body
     );
-
     return success(
         res,
         200,
