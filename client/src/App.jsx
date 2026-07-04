@@ -16,6 +16,10 @@ import ManageStudentsPage from "./Pages/ADMINpages/ManageStudentsPage";
 import TeacherHome from "./Pages/Teacherspages/TeacherHome";
 import TeacherDashboard from "./components/TeachersComp/TeacherDashboard";
 import MarkAttendance from "./components/TeachersComp/MarkAttendance/MarkAttendance";
+import TeacherProfile from "./Pages/Teacherspages/TeacherProfile";
+
+// Student Pages
+import StudentProfile from "./components/StudentComp/profile";
 
 // Public Pages
 import Landingpage from "./Pages/Defaultpages/Landingpage";
@@ -42,13 +46,15 @@ const App = () => {
         <Route path="managestudent" element={<TeacherHome />} />
         <Route path="teacherdashboard" element={<TeacherDashboard />} />
         <Route path="mark-attendance" element={<MarkAttendance />} />
+        <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
+        <Route path="profile" element={<TeacherProfile />} />
       </Route>
 
       {/* Student - Not Protected */}
       <Route path="/student" element={<DashboardLayout role="student" />}>
-        <Route path="dashboard" element={<div>Student Dashboard</div>} />
-        <Route path="attendance" element={<div>Attendance</div>} />
-        <Route path="profile" element={<div>Profile</div>} />
+        <Route path="dashboard" element={<div className="p-8"><h1 className="text-2xl font-bold">Student Dashboard</h1></div>} />
+        <Route path="attendance" element={<div className="p-8"><h1 className="text-2xl font-bold">My Attendance</h1></div>} />
+        <Route path="profile" element={<StudentProfile />} />
       </Route>
 
       {/* Public */}
