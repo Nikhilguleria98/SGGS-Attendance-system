@@ -33,16 +33,14 @@ const StudentRow = ({
 
       <td className="py-4 px-4">
         <select className="border border-gray-200 rounded-lg px-2 py-1 text-sm text-gray-700 bg-white outline-none focus:border-[#162b4a]">
-          <option>{student.group || 'A'}</option>
+          <option>{student.section || 'A'}</option>
           <option>B</option>
           <option>C</option>
           <option>D</option>
         </select>
       </td>
 
-      <td className="py-4 px-4 text-gray-600">
-        {student.phone}
-      </td>
+
 
       <td className="py-4 px-4">
         <div className="flex items-center gap-4">

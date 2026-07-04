@@ -13,13 +13,7 @@ const AttendanceFilters = () => {
             <option>CSE</option>
           </select>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Group No.</label>
-          <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">
-            <option>Group 1</option>
-            <option>Group 2</option>
-          </select>
-        </div>
+       
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
           <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">

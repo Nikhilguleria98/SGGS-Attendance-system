@@ -51,8 +51,7 @@ const columns = [
   "rollNo",
   "Department",
   "Batch",
-  "Group",
-  "Phone",
+  "Section",
   "Actions",
 ];
 
