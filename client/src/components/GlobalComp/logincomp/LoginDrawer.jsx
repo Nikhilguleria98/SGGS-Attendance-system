@@ -130,7 +130,7 @@ const LoginDrawer = ({ isOpen, onClose }) => {
                     type="text"
                     required
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all outline-none"
-                    placeholder="Enter Email / ID"
+                    placeholder="University Id"
                   />
                 </div>
 
