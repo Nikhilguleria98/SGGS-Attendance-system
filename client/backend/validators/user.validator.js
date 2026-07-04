@@ -1,0 +1,51 @@
+const { z } = require("zod");
+const roles = require("../constants/roles")
+const createUserSchema = z.object({
+    body: z.object({
+        firstName: z
+            .string()
+            .min(2, "First name is required"),
+
+        lastName: z
+            .string()
+            .min(2, "Last name is required"),
+
+        email: z
+            .string()
+            .email("Invalid email"),
+
+        password: z
+            .string()
+            .min(8, "Password must be at least 8 characters"),
+
+        role: z.enum(roles),
+
+        phone: z
+            .string()
+            .optional(),
+
+        department: z
+            .string()
+            .optional(),
+
+        semester: z
+            .number()
+            .optional(),
+
+        section: z
+            .string()
+            .optional(),
+
+        employeeId: z
+            .string()
+            .optional(),
+
+        rollNumber: z
+            .string()
+            .optional(),
+    }),
+});
+
+module.exports = {
+    createUserSchema,
+};
