@@ -17,6 +17,7 @@ import MarkAttendance from './components/TeachersComp/MarkAttendance/MarkAttenda
 import ProfilePage from './Pages/ADMINpages/ProfilePage';
 import ManageStudentsPage from './Pages/ADMINpages/ManageStudentsPage';
 import TeacherProfile from './Pages/Teacherspages/TeacherProfile';
+import StudentProfile from './components/StudentComp/profile';
 
 const App = () => {
   return (
@@ -44,7 +45,7 @@ const App = () => {
       <Route path="/student" element={<DashboardLayout role="student" />}>
         <Route path="dashboard"         element={<div className="p-8"><h1 className="text-2xl font-bold">Student Dashboard</h1></div>} />
         <Route path="attendance"        element={<div className="p-8"><h1 className="text-2xl font-bold">My Attendance</h1></div>} />
-        <Route path="profile"           element={<div className="p-8"><h1 className="text-2xl font-bold">Student Profile</h1></div>} />
+        <Route path="profile"           element={<StudentProfile/>} />
       </Route>
 
       {/* Public Routes */}
