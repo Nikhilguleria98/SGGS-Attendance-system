@@ -31,7 +31,7 @@ const App = () => {
     <Routes>
       {/* HOD Protected */}
       <Route element={<ProtectedRoute allowedRole="hod" />}>
-      <Route path="/hod" element={<DashboardLayout role="hod" />}>
+        <Route path="/hod" element={<DashboardLayout role="hod" />}>
           <Route path="dashboard" element={<HodDashboardPage />} />
           <Route path="teachers" element={<ManageTeachers />} />
           <Route path="departments" element={<CreateDepartment />} />
