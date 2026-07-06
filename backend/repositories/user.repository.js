@@ -5,8 +5,11 @@ class UserRepository {
         return await User.create(userData);
     }
 
-    async findAll(filter = {}) {
-        return await User.find(filter);
+    async findByRole(role) {
+        return await User.find({
+            role,
+            isActive: true,
+        }).populate("department", "name code");
     }
 
     async findById(id) {
@@ -42,6 +45,14 @@ class UserRepository {
 
     async count(filter = {}) {
         return await User.countDocuments(filter);
+    }
+    async findByRole(role) {
+        return await User.find({
+            role,
+            isActive: true,
+        })
+            .populate("department", "name code")
+            .sort({ firstName: 1 });
     }
 }
 

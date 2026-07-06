@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 const Roles = require("../constants/roles");
 const commonFields = require("./commonFields");
 
 const userSchema = new mongoose.Schema(
     {
+        // ==========================
         // Personal Information
+        // ==========================
+
         firstName: {
             type: String,
             required: true,
@@ -15,8 +18,8 @@ const userSchema = new mongoose.Schema(
 
         lastName: {
             type: String,
-            required: false,
             trim: true,
+            default: "",
         },
 
         email: {
@@ -36,6 +39,7 @@ const userSchema = new mongoose.Schema(
 
         phone: {
             type: String,
+            trim: true,
             default: "",
         },
 
@@ -53,14 +57,20 @@ const userSchema = new mongoose.Schema(
             default: "",
         },
 
+        // ==========================
         // Authorization
+        // ==========================
+
         role: {
             type: String,
             enum: Object.values(Roles),
             required: true,
         },
 
-        // Student Only
+        // ==========================
+        // Student Details
+        // ==========================
+
         rollNumber: {
             type: String,
             unique: true,
@@ -71,10 +81,13 @@ const userSchema = new mongoose.Schema(
 
         semester: {
             type: Number,
+            min: 1,
+            max: 8,
         },
 
         section: {
             type: String,
+            uppercase: true,
             trim: true,
         },
 
@@ -83,7 +96,10 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
-        // Teacher / HOD
+        // ==========================
+        // Teacher / HOD Details
+        // ==========================
+
         employeeId: {
             type: String,
             unique: true,
@@ -97,13 +113,19 @@ const userSchema = new mongoose.Schema(
             default: "",
         },
 
-        // Relationships
+        // ==========================
+        // Department
+        // ==========================
+
         department: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Department",
         },
 
+        // ==========================
         // Authentication
+        // ==========================
+
         isVerified: {
             type: Boolean,
             default: false,
@@ -130,20 +152,23 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-// Hash password
+// ==========================
+// Password Hashing
+// ==========================
+
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
 
-    const salt =  await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Compare password
+// ==========================
+// Password Compare
+// ==========================
+
 userSchema.methods.comparePassword = async function (password) {
     return bcrypt.compare(password, this.password);
 };
-
-// Indexes
-
 
 module.exports = mongoose.model("User", userSchema);

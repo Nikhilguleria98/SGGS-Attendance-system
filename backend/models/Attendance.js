@@ -2,19 +2,13 @@ const mongoose = require("mongoose");
 
 const attendanceSchema = new mongoose.Schema(
     {
+        assignment: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "TeacherAssignment",
+            required: true,
+        },
+
         student: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-
-        subject: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Subject",
-            required: true,
-        },
-
-        teacher: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
@@ -32,15 +26,17 @@ const attendanceSchema = new mongoose.Schema(
                 "absent",
                 "medical",
                 "duty",
-                "holiday"
+                "holiday",
             ],
             required: true,
+            default: "present",
         },
 
         remarks: {
             type: String,
+            trim: true,
             default: "",
-        }
+        },
     },
     {
         timestamps: true,
@@ -48,14 +44,27 @@ const attendanceSchema = new mongoose.Schema(
     }
 );
 
+// Prevent duplicate attendance for the same student
+// in the same class on the same day
+attendanceSchema.index(
+    {
+        assignment: 1,
+        student: 1,
+        attendanceDate: 1,
+    },
+    {
+        unique: true,
+    }
+);
+
+// Frequently used queries
 attendanceSchema.index({
-    student: 1,
-    subject: 1,
+    assignment: 1,
     attendanceDate: 1,
 });
 
 attendanceSchema.index({
-    teacher: 1,
+    student: 1,
 });
 
 module.exports = mongoose.model(

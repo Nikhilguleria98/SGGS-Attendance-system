@@ -65,3 +65,18 @@ exports.deleteUser = asyncHandler(async (req, res) => {
         "User deleted successfully"
     );
 });
+
+exports.getUsers = asyncHandler(async (req, res) => {
+
+    const { role } = req.query;
+
+    const users = await userService.getAllUsers(role);
+
+    return success(
+        res,
+        200,
+        "Users fetched successfully",
+        users
+    );
+});
+   

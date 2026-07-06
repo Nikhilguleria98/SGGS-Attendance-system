@@ -1,4 +1,5 @@
 const Attendance = require("../models/Attendance");
+require("../models/Subject");
 
 class AttendanceRepository {
     async create(data) {

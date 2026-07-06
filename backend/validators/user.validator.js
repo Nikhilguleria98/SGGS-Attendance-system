@@ -1,5 +1,6 @@
 const { z } = require("zod");
-const roles = require("../constants/roles")
+const roles = require("../constants/roles");
+const { objectId } = require("./common.validator");
 const createUserSchema = z.object({
     body: z.object({
         firstName: z
@@ -18,7 +19,7 @@ const createUserSchema = z.object({
             .string()
             .min(8, "Password must be at least 8 characters"),
 
-        role: z.enum(roles),
+            role: z.enum(Object.values(roles)),
 
         phone: z
             .string()
@@ -45,7 +46,24 @@ const createUserSchema = z.object({
             .optional(),
     }),
 });
+const updateUserSchema = z.object({
+    params: z.object({
+        id: z.string().regex(objectId, "Invalid user id"),
+    }),
+
+    body: z.object({
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        phone: z.string().optional(),
+        designation: z.string().optional(),
+        department: z.string().optional(),
+        semester: z.number().optional(),
+        section: z.string().optional(),
+        batch: z.string().optional(),
+    }),
+});
 
 module.exports = {
     createUserSchema,
+    updateUserSchema,
 };

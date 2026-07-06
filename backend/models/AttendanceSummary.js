@@ -2,48 +2,35 @@ const mongoose = require("mongoose");
 
 const attendanceSummarySchema = new mongoose.Schema(
     {
+        assignment: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "TeacherAssignment",
+            required: true,
+        },
+
         student: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
         },
 
-        subject: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Subject",
-            required: true,
-        },
-
-        teacher: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-
-        fromDate: {
-            type: Date,
-            required: true,
-        },
-
-        toDate: {
-            type: Date,
-            required: true,
-        },
-
         classesDelivered: {
             type: Number,
             default: 0,
+            min: 0,
         },
 
         classesAttended: {
             type: Number,
             default: 0,
+            min: 0,
         },
 
         classesAbsent: {
             type: Number,
             default: 0,
-        }
+            min: 0,
+        },
     },
     {
         timestamps: true,
@@ -51,17 +38,23 @@ const attendanceSummarySchema = new mongoose.Schema(
     }
 );
 
-attendanceSummarySchema.virtual(
-    "attendancePercentage"
-).get(function () {
+// One summary per student per assignment
+attendanceSummarySchema.index(
+    {
+        assignment: 1,
+        student: 1,
+    },
+    {
+        unique: true,
+    }
+);
 
-    if (this.classesDelivered === 0)
-        return 0;
+attendanceSummarySchema.virtual("attendancePercentage").get(function () {
+    if (this.classesDelivered === 0) return 0;
 
     return Number(
         (
-            (this.classesAttended /
-                this.classesDelivered) *
+            (this.classesAttended / this.classesDelivered) *
             100
         ).toFixed(2)
     );
