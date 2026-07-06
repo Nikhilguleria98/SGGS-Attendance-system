@@ -27,6 +27,7 @@ import Aboutuspage from "./Pages/Defaultpages/Aboutuspage";
 import Contactuspage from "./Pages/Defaultpages/Contactuspage";
 import AttendanceDashboard from "./Pages/Studentpages/AttendanceDashboard";
 import StudentDashboard from "./Pages/Studentpages/StudentDashboard";
+import StudentReportPage from "./components/TeachersComp/TeacherReport";
 
 const App = () => {
   return (
@@ -49,7 +50,7 @@ const App = () => {
           <Route path="managestudent" element={<TeacherHome />} />
           <Route path="teacherdashboard" element={<TeacherDashboard />} />
           <Route path="mark-attendance" element={<MarkAttendance />} />
-          <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
+          <Route path="reports" element={<StudentReportPage />} />
           <Route path="profile" element={<TeacherProfile />} />
         </Route>
       </Route>
