@@ -114,8 +114,14 @@ const userSchema = new mongoose.Schema(
         },
 
         // ==========================
+        // ==========================
         // Department
         // ==========================
+        
+        batches: { type: Array, default: [] },
+        groups: { type: Array, default: [] },
+        subjects: { type: Array, default: [] },
+        assignments: { type: Array, default: [] },
 
         department: {
             type: mongoose.Schema.Types.ObjectId,

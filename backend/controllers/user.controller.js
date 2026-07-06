@@ -6,9 +6,10 @@ const { success } = require("../utils/response");
 
 // Create Users
 exports.createUser = asyncHandler(async (req, res) => {
-    const user = await userService.createUser(
-        req.validatedData.body
-    );
+    let data = { ...req.validatedData.body };
+    if (data.rollNo) data.rollNumber = data.rollNo;
+    if (data.group) data.section = data.group;
+    const user = await userService.createUser(data);
 
     return success(
         res,
@@ -44,9 +45,12 @@ exports.getUser = asyncHandler(async (req, res) => {
 });
 
 exports.updateUser = asyncHandler(async (req, res) => {
+    let data = { ...req.validatedData.body };
+    if (data.rollNo) data.rollNumber = data.rollNo;
+    if (data.group) data.section = data.group;
     const user = await userService.updateUser(
         req.params.id,
-        req.validatedData.body
+        data
     );
     return success(
         res,
