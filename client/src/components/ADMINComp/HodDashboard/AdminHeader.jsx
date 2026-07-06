@@ -11,7 +11,9 @@ const AdminHeader = () => {
     }
   }, []);
 
-  const fullName = user ? (user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Admin') : 'Loading...';
+  const fullName = user 
+    ? (user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.name) || 'Admin'
+    : 'Loading...';
   const roleDisplay = user?.designation || user?.role || 'Head of Department';
 
   return (
