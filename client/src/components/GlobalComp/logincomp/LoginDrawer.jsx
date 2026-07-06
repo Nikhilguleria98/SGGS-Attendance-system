@@ -27,7 +27,7 @@ const handleLoginSubmit = async (e) => {
   if (selectedRole === "HOD") {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        "http://localhost:3000/api/auth/login",
         {
           method: "POST",
           headers: {
