@@ -60,6 +60,7 @@ const updateUserSchema = z.object({
         semester: z.number().optional(),
         section: z.string().optional(),
         batch: z.string().optional(),
+        password: z.string().min(8, "Password must be at least 8 characters").optional(),
         avatar: z.string().optional(),
         gender: z.string().optional(),
         dob: z.string().optional(),

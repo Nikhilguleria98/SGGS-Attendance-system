@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
  * @param {Object} props
  * @param {Function} props.onSubmitSuccess - Callback function triggered on a successful submission.
  */
-const CreateDepartmentFormFields = ({ onSubmitSuccess }) => {
+const CreateDepartmentFormFields = ({ onSubmitSuccess, initialData }) => {
   const navigate = useNavigate();
 
   // Form values state
@@ -79,8 +79,10 @@ const CreateDepartmentFormFields = ({ onSubmitSuccess }) => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/departments`, {
-        method: "POST",
+      const url = initialData ? `${import.meta.env.VITE_API_URL}/departments/${initialData._id}` : `${import.meta.env.VITE_API_URL}/departments`;
+      const method = initialData ? "PATCH" : "POST";
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
@@ -128,9 +130,9 @@ const CreateDepartmentFormFields = ({ onSubmitSuccess }) => {
             >
               <CheckCircle2 className="w-10 h-10" />
             </motion.div>
-            <h3 className="text-xl font-bold text-gray-900 mb-1">Department Created!</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">{initialData ? "Department Updated!" : "Department Created!"}</h3>
             <p className="text-gray-500 text-sm">
-              The department has been added successfully.
+              {initialData ? "The department has been updated successfully." : "The department has been added successfully."}
             </p>
 
             <div className="flex gap-4 mt-6">
@@ -142,7 +144,7 @@ const CreateDepartmentFormFields = ({ onSubmitSuccess }) => {
                 }}
                 className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-xl text-sm transition-all cursor-pointer"
               >
-                Create Another
+                {initialData ? "Edit Again" : "Create Another"}
               </button>
               <button
                 type="button"
@@ -271,10 +273,10 @@ const CreateDepartmentFormFields = ({ onSubmitSuccess }) => {
             {isLoading ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Creating Department...</span>
+                <span>{initialData ? "Updating Department..." : "Creating Department..."}</span>
               </>
             ) : (
-              <span>Create Department</span>
+              <span>{initialData ? "Update Department" : "Create Department"}</span>
             )}
           </motion.button>
         </form>

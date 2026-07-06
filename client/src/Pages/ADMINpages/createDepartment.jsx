@@ -9,6 +9,7 @@ const CreateDepartment = () => {
   const [departments, setDepartments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   useEffect(() => {
     fetchDepartments();
@@ -36,7 +37,7 @@ const CreateDepartment = () => {
 
   const handleSubmitSuccess = (newDepartment) => {
     toast.success("Department created successfully!");
-    setDepartments((prev) => [...prev, newDepartment]);
+    if (editData) { setDepartments(prev => prev.map(d => d._id === newDepartment._id ? newDepartment : d)); } else { setDepartments((prev) => [...prev, newDepartment]); }
     setTimeout(() => setIsModalOpen(false), 1500); // Close modal shortly after success animation
   };
 
@@ -53,7 +54,7 @@ const CreateDepartment = () => {
             </p>
           </div>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => { setEditData(null); setIsModalOpen(true); }}
             className="flex items-center gap-2 px-5 py-2.5 bg-[#00529b] hover:bg-[#003d73] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-[#00529b]/20"
           >
             <Plus size={18} />
@@ -67,7 +68,25 @@ const CreateDepartment = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00529b]"></div>
           </div>
         ) : (
-          <DepartmentTable departments={departments} />
+          <DepartmentTable 
+            departments={departments} 
+            onEdit={(dept) => { setEditData(dept); setIsModalOpen(true); }}
+            onDelete={async (dept) => {
+              if (confirm("Are you sure you want to delete this department?")) {
+                try {
+                  const token = localStorage.getItem("token");
+                  const res = await fetch(`${import.meta.env.VITE_API_URL}/departments/${dept._id}`, {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+                  if (res.ok) {
+                    setDepartments(prev => prev.filter(d => d._id !== dept._id));
+                    toast.success("Department deleted!");
+                  }
+                } catch(e) { toast.error("Failed to delete"); }
+              }
+            }}
+          />
         )}
 
       </div>
@@ -81,7 +100,7 @@ const CreateDepartment = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => { setIsModalOpen(false); setEditData(null); }}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             />
             
@@ -96,7 +115,7 @@ const CreateDepartment = () => {
               {/* Modal Header */}
               <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Create New Department</h2>
+                  <h2 className="text-xl font-bold text-gray-900">{editData ? "Edit Department" : "Create New Department"}</h2>
                   <p className="text-sm text-gray-500 mt-1">Fill in the details to add a department</p>
                 </div>
                 <button
@@ -109,7 +128,7 @@ const CreateDepartment = () => {
 
               {/* Form Component */}
               <div className="p-2">
-                <CreateDepartmentFormFields onSubmitSuccess={handleSubmitSuccess} />
+                <CreateDepartmentFormFields onSubmitSuccess={handleSubmitSuccess} initialData={editData} />
               </div>
             </motion.div>
           </div>

@@ -32,6 +32,11 @@ class UserService {
     }
 
     async updateUser(id, updateData) {
+        if (updateData.password) {
+            const bcrypt = require("bcryptjs");
+            const salt = await bcrypt.genSalt(12);
+            updateData.password = await bcrypt.hash(updateData.password, salt);
+        }
         return await userRepository.updateById(id, updateData);
     }
 
