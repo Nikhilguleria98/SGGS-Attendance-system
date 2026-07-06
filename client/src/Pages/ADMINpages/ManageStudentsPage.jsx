@@ -44,10 +44,10 @@ export default function ManageStudentsPage() {
       const token = localStorage.getItem("token");
       
       const [studentsRes, deptsRes] = await Promise.all([
-        fetch("http://localhost:3000/api/users?role=student", {
+        fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch("http://localhost:3000/api/departments", {
+        fetch(`${import.meta.env.VITE_API_URL}/departments`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -112,7 +112,7 @@ export default function ManageStudentsPage() {
     if (studentToDelete) {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(`http://localhost:3000/api/users/${studentToDelete._id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${studentToDelete._id}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -144,8 +144,8 @@ export default function ManageStudentsPage() {
       const token = localStorage.getItem("token");
       const isEdit = !!studentToEdit;
       const url = isEdit 
-        ? `http://localhost:3000/api/users/${studentToEdit._id}`
-        : `http://localhost:3000/api/users`;
+        ? `${import.meta.env.VITE_API_URL}/users/${studentToEdit._id}`
+        : `${import.meta.env.VITE_API_URL}/users`;
         
       const response = await fetch(url, {
         method: isEdit ? "PATCH" : "POST",

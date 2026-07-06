@@ -30,9 +30,9 @@ const StatCards = () => {
         const headers = { Authorization: `Bearer ${token}` };
 
         const [teachersRes, studentsRes, deptsRes] = await Promise.all([
-          fetch("http://localhost:3000/api/users?role=teacher", { headers }),
-          fetch("http://localhost:3000/api/users?role=student", { headers }),
-          fetch("http://localhost:3000/api/departments", { headers })
+          fetch(`${import.meta.env.VITE_API_URL}/users?role=teacher`, { headers }),
+          fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, { headers }),
+          fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers })
         ]);
 
         const [teachersData, studentsData, deptsData] = await Promise.all([

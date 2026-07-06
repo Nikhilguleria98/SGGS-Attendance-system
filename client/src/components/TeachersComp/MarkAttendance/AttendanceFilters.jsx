@@ -10,8 +10,8 @@ const AttendanceFilters = ({ filters, setFilters }) => {
       const token = localStorage.getItem("token");
       try {
         const [deptsRes, subsRes] = await Promise.all([
-          fetch("http://localhost:3000/api/departments", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://localhost:3000/api/subjects", { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
         const deptsData = await deptsRes.json();
         const subsData = await subsRes.json();

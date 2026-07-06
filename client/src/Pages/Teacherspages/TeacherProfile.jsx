@@ -16,7 +16,7 @@ const TeacherProfile = () => {
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
-          const response = await fetch(`http://localhost:3000/api/users/${payload.id}`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${payload.id}`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           const data = await response.json();
