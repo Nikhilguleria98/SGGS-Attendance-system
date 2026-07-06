@@ -24,11 +24,13 @@ const AdminHeader = () => {
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <img
-            src={user?.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400"}
-            alt="Profile"
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          {user?.avatar ? (
+          <img src={user.avatar} alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-gray-100" />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm flex items-center justify-center">
+            <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          </div>
+        )}
           <div className="hidden sm:block text-sm">
             <p className="font-semibold text-gray-800">{fullName}</p>
             <p className="text-xs text-gray-500 capitalize">

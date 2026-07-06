@@ -60,6 +60,13 @@ const updateUserSchema = z.object({
         semester: z.number().optional(),
         section: z.string().optional(),
         batch: z.string().optional(),
+        avatar: z.string().optional(),
+        gender: z.string().optional(),
+        dob: z.string().optional(),
+        address: z.string().optional(),
+        bloodGroup: z.string().optional(),
+        religion: z.string().optional(),
+        category: z.string().optional(),
     }),
 });
 

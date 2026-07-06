@@ -111,7 +111,13 @@ const StudentProfile = () => {
         <div className="bg-white rounded-3xl border border-gray-200 shadow-sm h-[220px] flex items-center px-10 mb-8">
           <div className="flex items-center gap-8">
             <div className="relative">
-              <img src={userData.avatar || "https://images.unsplash.com/photo-1500648767791-00dcc994a43?w=500"} alt="student" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
+              {userData.avatar ? (
+                <img src={userData.avatar} alt="student" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gray-200 border-4 border-white shadow-md flex items-center justify-center">
+                  <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                </div>
+              )}
               <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-green-500 border-2 border-white"></div>
             </div>
             <div>
@@ -172,7 +178,74 @@ const StudentProfile = () => {
           <div className="space-y-6">
             <Card title="Profile Photo">
               <div className="flex flex-col items-center">
-                <img src={userData.avatar || "https://images.unsplash.com/photo-1500648767791-00dcc994a43?w=500"} alt="student" className="w-40 h-40 rounded-full object-cover border-4 border-gray-100" />
+                <div className="w-40 h-40 rounded-full border-4 border-gray-100 overflow-hidden bg-gray-50 flex items-center justify-center mb-6">
+                  {userData.avatar ? (
+                    <img src={userData.avatar} alt="student" className="w-full h-full object-cover" />
+                  ) : (
+                    <svg className="w-20 h-20 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <input 
+                    type="file" 
+                    id="studentPhotoUpload" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      if (file.size > 5 * 1024 * 1024) return alert("File size must be less than 5MB");
+                      const reader = new FileReader();
+                      reader.onloadend = async () => {
+                        const token = localStorage.getItem("token");
+                        try {
+                          const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userData._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                            body: JSON.stringify({ avatar: reader.result })
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
+                            localStorage.setItem("user", JSON.stringify({ ...existingUser, avatar: reader.result }));
+                            window.location.reload();
+                          } else { alert("Failed to update"); }
+                        } catch (err) { console.error(err); alert("Server error"); }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
+                  />
+                  <button 
+                    onClick={() => document.getElementById('studentPhotoUpload').click()}
+                    className="bg-[#102B63] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0E2555]"
+                  >
+                    Upload Photo
+                  </button>
+                  {userData.avatar && (
+                    <button 
+                      onClick={async () => {
+                        if (confirm("Remove profile picture?")) {
+                          const token = localStorage.getItem("token");
+                          const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userData._id}`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                            body: JSON.stringify({ avatar: "" })
+                          });
+                          if (res.ok) {
+                            const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
+                            localStorage.setItem("user", JSON.stringify({ ...existingUser, avatar: "" }));
+                            window.location.reload();
+                          }
+                        }
+                      }}
+                      className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm hover:bg-red-100"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
               </div>
             </Card>
             <Card title="Contact Information">
