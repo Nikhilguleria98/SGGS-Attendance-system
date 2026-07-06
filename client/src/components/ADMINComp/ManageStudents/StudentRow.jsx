@@ -9,10 +9,10 @@ const StudentRow = ({ student, index, onEdit, onDelete }) => {
     <tr className="border-b border-gray-100 hover:bg-gray-50 text-sm">
       <td className="py-4 px-4 font-semibold text-[#162b4a]">{index + 1}</td>
       <td className="py-4 px-4 font-bold text-[#162b4a]">{studentName}</td>
-      <td className="py-4 px-4 text-gray-600">{student.rollNo}</td>
+      <td className="py-4 px-4 text-gray-600">{student.rollNo || student.rollNumber || "-"}</td>
       <td className="py-4 px-4 text-gray-600">{deptName}</td>
       <td className="py-4 px-4 text-gray-600">{student.batch || student.batches?.[0] || "-"}</td>
-      <td className="py-4 px-4 text-gray-600">{student.group || student.groups?.[0] || "-"}</td>
+      <td className="py-4 px-4 text-gray-600">{student.group || student.section || student.groups?.[0] || "-"}</td>
 
       <td className="py-4 px-4">
         <div className="flex items-center gap-3">

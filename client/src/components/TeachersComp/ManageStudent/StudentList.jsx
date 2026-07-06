@@ -236,7 +236,7 @@ const StudentList = () => {
                   </td>
                   <td className="px-6 py-6">
                     <span className="font-semibold text-[#0F172A]">
-                      {student.rollNo || '-'}
+                      {student.rollNo || student.rollNumber || '-'}
                     </span>
                   </td>
                   <td className="px-6 py-6">

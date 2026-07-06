@@ -41,6 +41,9 @@ const createUserSchema = z.object({
             .string()
             .optional(),
 
+        batch: z.string().optional(),
+        group: z.string().optional(),
+        rollNo: z.string().optional(),
         rollNumber: z
             .string()
             .optional(),
