@@ -19,7 +19,7 @@ const createUserSchema = z.object({
             .string()
             .min(8, "Password must be at least 8 characters"),
 
-            role: z.enum(Object.values(roles)),
+        role: z.enum(Object.values(roles)),
 
         phone: z
             .string()
@@ -30,7 +30,7 @@ const createUserSchema = z.object({
             .optional(),
 
         semester: z
-            .number()
+            .coerce.number()
             .optional(),
 
         section: z
@@ -57,7 +57,7 @@ const updateUserSchema = z.object({
         phone: z.string().optional(),
         designation: z.string().optional(),
         department: z.string().optional(),
-        semester: z.number().optional(),
+        semester: z.coerce.number().optional(),
         section: z.string().optional(),
         batch: z.string().optional(),
         password: z.string().min(8, "Password must be at least 8 characters").optional(),
