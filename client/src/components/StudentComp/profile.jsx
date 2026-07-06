@@ -1,186 +1,119 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CheckCircle, Phone, Mail } from "lucide-react";
 
 const StudentProfile = () => {
-  const student = {
-    name: "ABD Singh",
-    rollNo: "266tgdgd6",
-    uid: "UID-2023-12593",
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-    fatherName: "XYZ Singh",
-    motherName: "EFS Kaur",
-    bloodGroup: "B+",
-    religion: "XXX",
-    dob: "00000-00-00",
-    category: "GEN",
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${payload.id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const data = await response.json();
+          if (data.success) {
+            setUserData(data.data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch profile", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
-    address: "XYR, District mmmm, Punjab",
+  if (isLoading) {
+    return <div className="p-8 text-center text-gray-500">Loading profile...</div>;
+  }
 
-    department: "Computer Science Engineering",
-    program: "B.Tech CSE",
-    semester: "7",
-    section: "23BCS-802",
-    university: "Sri Guru Granth Sahib World University",
+  if (!userData) {
+    return <div className="p-8 text-center text-red-500">Failed to load profile data.</div>;
+  }
 
-    mobile: "+91 9417314164",
-    email: "ABD@sggswu.edu.in",
-
-    photo:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43?w=500",
-  };
-
+  const name = userData.firstName + " " + (userData.lastName || "");
+  const departmentName = userData.department?.name || userData.department || "N/A";
+  
   return (
     <div className="min-h-screen bg-[#F4F5F7] p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Page Title */}
-
         <div className="mb-6">
-          <h1 className="text-[34px] font-bold text-[#102B63]">
-            Student Profile
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            View your academic and personal information
-          </p>
+          <h1 className="text-[34px] font-bold text-[#102B63]">Student Profile</h1>
+          <p className="text-gray-500 text-sm mt-1">View your academic and personal information</p>
         </div>
-
-        {/* Profile Header */}
 
         <div className="bg-white rounded-3xl border border-gray-200 shadow-sm h-[220px] flex items-center px-10 mb-8">
           <div className="flex items-center gap-8">
             <div className="relative">
-              <img
-                src={student.photo}
-                alt="student"
-                className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
-              />
-
+              <img src={userData.avatar || "https://images.unsplash.com/photo-1500648767791-00dcc994a43?w=500"} alt="student" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md" />
               <div className="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-green-500 border-2 border-white"></div>
             </div>
-
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-[30px] font-bold text-[#102B63]">
-                  {student.name}
-                </h2>
-
-                <CheckCircle
-                  size={22}
-                  className="text-blue-500"
-                />
+                <h2 className="text-[30px] font-bold text-[#102B63]">{name}</h2>
+                <CheckCircle size={22} className="text-blue-500" />
               </div>
-
-              <p className="text-[#D90429] text-lg font-semibold">
-                Student
-              </p>
-
-              <p className="text-gray-600 text-sm mt-2">
-                Department: {student.department}
-              </p>
-
-              <p className="text-gray-500 text-sm">
-                Roll No: {student.rollNo}
-              </p>
-
-              <p className="text-gray-500 text-sm">
-                Semester {student.semester}
-              </p>
+              <p className="text-[#D90429] text-lg font-semibold">Student</p>
+              <p className="text-gray-600 text-sm mt-2">Department: {departmentName}</p>
+              <p className="text-gray-500 text-sm">Roll No: {userData.rollNumber || "N/A"}</p>
+              <p className="text-gray-500 text-sm">Semester {userData.semester || "N/A"}</p>
             </div>
           </div>
         </div>
 
-        {/* Main Layout */}
-
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Left Section */}
-
           <div className="lg:col-span-2 space-y-6">
             <Card title="Personal Information">
-              <InfoGrid
-                data={[
-                  ["Full Name", student.name],
-                  ["Father's Name", student.fatherName],
-                  ["Mother's Name", student.motherName],
-                  ["Blood Group", student.bloodGroup],
-                  ["Religion", student.religion],
-                  ["Date of Birth", student.dob],
-                  ["Category", student.category],
-                  ["Address", student.address],
-                ]}
-              />
+              <InfoGrid data={[
+                ["Full Name", name],
+                ["Blood Group", userData.bloodGroup || "N/A"],
+                ["Religion", userData.religion || "N/A"],
+                ["Date of Birth", userData.dob ? new Date(userData.dob).toLocaleDateString() : "N/A"],
+                ["Category", userData.category || "N/A"],
+                ["Address", userData.address || "N/A"]
+              ]} />
             </Card>
-
             <Card title="Academic Information">
-              <InfoGrid
-                data={[
-                  ["UID", student.uid],
-                  ["Program", student.program],
-                  ["Department", student.department],
-                  ["Semester", student.semester],
-                  ["Section", student.section],
-                  ["University", student.university],
-                ]}
-              />
+              <InfoGrid data={[
+                ["Program", userData.program || "N/A"],
+                ["Department", departmentName],
+                ["Semester", userData.semester || "N/A"],
+                ["Section", userData.section || "N/A"],
+                ["Batch", userData.batch || "N/A"]
+              ]} />
             </Card>
-
-            
           </div>
-
-          {/* Right Section */}
-
           <div className="space-y-6">
             <Card title="Profile Photo">
               <div className="flex flex-col items-center">
-                <img
-                  src={student.photo}
-                  alt="student"
-                  className="w-40 h-40 rounded-full object-cover border-4 border-gray-100"
-                />
-
-                <button className="mt-6 w-full bg-[#102B63] hover:bg-[#0E2555] text-white py-3 rounded-xl font-medium transition">
-                  View Student Photo
-                </button>
+                <img src={userData.avatar || "https://images.unsplash.com/photo-1500648767791-00dcc994a43?w=500"} alt="student" className="w-40 h-40 rounded-full object-cover border-4 border-gray-100" />
               </div>
             </Card>
-
             <Card title="Contact Information">
               <div className="space-y-5">
                 <div className="flex gap-3 items-center">
-                  <Phone
-                    size={18}
-                    className="text-[#102B63]"
-                  />
-
+                  <Phone size={18} className="text-[#102B63]" />
                   <div>
-                    <p className="text-xs text-gray-500">
-                      Mobile Number
-                    </p>
-
-                    <p className="font-semibold text-sm">
-                      {student.mobile}
-                    </p>
+                    <p className="text-xs text-gray-500">Mobile Number</p>
+                    <p className="font-semibold text-sm">{userData.phone || "N/A"}</p>
                   </div>
                 </div>
-
                 <div className="flex gap-3 items-center">
-                  <Mail
-                    size={18}
-                    className="text-[#102B63]"
-                  />
-
+                  <Mail size={18} className="text-[#102B63]" />
                   <div>
-                    <p className="text-xs text-gray-500">
-                      Official Email
-                    </p>
-
-                    <p className="font-semibold text-sm break-all">
-                      {student.email}
-                    </p>
+                    <p className="text-xs text-gray-500">Official Email</p>
+                    <p className="font-semibold text-sm break-all">{userData.email}</p>
                   </div>
                 </div>
               </div>
             </Card>
-
-            
           </div>
         </div>
       </div>
@@ -190,10 +123,7 @@ const StudentProfile = () => {
 
 const Card = ({ title, children }) => (
   <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8">
-    <h2 className="text-[20px] font-bold text-[#102B63] mb-6">
-      {title}
-    </h2>
-
+    <h2 className="text-[20px] font-bold text-[#102B63] mb-6">{title}</h2>
     {children}
   </div>
 );
@@ -202,13 +132,8 @@ const InfoGrid = ({ data }) => (
   <div className="grid md:grid-cols-2 gap-y-8 gap-x-16">
     {data.map(([label, value]) => (
       <div key={label}>
-        <p className="text-gray-500 text-sm mb-1">
-          {label}
-        </p>
-
-        <p className="text-[16px] font-semibold text-slate-900">
-          {value}
-        </p>
+        <p className="text-gray-500 text-sm mb-1">{label}</p>
+        <p className="text-[16px] font-semibold text-slate-900">{value}</p>
       </div>
     ))}
   </div>
