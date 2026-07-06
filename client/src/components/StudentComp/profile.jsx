@@ -122,44 +122,7 @@ const StudentProfile = () => {
               />
             </Card>
 
-            <Card title="Qualification Details">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="bg-gray-50">
-                      <th className="p-3 text-left font-semibold">
-                        Qualification
-                      </th>
-                      <th className="p-3 text-left font-semibold">
-                        Board
-                      </th>
-                      <th className="p-3 text-left font-semibold">
-                        Year
-                      </th>
-                      <th className="p-3 text-left font-semibold">
-                        Marks
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr className="border-t">
-                      <td className="p-3">10th</td>
-                      <td className="p-3">PSEB</td>
-                      <td className="p-3">2021</td>
-                      <td className="p-3">100%</td>
-                    </tr>
-
-                    <tr className="border-t">
-                      <td className="p-3">12th</td>
-                      <td className="p-3">PSEB</td>
-                      <td className="p-3">2023</td>
-                      <td className="p-3">90.6%</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </Card>
+            
           </div>
 
           {/* Right Section */}
@@ -217,25 +180,7 @@ const StudentProfile = () => {
               </div>
             </Card>
 
-            <Card title="Facilities Available">
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  "Hostel",
-                  "Library",
-                  "Transport",
-                  "Sports",
-                  "Medical",
-                  "Wi-Fi",
-                ].map((item) => (
-                  <div
-                    key={item}
-                    className="bg-gray-50 rounded-xl p-3 text-sm font-medium text-gray-700"
-                  >
-                    ✓ {item}
-                  </div>
-                ))}
-              </div>
-            </Card>
+            
           </div>
         </div>
       </div>
