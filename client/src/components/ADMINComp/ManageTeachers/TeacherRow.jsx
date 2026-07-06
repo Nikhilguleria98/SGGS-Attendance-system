@@ -3,7 +3,7 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export default function TeacherRow({ teacher, index, onEdit, onDelete }) {
   // Mock subjects if none exist to match Figma visually
-  const subjects = teacher.subjects || ["Java", "DBMS", "DSA"];
+  const subjects = (teacher.subjects && teacher.subjects.length > 0) ? teacher.subjects : [];
   
   const displaySubjects = subjects.slice(0, 3);
   const overflowCount = subjects.length - 3;

@@ -28,6 +28,10 @@ const createUserSchema = z.object({
         department: z
             .string()
             .optional(),
+        batches: z.any().optional(),
+        groups: z.any().optional(),
+        subjects: z.any().optional(),
+        assignments: z.any().optional(),
 
         semester: z
             .coerce.number()
@@ -60,6 +64,10 @@ const updateUserSchema = z.object({
         phone: z.string().optional(),
         designation: z.string().optional(),
         department: z.string().optional(),
+        batches: z.any().optional(),
+        groups: z.any().optional(),
+        subjects: z.any().optional(),
+        assignments: z.any().optional(),
         semester: z.coerce.number().optional(),
         section: z.string().optional(),
         batch: z.string().optional(),

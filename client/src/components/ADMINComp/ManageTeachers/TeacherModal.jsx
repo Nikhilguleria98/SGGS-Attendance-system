@@ -44,7 +44,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
           if (data.success) {
             setSubjectsOptions(data.data.map(sub => ({
               label: sub.name,
-              value: sub._id || sub.name
+              value: sub.name
             })));
           }
         } catch (error) {
