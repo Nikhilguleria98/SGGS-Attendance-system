@@ -3,47 +3,79 @@ import AttendanceFilters from './AttendanceFilters';
 import AttendanceStats from './AttendanceStats';
 import AttendanceTable from './AttendanceTable';
 import { Users, UsersIcon, Save, Ban } from 'lucide-react';
-
-// Mock data
-const mockStudents = [
-  { id: 1, name: 'Raushan Kumar', rollNo: '2310991001' },
-  { id: 2, name: 'Aman Sharma', rollNo: '2310991002' },
-  { id: 3, name: 'Priya Singh', rollNo: '2310991003' },
-  { id: 4, name: 'Vikas Gupta', rollNo: '2310991004' },
-  { id: 5, name: 'Anjali Verma', rollNo: '2310991005' },
-  { id: 6, name: 'Rohit Kumar', rollNo: '2310991006' },
-  { id: 7, name: 'Neha Kumari', rollNo: '2310991007' },
-  { id: 8, name: 'Sahil Jain', rollNo: '2310991008' },
-];
+import toast from 'react-hot-toast';
 
 const MarkAttendance = () => {
-  const [attendanceData, setAttendanceData] = useState({});
-  const [stats, setStats] = useState({ total: 25, present: 18, absent: 7 });
+  const [filters, setFilters] = useState({
+    department: '',
+    section: '',
+    subject: '',
+    date: new Date().toISOString().split('T')[0]
+  });
 
-  // Initialize with some default values to match screenshot roughly
+  const [students, setStudents] = useState([]);
+  const [attendanceData, setAttendanceData] = useState({});
+  const [stats, setStats] = useState({ total: 0, present: 0, absent: 0 });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [teacherId, setTeacherId] = useState(null);
+
   useEffect(() => {
-    const initialData = {};
-    mockStudents.forEach((student, index) => {
-      // Just making a few absent by default to match screenshot look
-      if (index === 2 || index === 5) {
-        initialData[student.id] = 'absent';
-      } else {
-        initialData[student.id] = 'present';
+    // Decode teacher ID from JWT
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setTeacherId(payload.id); // Check if your JWT payload uses .id or ._id
+      } catch (err) {
+        console.error("Failed to decode token", err);
       }
-    });
-    setAttendanceData(initialData);
+    }
   }, []);
 
   useEffect(() => {
-    // Calculate stats dynamically based on actual data
+    // Fetch students when department changes (or load all and filter)
+    const fetchStudents = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        let url = "http://localhost:3000/api/users?role=student";
+        
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          // Client side filtering for department/section if needed
+          let filtered = data.data;
+          if (filters.department) {
+            filtered = filtered.filter(s => s.department && s.department._id === filters.department);
+          }
+          setStudents(filtered);
+          
+          // Initialize attendance
+          const initialData = {};
+          filtered.forEach((student) => {
+            initialData[student._id] = 'present';
+          });
+          setAttendanceData(initialData);
+        }
+      } catch (err) {
+        console.error("Failed to fetch students", err);
+      }
+    };
+    
+    fetchStudents();
+  }, [filters.department, filters.section]);
+
+  useEffect(() => {
     let p = 0;
     let a = 0;
     Object.values(attendanceData).forEach(status => {
       if (status === 'present') p++;
       if (status === 'absent') a++;
     });
-    setStats({ total: mockStudents.length, present: p, absent: a });
-  }, [attendanceData]);
+    setStats({ total: students.length, present: p, absent: a });
+  }, [attendanceData, students]);
 
   const handleStatusChange = (studentId, status) => {
     setAttendanceData(prev => ({
@@ -54,10 +86,54 @@ const MarkAttendance = () => {
 
   const markAll = (status) => {
     const newData = {};
-    mockStudents.forEach(s => {
-      newData[s.id] = status;
+    students.forEach(s => {
+      newData[s._id] = status;
     });
     setAttendanceData(newData);
+  };
+
+  const submitAttendance = async () => {
+    if (!filters.subject) {
+      toast.error("Please select a subject");
+      return;
+    }
+    if (!teacherId) {
+      toast.error("Teacher ID not found. Please re-login.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const token = localStorage.getItem("token");
+
+    try {
+      // Create an array of promises for each student
+      const promises = students.map(student => {
+        const payload = {
+          student: student._id,
+          teacher: teacherId,
+          subject: filters.subject,
+          attendanceDate: new Date(filters.date).toISOString(),
+          status: attendanceData[student._id] || 'absent'
+        };
+
+        return fetch("http://localhost:3000/api/attendance", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}` 
+          },
+          body: JSON.stringify(payload)
+        });
+      });
+
+      await Promise.all(promises);
+      toast.success("Attendance saved successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save attendance");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -68,7 +144,7 @@ const MarkAttendance = () => {
           <p className="text-gray-500">Select course details and mark attendance</p>
         </div>
 
-        <AttendanceFilters />
+        <AttendanceFilters filters={filters} setFilters={setFilters} />
         
         <AttendanceStats 
           total={stats.total} 
@@ -77,7 +153,7 @@ const MarkAttendance = () => {
         />
         
         <AttendanceTable 
-          students={mockStudents}
+          students={students}
           attendanceData={attendanceData}
           handleStatusChange={handleStatusChange}
         />
@@ -107,9 +183,15 @@ const MarkAttendance = () => {
         </div>
 
         <div className="flex justify-center mb-10">
-          <button className="flex items-center gap-2 bg-[#1d4ed8] hover:bg-blue-800 text-white px-8 py-3 rounded-lg font-medium transition-colors shadow-sm">
+          <button 
+            onClick={submitAttendance}
+            disabled={isSubmitting || students.length === 0}
+            className={`flex items-center gap-2 px-8 py-3 rounded-lg font-medium shadow-sm transition-colors ${
+              isSubmitting ? "bg-gray-400 cursor-not-allowed text-white" : "bg-[#1d4ed8] hover:bg-blue-800 text-white"
+            }`}
+          >
             <Save size={20} />
-            Submit Attendance
+            {isSubmitting ? "Saving..." : "Submit Attendance"}
           </button>
         </div>
         

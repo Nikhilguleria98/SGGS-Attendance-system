@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const validate = require("../middleware/validate.middleware");
+const { protect, authorize } = require("../middleware/auth.middleware");
 
 const departmentController = require("../controllers/department.controller");
 
@@ -11,11 +12,14 @@ const {
     updateDepartmentSchema,
 } = require("../validators/department.validator");
 
+router.use(protect);
+
 // ==========================
 // Create
 // ==========================
 router.post(
     "/",
+    authorize("hod"),
     validate(createDepartmentSchema),
     departmentController.createDepartment
 );
@@ -27,12 +31,14 @@ router.post(
 // Get all departments
 router.get(
     "/",
+    authorize("hod", "teacher", "student"),
     departmentController.getDepartments
 );
 
 // Get department by id
 router.get(
     "/:id",
+    authorize("hod", "teacher", "student"),
     departmentController.getDepartment
 );
 
@@ -41,6 +47,7 @@ router.get(
 // ==========================
 router.patch(
     "/:id",
+    authorize("hod"),
     validate(updateDepartmentSchema),
     departmentController.updateDepartment
 );
@@ -50,6 +57,7 @@ router.patch(
 // ==========================
 router.delete(
     "/:id",
+    authorize("hod"),
     departmentController.deleteDepartment
 );
 

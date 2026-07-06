@@ -14,7 +14,7 @@ export const sidebarMenus = {
   hod: [
     { label: 'Dashboard', icon: Home, path: '/hod/dashboard' },
     { label: 'Department', icon: Building2, path: '/hod/departments' },
-    { label: 'Teachers', icon: Users, path: '/hod/teachers' },
+    { label: 'Faculty', icon: Users, path: '/hod/teachers' },
     { label: 'Students', icon: GraduationCap, path: '/hod/manage-students' },
     { label: 'Profile', icon: UserCircle, path: '/hod/profile' },
   ],

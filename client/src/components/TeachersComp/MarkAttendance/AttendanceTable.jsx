@@ -14,40 +14,48 @@ const AttendanceTable = ({ students, attendanceData, handleStatusChange }) => {
             </tr>
           </thead>
           <tbody>
-            {students.map((student, index) => {
-              const status = attendanceData[student.id];
-              return (
-                <tr key={student.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4">{index + 1}</td>
-                  <td className="px-6 py-4 font-medium">{student.name}</td>
-                  <td className="px-6 py-4 text-gray-500">{student.rollNo}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-4">
-                      <button 
-                        onClick={() => handleStatusChange(student.id, 'present')}
-                        className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                          status === 'present' 
-                            ? 'bg-green-50 text-green-600 border border-green-200' 
-                            : 'border border-gray-300 text-green-600 hover:bg-green-50'
-                        }`}
-                      >
-                        Present
-                      </button>
-                      <button 
-                        onClick={() => handleStatusChange(student.id, 'absent')}
-                        className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                          status === 'absent' 
-                            ? 'bg-[#c00021] text-white border border-[#c00021]' 
-                            : 'border border-gray-300 text-[#c00021] hover:bg-red-50'
-                        }`}
-                      >
-                        Absent
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {students.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                  No students found for this filter.
+                </td>
+              </tr>
+            ) : (
+              students.map((student, index) => {
+                const status = attendanceData[student._id];
+                return (
+                  <tr key={student._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4">{index + 1}</td>
+                    <td className="px-6 py-4 font-medium">{student.firstName} {student.lastName || ''}</td>
+                    <td className="px-6 py-4 text-gray-500">{student.rollNo || '-'}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-4">
+                        <button 
+                          onClick={() => handleStatusChange(student._id, 'present')}
+                          className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                            status === 'present' 
+                              ? 'bg-green-50 text-green-600 border border-green-200' 
+                              : 'border border-gray-300 text-green-600 hover:bg-green-50'
+                          }`}
+                        >
+                          Present
+                        </button>
+                        <button 
+                          onClick={() => handleStatusChange(student._id, 'absent')}
+                          className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                            status === 'absent' 
+                              ? 'bg-[#c00021] text-white border border-[#c00021]' 
+                              : 'border border-gray-300 text-[#c00021] hover:bg-red-50'
+                          }`}
+                        >
+                          Absent
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
           </tbody>
         </table>
       </div>

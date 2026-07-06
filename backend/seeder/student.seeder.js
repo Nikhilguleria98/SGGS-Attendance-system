@@ -5,7 +5,7 @@ module.exports = async (departmentId) => [
       firstName: "Aman",
       lastName: "Singh",
       email: "student1@sggs.ac.in",
-      password: "Student@123",
+      password: "student@123",
       role: "student",
       rollNumber: "2210990001",
       semester: 5,

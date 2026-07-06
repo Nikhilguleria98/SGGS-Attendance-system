@@ -42,21 +42,25 @@ const App = () => {
         </Route>
       </Route>
 
-      {/* Teacher - Not Protected */}
-      <Route path="/teacher" element={<DashboardLayout role="teacher" />}>
-        <Route path="dashboard" element={<TeacherDashboard />} />
-        <Route path="managestudent" element={<TeacherHome />} />
-        <Route path="teacherdashboard" element={<TeacherDashboard />} />
-        <Route path="mark-attendance" element={<MarkAttendance />} />
-        <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
-        <Route path="profile" element={<TeacherProfile />} />
+      {/* Teacher Protected */}
+      <Route element={<ProtectedRoute allowedRole="teacher" />}>
+        <Route path="/teacher" element={<DashboardLayout role="teacher" />}>
+          <Route path="dashboard" element={<TeacherDashboard />} />
+          <Route path="managestudent" element={<TeacherHome />} />
+          <Route path="teacherdashboard" element={<TeacherDashboard />} />
+          <Route path="mark-attendance" element={<MarkAttendance />} />
+          <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
+          <Route path="profile" element={<TeacherProfile />} />
+        </Route>
       </Route>
 
-      {/* Student - Not Protected */}
-      <Route path="/student" element={<DashboardLayout role="student" />}>
-        <Route path="dashboard" element={<StudentDashboard/>} />
-        <Route path="attendance" element={<AttendanceDashboard/>} />
-        <Route path="profile" element={<StudentProfile />} />
+      {/* Student Protected */}
+      <Route element={<ProtectedRoute allowedRole="student" />}>
+        <Route path="/student" element={<DashboardLayout role="student" />}>
+          <Route path="dashboard" element={<StudentDashboard/>} />
+          <Route path="attendance" element={<AttendanceDashboard/>} />
+          <Route path="profile" element={<StudentProfile />} />
+        </Route>
       </Route>
 
       {/* Public */}

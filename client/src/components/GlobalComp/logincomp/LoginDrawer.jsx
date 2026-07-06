@@ -20,64 +20,49 @@ const LoginDrawer = ({ isOpen, onClose }) => {
 
   const navigate = useNavigate();
 
-const handleLoginSubmit = async (e) => {
-  e.preventDefault();
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
 
-  // HOD Login from backend
-  if (selectedRole === "HOD") {
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            identifier,
-            password,
-            role: selectedRole,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          identifier,
+          password,
+          role: selectedRole,
+        }),
+      });
 
       const data = await response.json();
 
       if (!data.success) {
-        toast.error("Wrong email or password");
+        toast.error(data.message || "Invalid credentials");
         return;
       }
 
+      // Save to localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.user.role);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      navigate("/hod/dashboard");
+      // Navigate based on backend role
+      if (data.user.role === "hod") {
+        navigate("/hod/dashboard");
+      } else if (data.user.role === "teacher") {
+        navigate("/teacher/dashboard");
+      } else if (data.user.role === "student") {
+        navigate("/student/dashboard");
+      }
+      
       onClose();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error("Server Error. Please try again.");
     }
-
-    return;
-  }
-
-  // Temporary Teacher Login
-  if (selectedRole === "Teacher") {
-    localStorage.setItem("role", "teacher");
-    navigate("/teacher/dashboard");
-    onClose();
-    return;
-  }
-
-  // Temporary Student Login
-  if (selectedRole === "Student") {
-    localStorage.setItem("role", "student");
-    navigate("/student/dashboard");
-    onClose();
-    return;
-  }
-};
+  };
 
   return (
     <AnimatePresence>
@@ -232,6 +217,9 @@ const handleLoginSubmit = async (e) => {
                   Login
                 </button>
               </form>
+              <p className="text-center text-xs text-gray-400 mt-auto pt-8">
+                @ 2026 college Attendance System
+              </p>
             </div>
           </motion.div>
         </div>

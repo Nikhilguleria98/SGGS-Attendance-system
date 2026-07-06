@@ -1,33 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 
 export default function TeacherDashboard() {
-  const navigate = useNavigate();
-  const [teacherName, setTeacherName] = useState("Teacher");
-  const [teacherAvatar, setTeacherAvatar] = useState("");
-
-  useEffect(() => {
-    const fetchTeacherProfile = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          const response = await fetch(`http://localhost:3000/api/users/${payload.id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const data = await response.json();
-          if (data.success) {
-            setTeacherName(`${data.data.firstName} ${data.data.lastName || ''}`);
-            setTeacherAvatar(data.data.avatar || "https://ui-avatars.com/api/?name=" + data.data.firstName);
-          }
-        } catch (error) {
-          console.error("Failed to fetch profile", error);
-        }
-      }
-    };
-    fetchTeacherProfile();
-  }, []);
-
   // Mock data representing the class list
   const classesData = [
     { name: 'CSE 3rd Year - Section A', students: 28 },
@@ -49,14 +22,14 @@ export default function TeacherDashboard() {
           
           <div className="flex items-center gap-3 self-end sm:self-auto">
             <div className="text-right">
-              <p className="text-sm font-semibold text-slate-950">Welcome, {teacherName}</p>
-              <p className="text-xs text-slate-500 font-medium">Faculty</p>
+              <p className="text-sm font-semibold text-slate-950">Welcome, Priya Singh</p>
+              <p className="text-xs text-slate-500 font-medium">Assistant Professor - CSE</p>
             </div>
-            {/* Profile Image */}
+            {/* Placeholder Profile Image */}
             <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border border-slate-200">
               <img 
-                src={teacherAvatar || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120"} 
-                alt="Profile" 
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=120" 
+                alt="Priya Singh" 
                 className="w-full h-full object-cover"
               />
             </div>
@@ -149,28 +122,19 @@ export default function TeacherDashboard() {
             
             <div className="flex flex-col gap-3">
               {/* Action 1: Take Attendance */}
-              <button 
-                onClick={() => navigate('/teacher/mark-attendance')}
-                className="flex items-center justify-start gap-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
-              >
+              <button className="flex items-center justify-start gap-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]">
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">Take Attendance</span>
               </button>
 
               {/* Action 2: View Students */}
-              <button 
-                onClick={() => navigate('/teacher/managestudent')}
-                className="flex items-center justify-start gap-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
-              >
+              <button className="flex items-center justify-start gap-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]">
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">View Students</span>
               </button>
 
               {/* Action 3: Attendance Reports */}
-              <button 
-                onClick={() => navigate('/teacher/reports')}
-                className="flex items-center justify-start gap-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
-              >
+              <button className="flex items-center justify-start gap-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]">
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">Attendance Reports</span>
               </button>

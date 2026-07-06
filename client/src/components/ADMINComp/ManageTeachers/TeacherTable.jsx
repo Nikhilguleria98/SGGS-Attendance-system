@@ -1,7 +1,7 @@
 import TeacherRow from "./TeacherRow";
 
 export default function TeacherTable({ teachers, onEdit, onDelete }) {
-  const columns = ["#", "Name", "Email", "Department", "Phone", "Action"];
+  const columns = ["#", "Teacher Name", "Email", "Department", "Batches", "Groups", "Subjects", "Actions"];
 
   return (
     <div className="bg-white rounded-lg border border-gray-100 overflow-x-auto">

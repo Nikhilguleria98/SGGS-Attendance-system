@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const validate = require("../middleware/validate.middleware");
+const { protect, authorize } = require("../middleware/auth.middleware");
 
 const subjectController = require("../controllers/subject.controller");
 
@@ -11,11 +12,14 @@ const {
     updateSubjectSchema,
 } = require("../validators/subject.validator");
 
+router.use(protect);
+
 // ==========================
 // Create
 // ==========================
 router.post(
     "/",
+    authorize("hod"),
     validate(createSubjectSchema),
     subjectController.createSubject
 );
@@ -27,18 +31,21 @@ router.post(
 // Get all subjects
 router.get(
     "/",
+    authorize("hod", "teacher", "student"),
     subjectController.getSubjects
 );
 
 // Get subjects by department
 router.get(
     "/department/:departmentId",
+    authorize("hod", "teacher", "student"),
     subjectController.getSubjectsByDepartment
 );
 
 // Get subject by id
 router.get(
     "/:id",
+    authorize("hod", "teacher", "student"),
     subjectController.getSubject
 );
 
@@ -47,6 +54,7 @@ router.get(
 // ==========================
 router.patch(
     "/:id",
+    authorize("hod"),
     validate(updateSubjectSchema),
     subjectController.updateSubject
 );
@@ -56,6 +64,7 @@ router.patch(
 // ==========================
 router.delete(
     "/:id",
+    authorize("hod"),
     subjectController.deleteSubject
 );
 

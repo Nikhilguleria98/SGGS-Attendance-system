@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Camera, Trash2, Upload } from 'lucide-react';
 
-const TeacherProfilePhoto= () => {
-  const [photo, setPhoto] = useState("https://randomuser.me/api/portraits/men/32.jpg");
+const TeacherProfilePhoto = ({ user }) => {
+  const [photo, setPhoto] = useState(user?.avatar || `https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName || ''}&background=random`);
 
   const handlePhotoUpload = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -12,12 +12,12 @@ const TeacherProfilePhoto= () => {
   };
 
   const handleRemovePhoto = () => {
-    setPhoto("https://via.placeholder.com/150");
+    setPhoto(`https://ui-avatars.com/api/?name=${user?.firstName}+${user?.lastName || ''}&background=random`);
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <h3 className="text-xl font-bold text-[#162b4a] mb-6">  Profile Photo </h3>
+      <h3 className="text-xl font-bold text-[#162b4a] mb-6">Profile Photo</h3>
       
       <div className="flex flex-col items-center gap-6">
         <div className="relative">

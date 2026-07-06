@@ -1,30 +1,73 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Header from "../../components/ADMINComp/ManageTeachers/Header";
 import SearchFilterBar from "../../components/ADMINComp/ManageTeachers/SearchFilterBar";
 import TeacherTable from "../../components/ADMINComp/ManageTeachers/TeacherTable";
 import Pagination from "../../components/ADMINComp/ManageTeachers/Pagination";
-
-// 👇 This MUST exist with actual data in it
-const dummyTeachers = [
-  { id: 1, name: "Amit Verma", email: "amit@college.edu.in", department: "PGDCA", phone: "9876543210" },
-  { id: 2, name: "Priya Singh", email: "priya@college.edu.in", department: "MCA", phone: "9876543211" },
-  { id: 3, name: "Rahul Mehta", email: "rahul@college.edu.in", department: "BCA", phone: "9876543212" },
-  { id: 4, name: "Neha Sharma", email: "neha@college.edu.in", department: "M.TECH", phone: "9876543213" },
-  { id: 5, name: "Vikram Joshi", email: "vikram@college.edu.in", department: "B.TECH", phone: "9876543214" },
-];
+import DeleteConfirmationModal from "../../components/ADMINComp/Common/DeleteConfirmationModal";
+import TeacherModal from "../../components/ADMINComp/ManageTeachers/TeacherModal";
+import toast from "react-hot-toast";
 
 const PAGE_SIZE = 5;
 
 export default function ManageTeachers() {
-  const [teachers] = useState(dummyTeachers); // 👈 must be seeded, not []
+  const [teachers, setTeachers] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  
   const [search, setSearch] = useState("");
-  const [department, setDepartment] = useState("All Departments");
+  const [department, setDepartment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [teacherToDelete, setTeacherToDelete] = useState(null);
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [teacherToEdit, setTeacherToEdit] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      
+      const [teachersRes, deptsRes] = await Promise.all([
+        fetch("http://localhost:3000/api/users?role=teacher", {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch("http://localhost:3000/api/departments", {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+
+      const teachersData = await teachersRes.json();
+      const deptsData = await deptsRes.json();
+
+      if (teachersData.success) {
+        setTeachers(teachersData.data);
+      }
+      if (deptsData.success) {
+        setDepartments(deptsData.data);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredTeachers = useMemo(() => {
     return teachers.filter((t) => {
-      const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
-      const matchesDept = department === "All Departments" || t.department === department;
+      const name = t.firstName + " " + t.lastName;
+      const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
+      
+      // t.department could be an ID or populated object, depending on backend
+      const tDeptId = typeof t.department === "object" ? t.department?._id : t.department;
+      const matchesDept = !department || tDeptId === department;
+      
       return matchesSearch && matchesDept;
     });
   }, [teachers, search, department]);
@@ -35,9 +78,77 @@ export default function ManageTeachers() {
     currentPage * PAGE_SIZE
   );
 
-  const handleEdit = (teacher) => console.log("Edit", teacher);
-  const handleDelete = (teacher) => console.log("Delete", teacher);
-  const handleAddTeacher = () => console.log("Open add teacher modal");
+  const handleEdit = (teacher) => {
+    setTeacherToEdit(teacher);
+    setIsModalOpen(true);
+  };
+
+  const handleAddTeacher = () => {
+    setTeacherToEdit(null);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (teacher) => setTeacherToDelete(teacher);
+
+  const confirmDelete = async () => {
+    if (teacherToDelete) {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`http://localhost:3000/api/users/${teacherToDelete._id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          toast.success("Teacher deleted successfully");
+          setTeachers(teachers.filter(t => t._id !== teacherToDelete._id));
+        } else {
+          toast.error(data.message || "Failed to delete teacher");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Server error");
+      }
+      setTeacherToDelete(null);
+    }
+  };
+
+  const handleSaveTeacher = async (teacherData) => {
+    // Add role explicitly
+    teacherData.role = "teacher";
+    
+    try {
+      const token = localStorage.getItem("token");
+      const isEdit = !!teacherToEdit;
+      const url = isEdit 
+        ? `http://localhost:3000/api/users/${teacherToEdit._id}`
+        : `http://localhost:3000/api/users`;
+        
+      const response = await fetch(url, {
+        method: isEdit ? "PATCH" : "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify(teacherData)
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success(`Teacher ${isEdit ? "updated" : "added"} successfully`);
+        // Refresh data to get the populated department
+        fetchData(); 
+        setIsModalOpen(false);
+      } else {
+        toast.error(data.message || "Failed to save teacher");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error");
+    }
+  };
 
   return (
     <div className="flex">
@@ -49,19 +160,45 @@ export default function ManageTeachers() {
             setSearch={setSearch}
             department={department}
             setDepartment={setDepartment}
+            departments={departments}
           />
-          <TeacherTable
-            teachers={paginatedTeachers}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          
+          {isLoading ? (
+            <div className="flex justify-center py-20">
+               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00529b]"></div>
+            </div>
+          ) : (
+            <>
+              <TeacherTable
+                teachers={paginatedTeachers}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
+          )}
         </div>
       </div>
+
+      <DeleteConfirmationModal 
+        isOpen={!!teacherToDelete} 
+        onClose={() => setTeacherToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Teacher"
+        message={`Are you sure you want to delete ${teacherToDelete?.firstName || 'this teacher'}? This action cannot be undone.`}
+      />
+
+      <TeacherModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialData={teacherToEdit}
+        onSave={handleSaveTeacher}
+        departments={departments}
+      />
     </div>
   );
 }

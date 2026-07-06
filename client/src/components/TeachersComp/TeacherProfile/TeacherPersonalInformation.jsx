@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit2, Save, X, CheckCircle } from 'lucide-react';
 
-const TeacherPersonalInformation = () => {
+const TeacherPersonalInformation = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
-    fullName: 'Dr. Rajesh Kumar',
-    email: 'rajesh.kumar@sggs.edu.in',
-    phone: '+91 9876543210',
+    fullName: '',
+    email: '',
+    phone: '',
     gender: 'Male',
-    dob: '1980-05-15'
+    dob: ''
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: `${user.firstName} ${user.lastName || ''}`.trim(),
+        email: user.email || '',
+        phone: user.phone || '',
+        gender: user.gender || 'Male',
+        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : ''
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +31,7 @@ const TeacherPersonalInformation = () => {
   };
 
   const handleSave = () => {
+    // In a real app, send API request to update profile here
     setIsEditing(false);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
@@ -65,7 +78,7 @@ const TeacherPersonalInformation = () => {
           {isEditing ? (
             <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
           ) : (
-            <p className="text-gray-900 font-medium">{formData.fullName}</p>
+            <p className="text-gray-900 font-medium">{formData.fullName || '-'}</p>
           )}
         </div>
         <div>
@@ -73,7 +86,7 @@ const TeacherPersonalInformation = () => {
           {isEditing ? (
             <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
           ) : (
-            <p className="text-gray-900 font-medium">{formData.email}</p>
+            <p className="text-gray-900 font-medium">{formData.email || '-'}</p>
           )}
         </div>
         <div>
@@ -81,7 +94,7 @@ const TeacherPersonalInformation = () => {
           {isEditing ? (
             <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
           ) : (
-            <p className="text-gray-900 font-medium">{formData.phone}</p>
+            <p className="text-gray-900 font-medium">{formData.phone || '-'}</p>
           )}
         </div>
         <div>
@@ -93,7 +106,7 @@ const TeacherPersonalInformation = () => {
               <option value="Other">Other</option>
             </select>
           ) : (
-            <p className="text-gray-900 font-medium">{formData.gender}</p>
+            <p className="text-gray-900 font-medium">{formData.gender || '-'}</p>
           )}
         </div>
         <div>
@@ -101,7 +114,7 @@ const TeacherPersonalInformation = () => {
           {isEditing ? (
             <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
           ) : (
-            <p className="text-gray-900 font-medium">{new Date(formData.dob).toLocaleDateString()}</p>
+            <p className="text-gray-900 font-medium">{formData.dob ? new Date(formData.dob).toLocaleDateString() : '-'}</p>
           )}
         </div>
       </div>

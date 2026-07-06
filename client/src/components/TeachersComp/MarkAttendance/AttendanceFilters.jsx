@@ -1,31 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar } from 'lucide-react';
 
-const AttendanceFilters = () => {
+const AttendanceFilters = ({ filters, setFilters }) => {
+  const [departments, setDepartments] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const [deptsRes, subsRes] = await Promise.all([
+          fetch("http://localhost:3000/api/departments", { headers: { Authorization: `Bearer ${token}` } }),
+          fetch("http://localhost:3000/api/subjects", { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+        const deptsData = await deptsRes.json();
+        const subsData = await subsRes.json();
+
+        if (deptsData.success) setDepartments(deptsData.data);
+        if (subsData.success) setSubjects(subsData.data);
+      } catch (err) {
+        console.error("Failed to fetch filters data", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleChange = (e) => {
+    setFilters({ ...filters, [e.target.name]: e.target.value });
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Course</label>
-          <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">
-            <option>BCA</option>
-            <option>MCA</option>
-            <option>CSE</option>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+          <select 
+            name="department" 
+            value={filters.department} 
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
+          >
+            <option value="">Select Department</option>
+            {departments.map(dept => (
+              <option key={dept._id} value={dept._id}>{dept.name}</option>
+            ))}
           </select>
         </div>
        
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
-          <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">
-            <option>Section A</option>
-            <option>Section B</option>
+          <select 
+            name="section" 
+            value={filters.section} 
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
+          >
+            <option value="">Select Section</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
           </select>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-          <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">
-            <option>Data Structures</option>
-            <option>Algorithms</option>
+          <select 
+            name="subject" 
+            value={filters.subject} 
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
+          >
+            <option value="">Select Subject</option>
+            {subjects.map(sub => (
+              <option key={sub._id} value={sub._id}>{sub.name}</option>
+            ))}
           </select>
         </div>
         <div>
@@ -33,28 +79,12 @@ const AttendanceFilters = () => {
           <div className="relative">
             <input 
               type="date" 
+              name="date"
+              value={filters.date}
+              onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700" 
-              defaultValue="2025-07-03"
             />
           </div>
-        </div>
-      </div>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-1">
-           <label className="block text-sm font-medium text-gray-700 mb-1">Lecture No.</label>
-           <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">
-            <option>Lecture 1</option>
-            <option>Lecture 2</option>
-            <option>Lecture 3</option>
-          </select>
-        </div>
-        <div className="lg:col-span-2">
-           <label className="block text-sm font-medium text-gray-700 mb-1">Lecture Time (1 Hour)</label>
-           <select className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700">
-            <option>9:00 AM - 10:00 AM</option>
-            <option>10:00 AM - 11:00 AM</option>
-            <option>11:00 AM - 12:00 PM</option>
-          </select>
         </div>
       </div>
     </div>

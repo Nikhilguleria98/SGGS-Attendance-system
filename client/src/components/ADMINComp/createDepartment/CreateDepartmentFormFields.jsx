@@ -78,20 +78,34 @@ const CreateDepartmentFormFields = ({ onSubmitSuccess }) => {
     setIsLoading(true);
 
     try {
-      // Simulate API response time
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3000/api/departments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Failed to create department");
+      }
       
       setIsLoading(false);
       setIsSuccess(true);
 
-      // Trigger success callback
+      // Trigger success callback with the created department
       if (onSubmitSuccess) {
-        onSubmitSuccess(formData);
+        onSubmitSuccess(data.data);
       }
 
     } catch (err) {
+      console.error(err);
       setIsLoading(false);
-      setErrors({ form: "Failed to create department. Please try again." });
+      setErrors({ form: err.message || "Failed to create department. Please try again." });
     }
   };
 

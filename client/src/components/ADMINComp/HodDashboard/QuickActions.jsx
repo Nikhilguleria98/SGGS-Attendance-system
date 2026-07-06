@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 const actions = [
   { label: 'Add Teachers', color: 'bg-[#c00021] hover:bg-[#a0001a]', path: '/hod/teachers' },
   { label: 'Create Department', color: 'bg-[#162b4a] hover:bg-[#0f1d33]', path: '/hod/departments' },
-  { label: 'Add Students', color: 'bg-[#c00021] hover:bg-[#a0001a]', path: '/hod/students' },
-  { label: 'View Report', color: 'bg-[#c00021] hover:bg-[#a0001a]', path: '/teacher/reports' },
+  { label: 'Add Students', color: 'bg-[#c00021] hover:bg-[#a0001a]', path: '/hod/manage-students' },
+  // { label: 'View Report', color: 'bg-[#c00021] hover:bg-[#a0001a]', path: '/teacher/reports' },
 ];
 
 const QuickActions = () => {
