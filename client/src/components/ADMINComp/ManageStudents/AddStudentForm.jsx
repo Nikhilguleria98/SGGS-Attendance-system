@@ -195,14 +195,14 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [] }) => 
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
               >
                 <option value="">Select semester / year</option>
-                <option value="Semester 1">Semester 1</option>
-                <option value="Semester 2">Semester 2</option>
-                <option value="Semester 3">Semester 3</option>
-                <option value="Semester 4">Semester 4</option>
-                <option value="Semester 5">Semester 5</option>
-                <option value="Semester 6">Semester 6</option>
-                <option value="Year 1">Year 1</option>
-                <option value="Year 2">Year 2</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
               </select>
             </div>
           </div>
