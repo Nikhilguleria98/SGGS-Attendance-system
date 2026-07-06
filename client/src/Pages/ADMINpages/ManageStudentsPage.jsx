@@ -109,26 +109,26 @@ export default function ManageStudentsPage() {
   };
 
   const confirmDelete = async () => {
-    if (studentToDelete) {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${studentToDelete._id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        const data = await response.json();
-        if (data.success) {
-          toast.success("Student deleted successfully");
-          setStudents(students.filter(s => s._id !== studentToDelete._id));
-        } else {
-          toast.error(data.message || "Failed to delete student");
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Server error");
+    const target = studentToDelete;
+    if (!target) return;
+    setStudentToDelete(null); // close modal immediately
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${target._id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Student deleted successfully");
+        setStudents(prev => prev.filter(s => s._id !== target._id));
+      } else {
+        toast.error(data.message || "Failed to delete student");
       }
-      setStudentToDelete(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error");
     }
   };
 

@@ -91,26 +91,26 @@ export default function ManageTeachers() {
   const handleDelete = (teacher) => setTeacherToDelete(teacher);
 
   const confirmDelete = async () => {
-    if (teacherToDelete) {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${teacherToDelete._id}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        const data = await response.json();
-        if (data.success) {
-          toast.success("Teacher deleted successfully");
-          setTeachers(teachers.filter(t => t._id !== teacherToDelete._id));
-        } else {
-          toast.error(data.message || "Failed to delete teacher");
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Server error");
+    const target = teacherToDelete;
+    if (!target) return;
+    setTeacherToDelete(null); // close modal immediately
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${target._id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Teacher deleted successfully");
+        setTeachers(prev => prev.filter(t => t._id !== target._id));
+      } else {
+        toast.error(data.message || "Failed to delete teacher");
       }
-      setTeacherToDelete(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Server error");
     }
   };
 

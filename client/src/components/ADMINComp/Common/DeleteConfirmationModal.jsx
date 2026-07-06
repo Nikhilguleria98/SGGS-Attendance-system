@@ -33,10 +33,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title, message })
               Cancel
             </button>
             <button
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
+              onClick={onConfirm}
               className="px-4 py-2 text-sm font-medium text-white bg-[#c00021] rounded-lg hover:bg-red-800 transition-colors"
             >
               Delete
@@ -49,3 +46,4 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title, message })
 };
 
 export default DeleteConfirmationModal;
+

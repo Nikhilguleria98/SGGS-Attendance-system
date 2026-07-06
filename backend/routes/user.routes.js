@@ -12,11 +12,6 @@ const {
 
 const userController = require("../controllers/user.controller");
 
-router.post(
-    "/",
-    validate(createUserSchema),
-    userController.createUser
-);
 // ==========================
 // Apply protect to all routes
 // ==========================
@@ -25,22 +20,22 @@ router.use(protect);
 // ==========================
 // Create
 // ==========================
-// Only HOD can create users
-// router.post("/", authorize("hod"), validate(createUserSchema), userController.createUser);
+// HOD and Teacher can create users (students)
+router.post("/", authorize("hod", "teacher"), validate(createUserSchema), userController.createUser);
 
 // HOD and Teacher can get users (Teachers might need to see students)
 router.get("/", authorize("hod", "teacher"), userController.getUsers);
 
 router.get("/:id", authorize("hod", "teacher"), userController.getUser);
 
-// Only HOD can update or delete users
+// Only HOD and Teacher can update or delete users
 router.patch(
     "/:id",
-    authorize("hod"),
+    authorize("hod", "teacher"),
     validate(updateUserSchema),
     userController.updateUser
 );
 
-router.delete("/:id", authorize("hod"), userController.deleteUser);
+router.delete("/:id", authorize("hod", "teacher"), userController.deleteUser);
 
 module.exports = router;
