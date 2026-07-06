@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  FiSearch,
-  FiFilter,
-  FiMoreVertical,
-} from "react-icons/fi";
+import { FiFilter } from "react-icons/fi";
 
 const subjects = [
   {
@@ -71,14 +67,9 @@ const getStatus = (value) => {
 };
 
 export default function AttendanceTable() {
-  const [search, setSearch] = useState("");
+ 
 
-  const filtered = subjects.filter((item) =>
-    item.subject
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
-
+  
   return (
     <div className="bg-white rounded-3xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
 
@@ -98,32 +89,17 @@ export default function AttendanceTable() {
 
         </div>
 
-        <div className="flex gap-4">
+       <div className="flex items-center gap-4">
 
-          <div className="relative">
+    <button className="flex items-center gap-2 h-11 px-5 rounded-xl border border-[#E2E8F0] hover:bg-gray-50 transition">
 
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+        <FiFilter />
 
-            <input
-              placeholder="Search Subject"
-              value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
-              className="w-72 h-11 pl-11 rounded-xl border border-gray-200 outline-none focus:ring-4 focus:ring-blue-100"
-            />
+        Filter
 
-          </div>
+    </button>
 
-          <button className="flex items-center gap-2 h-11 px-5 rounded-xl border border-gray-200 hover:bg-gray-50">
-
-            <FiFilter />
-
-            Filter
-
-          </button>
-
-        </div>
+</div>
 
       </div>
 
@@ -161,9 +137,7 @@ export default function AttendanceTable() {
                 Status
               </th>
 
-              <th className="px-6 py-4 text-center text-slate-600">
-                Action
-              </th>
+              
 
             </tr>
 
@@ -171,7 +145,7 @@ export default function AttendanceTable() {
 
           <tbody>
 
-            {filtered.map((item) => {
+            {subjects.map((item) => {
 
               const status = getStatus(
                 item.percentage
@@ -213,15 +187,7 @@ export default function AttendanceTable() {
 
                   </td>
 
-                  <td className="px-6 py-5 text-center">
-
-                    <button className="p-2 rounded-lg hover:bg-gray-100">
-
-                      <FiMoreVertical />
-
-                    </button>
-
-                  </td>
+                  
 
                 </tr>
               );

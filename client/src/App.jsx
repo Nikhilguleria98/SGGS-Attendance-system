@@ -26,6 +26,7 @@ import Landingpage from "./Pages/Defaultpages/Landingpage";
 import Aboutuspage from "./Pages/Defaultpages/Aboutuspage";
 import Contactuspage from "./Pages/Defaultpages/Contactuspage";
 import AttendanceDashboard from "./Pages/Studentpages/AttendanceDashboard";
+import StudentDashboard from "./Pages/Studentpages/StudentDashboard";
 
 const App = () => {
   return (
@@ -53,7 +54,7 @@ const App = () => {
 
       {/* Student - Not Protected */}
       <Route path="/student" element={<DashboardLayout role="student" />}>
-        <Route path="dashboard" element={<div className="p-8"><h1 className="text-2xl font-bold">Student Dashboard</h1></div>} />
+        <Route path="dashboard" element={<StudentDashboard/>} />
         <Route path="attendance" element={<AttendanceDashboard/>} />
         <Route path="profile" element={<StudentProfile />} />
       </Route>
