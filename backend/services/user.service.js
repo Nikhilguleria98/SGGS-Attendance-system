@@ -32,12 +32,18 @@ class UserService {
     }
 
     async updateUser(id, updateData) {
-        if (updateData.password) {
-            const bcrypt = require("bcryptjs");
-            const salt = await bcrypt.genSalt(12);
-            updateData.password = await bcrypt.hash(updateData.password, salt);
+        const User = require("../models/users");
+        const user = await User.findById(id);
+        if (!user) {
+            throw new ApiError(404, "User not found");
         }
-        return await userRepository.updateById(id, updateData);
+
+        for (const key in updateData) {
+            user[key] = updateData[key];
+        }
+        
+        await user.save();
+        return await userRepository.findById(id);
     }
 
     async deleteUser(id) {
