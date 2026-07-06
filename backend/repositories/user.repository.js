@@ -13,7 +13,7 @@ class UserRepository {
     }
 
     async findById(id) {
-        return await User.findById(id);
+        return await User.findById(id).populate("department", "name code");
     }
 
     async findByEmail(email) {
@@ -32,7 +32,7 @@ class UserRepository {
         return await User.findByIdAndUpdate(id, updateData, {
             new: true,
             runValidators: true,
-        });
+        }).populate("department", "name code");
     }
 
     async deleteById(id) {
