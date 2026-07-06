@@ -24,12 +24,20 @@ const seedDatabase = async () => {
     const teachers = await teacherSeeder(cseDepartment._id);
     const students = await studentSeeder(cseDepartment._id);
 
-    const createdHod = await User.create(hod);
-    await User.create(teachers);
-    await User.create(students);
+    try {
+      const createdHod = await User.create(hod);
+      await User.create(teachers);
+      await User.create(students);
 
-    const subjects = await subjectSeeder(cseDepartment._id, createdHod._id);
-    await Subject.create(subjects);
+      const subjects = await subjectSeeder(cseDepartment._id, createdHod._id);
+      await Subject.create(subjects);
+    } catch (e) {
+      if (e.code === 11000) {
+        console.log("Users already exist. Skipping user creation.");
+      } else {
+        throw e;
+      }
+    }
 
     console.log("Database seeded successfully");
     process.exit(0);
