@@ -17,6 +17,19 @@ const userController = require("../controllers/user.controller");
 // ==========================
 router.use(protect);
 
+// Custom authorization middleware to allow self-access or role-based access
+const authorizeSelfOrRoles = (...roles) => {
+    return (req, res, next) => {
+        if (req.user && (req.user._id.toString() === req.params.id || roles.includes(req.user.role))) {
+            return next();
+        }
+        return res.status(403).json({
+            success: false,
+            message: `User is not authorized to access this resource`,
+        });
+    };
+};
+
 // ==========================
 // Create
 // ==========================
@@ -26,12 +39,12 @@ router.post("/", authorize("hod", "teacher"), validate(createUserSchema), userCo
 // HOD and Teacher can get users (Teachers might need to see students)
 router.get("/", authorize("hod", "teacher"), userController.getUsers);
 
-router.get("/:id", authorize("hod", "teacher"), userController.getUser);
+router.get("/:id", authorizeSelfOrRoles("hod", "teacher"), userController.getUser);
 
-// Only HOD and Teacher can update or delete users
+// Only HOD and Teacher can update/delete users, but users can update themselves
 router.patch(
     "/:id",
-    authorize("hod", "teacher"),
+    authorizeSelfOrRoles("hod", "teacher"),
     validate(updateUserSchema),
     userController.updateUser
 );

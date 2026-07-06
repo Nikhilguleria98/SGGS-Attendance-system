@@ -19,7 +19,7 @@ exports.login = async (req, res) => {
       Student: "student",
     };
 
-    const backendRole = roleMap[role];
+    const backendRole = roleMap[role] || (role && role.toLowerCase());
 
     if (!backendRole) {
       return res.status(400).json({
@@ -28,12 +28,13 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Find user by email, employeeId, or rollNumber
+    // Trim and normalize search identifier to avoid failures due to trailing spaces or casing differences
+    const normalizedIdentifier = identifier.trim();
     const user = await User.findOne({
       $or: [
-        { email: identifier },
-        { employeeId: identifier },
-        { rollNumber: identifier },
+        { email: normalizedIdentifier.toLowerCase() },
+        { employeeId: normalizedIdentifier.toUpperCase() },
+        { rollNumber: normalizedIdentifier.toUpperCase() },
       ],
     }).select("+password"); // Need password to compare
 
