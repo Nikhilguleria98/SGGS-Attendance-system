@@ -25,7 +25,7 @@ import StudentProfile from "./components/StudentComp/profile";
 import Landingpage from "./Pages/Defaultpages/Landingpage";
 import Aboutuspage from "./Pages/Defaultpages/Aboutuspage";
 import Contactuspage from "./Pages/Defaultpages/Contactuspage";
-import StudentReportPage from "./components/TeachersComp/TeacherReport";
+import AttendanceDashboard from "./Pages/Studentpages/AttendanceDashboard";
 
 const App = () => {
   return (
@@ -36,7 +36,7 @@ const App = () => {
           <Route path="dashboard" element={<HodDashboardPage />} />
           <Route path="teachers" element={<ManageTeachers />} />
           <Route path="departments" element={<CreateDepartment />} />
-          <Route path="manage-students" element={<ManageStudentsPage/>} />
+          <Route path="manage-students" element={<ManageStudentsPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Route>
@@ -47,14 +47,14 @@ const App = () => {
         <Route path="managestudent" element={<TeacherHome />} />
         <Route path="teacherdashboard" element={<TeacherDashboard />} />
         <Route path="mark-attendance" element={<MarkAttendance />} />
-        <Route path="reports" element={<StudentReportPage/>} />
+        <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
         <Route path="profile" element={<TeacherProfile />} />
       </Route>
 
       {/* Student - Not Protected */}
       <Route path="/student" element={<DashboardLayout role="student" />}>
         <Route path="dashboard" element={<div className="p-8"><h1 className="text-2xl font-bold">Student Dashboard</h1></div>} />
-        <Route path="attendance" element={<div className="p-8"><h1 className="text-2xl font-bold">My Attendance</h1></div>} />
+        <Route path="attendance" element={<AttendanceDashboard/>} />
         <Route path="profile" element={<StudentProfile />} />
       </Route>
 
