@@ -1,6 +1,6 @@
 const { z } = require("zod");
 const roles = require("../constants/roles");
-const { objectId } = require("./common.validator");
+const objectId = /^[0-9a-fA-F]{24}$/;
 const createUserSchema = z.object({
     body: z.object({
         firstName: z
