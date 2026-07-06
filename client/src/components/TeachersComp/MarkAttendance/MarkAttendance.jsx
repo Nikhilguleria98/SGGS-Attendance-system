@@ -37,7 +37,7 @@ const MarkAttendance = () => {
     const fetchStudents = async () => {
       try {
         const token = localStorage.getItem("token");
-        let url = "http://localhost:3000/api/users?role=student";
+        let url = `${import.meta.env.VITE_API_URL}/users?role=student`;
         
         const response = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` }
@@ -116,7 +116,7 @@ const MarkAttendance = () => {
           status: attendanceData[student._id] || 'absent'
         };
 
-        return fetch("http://localhost:3000/api/attendance", {
+        return fetch(`${import.meta.env.VITE_API_URL}/attendance`, {
           method: "POST",
           headers: { 
             "Content-Type": "application/json",

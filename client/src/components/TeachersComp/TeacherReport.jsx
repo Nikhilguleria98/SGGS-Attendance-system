@@ -23,10 +23,10 @@ const StudentReportPage = () => {
       try {
         const token = localStorage.getItem("token");
         const [studentsRes, attendanceRes] = await Promise.all([
-          fetch("http://localhost:3000/api/users?role=student", {
+          fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          fetch("http://localhost:3000/api/attendance", {
+          fetch(`${import.meta.env.VITE_API_URL}/attendance`, {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);

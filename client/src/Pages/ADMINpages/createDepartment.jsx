@@ -17,7 +17,7 @@ const CreateDepartment = () => {
   const fetchDepartments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:3000/api/departments", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/departments`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
