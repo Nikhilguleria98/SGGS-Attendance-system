@@ -11,7 +11,7 @@ const AdminHeader = () => {
     }
   }, []);
 
-  const fullName = user ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Loading...';
+  const fullName = user ? (user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Admin') : 'Loading...';
   const roleDisplay = user?.designation || user?.role || 'Head of Department';
 
   return (
@@ -29,8 +29,8 @@ const AdminHeader = () => {
           />
           <div className="hidden sm:block text-sm">
             <p className="font-semibold text-gray-800">{fullName}</p>
-            <p className="text-xs text-gray-500 flex items-center gap-1 capitalize">
-              {roleDisplay} <ChevronDown size={14} />
+            <p className="text-xs text-gray-500 capitalize">
+              {roleDisplay}
             </p>
           </div>
         </div>
