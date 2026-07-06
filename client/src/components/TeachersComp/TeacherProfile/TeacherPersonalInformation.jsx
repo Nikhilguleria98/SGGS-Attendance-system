@@ -47,6 +47,8 @@ const TeacherPersonalInformation = ({ user }) => {
       if (data.success) {
         setIsEditing(false);
         setShowSuccess(true);
+        const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
+        localStorage.setItem("user", JSON.stringify({ ...existingUser, ...data.data }));
         setTimeout(() => {
           setShowSuccess(false);
           window.location.reload();

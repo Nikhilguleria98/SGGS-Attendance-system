@@ -62,6 +62,8 @@ const StudentProfile = () => {
       if (data.success) {
         setIsEditing(false);
         setUserData(data.data); // Update locally
+        const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
+        localStorage.setItem("user", JSON.stringify({ ...existingUser, ...data.data }));
       } else {
         alert(data.message || "Failed to update");
       }
