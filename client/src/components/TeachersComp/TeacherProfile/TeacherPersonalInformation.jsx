@@ -6,7 +6,8 @@ const TeacherPersonalInformation = ({ user }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     gender: 'Male',
@@ -16,7 +17,8 @@ const TeacherPersonalInformation = ({ user }) => {
   useEffect(() => {
     if (user) {
       setFormData({
-        fullName: `${user.firstName} ${user.lastName || ''}`.trim(),
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
         email: user.email || '',
         phone: user.phone || '',
         gender: user.gender || 'Male',
@@ -30,11 +32,32 @@ const TeacherPersonalInformation = ({ user }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    // In a real app, send API request to update profile here
-    setIsEditing(false);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${user._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setIsEditing(false);
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          window.location.reload();
+        }, 1500);
+      } else {
+        alert(data.message || "Failed to update");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   };
 
   return (
@@ -74,11 +97,19 @@ const TeacherPersonalInformation = ({ user }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
+          <label className="block text-sm font-medium text-gray-500 mb-1">First Name</label>
           {isEditing ? (
-            <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
+            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
           ) : (
-            <p className="text-gray-900 font-medium">{formData.fullName || '-'}</p>
+            <p className="text-gray-900 font-medium">{formData.firstName || '-'}</p>
+          )}
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-500 mb-1">Last Name</label>
+          {isEditing ? (
+            <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
+          ) : (
+            <p className="text-gray-900 font-medium">{formData.lastName || '-'}</p>
           )}
         </div>
         <div>
@@ -121,5 +152,4 @@ const TeacherPersonalInformation = ({ user }) => {
     </div>
   );
 };
-
 export default TeacherPersonalInformation;
