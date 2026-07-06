@@ -25,6 +25,7 @@ import StudentProfile from "./components/StudentComp/profile";
 import Landingpage from "./Pages/Defaultpages/Landingpage";
 import Aboutuspage from "./Pages/Defaultpages/Aboutuspage";
 import Contactuspage from "./Pages/Defaultpages/Contactuspage";
+import StudentReportPage from "./components/TeachersComp/TeacherReport";
 
 const App = () => {
   return (
@@ -35,7 +36,7 @@ const App = () => {
           <Route path="dashboard" element={<HodDashboardPage />} />
           <Route path="teachers" element={<ManageTeachers />} />
           <Route path="departments" element={<CreateDepartment />} />
-          <Route path="manage-students" element={<ManageStudentsPage />} />
+          <Route path="manage-students" element={<ManageStudentsPage/>} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Route>
@@ -46,7 +47,7 @@ const App = () => {
         <Route path="managestudent" element={<TeacherHome />} />
         <Route path="teacherdashboard" element={<TeacherDashboard />} />
         <Route path="mark-attendance" element={<MarkAttendance />} />
-        <Route path="reports" element={<div className="p-8"><h1 className="text-2xl font-bold">Attendance Reports</h1></div>} />
+        <Route path="reports" element={<StudentReportPage/>} />
         <Route path="profile" element={<TeacherProfile />} />
       </Route>
 
