@@ -19,13 +19,13 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [] }) => 
       setFormData({
         firstName: initialData.firstName || '',
         lastName: initialData.lastName || '',
-        rollNo: initialData.rollNo || '',
+        rollNo: initialData.rollNo || initialData.rollNumber || '',
         email: initialData.email || '',
         password: '', // Blank on edit
         gender: initialData.gender || '',
         department: typeof initialData.department === 'object' ? initialData.department?._id : initialData.department || '',
         batch: initialData.batch || initialData.batches?.[0] || '',
-        group: initialData.group || initialData.groups?.[0] || '',
+        group: initialData.group || initialData.section || initialData.groups?.[0] || '',
         semester: initialData.semester || ''
       });
     } else if (departments.length > 0) {
