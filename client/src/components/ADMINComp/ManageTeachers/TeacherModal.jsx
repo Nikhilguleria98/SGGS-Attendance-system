@@ -8,14 +8,14 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
     lastName: '',
     email: '',
     password: '',
-    department: '',
+    departments: [],
   });
 
   const [subjectsOptions, setSubjectsOptions] = useState([]);
 
   // State for the dynamic subject assignment rows
   const [assignments, setAssignments] = useState([
-    { id: Date.now(), batch: '', group: '', section: '', subjects: [] }
+    { id: Date.now(), batches: [], groups: [], subjects: [] }
   ]);
 
   useEffect(() => {
@@ -47,19 +47,19 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
           lastName: initialData.lastName || '',
           email: initialData.email || '',
           password: '', // blank password on edit
-          department: typeof initialData.department === 'object' ? initialData.department?._id : initialData.department || ''
+          departments: initialData.departments || (initialData.department ? [typeof initialData.department === 'object' ? initialData.department._id : initialData.department] : [])
         });
         
         // Mock assignments based on initialData for demo purposes, if stored
         setAssignments([{ 
           id: Date.now(), 
-          batch: initialData.batches?.[0] || '', 
-          group: initialData.groups?.[0] || '', 
+          batches: initialData.batches || [], 
+          groups: initialData.groups || [], 
           subjects: initialData.subjects || [] 
         }]);
       } else {
-        setFormData({ firstName: '', lastName: '', email: '', password: '', department: departments[0]?._id || '' });
-        setAssignments([{ id: Date.now(), batch: '', group: '', subjects: [] }]);
+        setFormData({ firstName: '', lastName: '', email: '', password: '', departments: [] });
+        setAssignments([{ id: Date.now(), batches: [], groups: [], subjects: [] }]);
       }
     }
   }, [isOpen, initialData, departments]);
@@ -67,7 +67,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   if (!isOpen) return null;
 
   const handleAddAssignment = () => {
-    setAssignments([...assignments, { id: Date.now(), batch: '', group: '', subjects: [] }]);
+    setAssignments([...assignments, { id: Date.now(), batches: [], groups: [], subjects: [] }]);
   };
 
   const handleRemoveAssignment = (id) => {
@@ -82,8 +82,8 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
   const handleSubmit = () => {
     const allSubjects = [...new Set(assignments.flatMap(a => a.subjects))];
-    const allBatches = [...new Set(assignments.map(a => a.batch).filter(Boolean))];
-    const allGroups = [...new Set(assignments.map(a => a.group).filter(Boolean))];
+    const allBatches = [...new Set(assignments.flatMap(a => a.batches).filter(Boolean))];
+    const allGroups = [...new Set(assignments.flatMap(a => a.groups).filter(Boolean))];
 
     const finalData = { ...formData, subjects: allSubjects, batches: allBatches, groups: allGroups, assignments };
     
@@ -166,16 +166,12 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Department <span className="text-red-500">*</span>
               </label>
-              <select 
-                value={formData.department}
-                onChange={e => setFormData({...formData, department: e.target.value})}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
-              >
-                <option value="">Select a department</option>
-                {departments.map((dept) => (
-                  <option key={dept._id} value={dept._id}>{dept.name}</option>
-                ))}
-              </select>
+              <MultiSelect 
+                options={departments.map(dept => ({ label: dept.name, value: dept._id }))}
+                selected={formData.departments}
+                onChange={val => setFormData({...formData, departments: val})}
+                placeholder="Select departments"
+              />
             </div>
           </div>
 
@@ -199,24 +195,20 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                     <tr key={assignment.id} className="border-b border-gray-50 last:border-none">
                       <td className="py-3 px-4 text-center font-medium text-gray-500">{index + 1}</td>
                       <td className="py-3 px-2">
-                        <select 
-                          value={assignment.batch}
-                          onChange={(e) => updateAssignment(assignment.id, 'batch', e.target.value)}
-                          className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
-                        >
-                          <option value="">Select batch</option>
-                          {batches.map(b => <option key={b._id} value={b.name}>{b.name}</option>)}
-                        </select>
+                        <MultiSelect 
+                          options={batches.map(b => ({ label: b.name, value: b.name }))}
+                          selected={assignment.batches}
+                          onChange={(val) => updateAssignment(assignment.id, 'batches', val)}
+                          placeholder="Select batches"
+                        />
                       </td>
                       <td className="py-3 px-2">
-                        <select 
-                          value={assignment.group}
-                          onChange={(e) => updateAssignment(assignment.id, 'group', e.target.value)}
-                          className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
-                        >
-                          <option value="">Select group</option>
-                          {groups.map(g => <option key={g._id} value={g.name}>{g.name}</option>)}
-                        </select>
+                        <MultiSelect 
+                          options={groups.map(g => ({ label: g.name, value: g.name }))}
+                          selected={assignment.groups}
+                          onChange={(val) => updateAssignment(assignment.id, 'groups', val)}
+                          placeholder="Select groups"
+                        />
                       </td>
 
                       <td className="py-3 px-2">
