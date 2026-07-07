@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Search } from "lucide-react";
 
 const FilterBar = ({ filters, onChange }) => {
   const [departments, setDepartments] = useState([]);
@@ -50,6 +49,20 @@ const FilterBar = ({ filters, onChange }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="mb-5">
+        <label className="block text-sm font-semibold text-gray-800 mb-2">
+          Search
+        </label>
+        <input
+          type="text"
+          name="search"
+          placeholder="Search by name or roll no..."
+          value={filters.search}
+          onChange={onChange}
+          className="w-full sm:w-[400px] border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+        />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div>
           <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -125,29 +138,6 @@ const FilterBar = ({ filters, onChange }) => {
               </option>
             ))}
           </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
-        <div>
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Search
-          </label>
-          <input
-            type="text"
-            name="search"
-            placeholder="Name / Roll No"
-            value={filters.search}
-            onChange={onChange}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
-          />
-        </div>
-
-        <div className="flex items-end">
-          <button className="w-full bg-[#1d4ed8] hover:bg-blue-700 transition-colors text-white rounded-lg flex items-center justify-center gap-2 px-4 py-2.5 font-medium text-sm">
-            <Search size={18} />
-            Search
-          </button>
         </div>
       </div>
     </div>

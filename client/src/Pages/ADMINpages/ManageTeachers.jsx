@@ -7,21 +7,21 @@ import DeleteConfirmationModal from "../../components/ADMINComp/Common/DeleteCon
 import TeacherModal from "../../components/ADMINComp/ManageTeachers/TeacherModal";
 import toast from "react-hot-toast";
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 10;
 
 export default function ManageTeachers() {
   const [teachers, setTeachers] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [batches, setBatches] = useState([]);
   const [groups, setGroups] = useState([]);
-  
+
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
   const [batch, setBatch] = useState("");
   const [group, setGroup] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [teacherToDelete, setTeacherToDelete] = useState(null);
-  
+
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [teacherToEdit, setTeacherToEdit] = useState(null);
@@ -32,11 +32,16 @@ export default function ManageTeachers() {
     fetchData();
   }, []);
 
+  // Reset to page 1 whenever any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, department, batch, group]);
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      
+
       const [teachersRes, deptsRes, batchesRes, groupsRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/users?role=teacher`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -73,10 +78,10 @@ export default function ManageTeachers() {
     return teachers.filter((teacher) => {
       const name = teacher.firstName + " " + (teacher.lastName || "");
       const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
-      
+
       const tDeptId = typeof teacher.department === "object" ? teacher.department?._id : teacher.department;
-      const matchesDepartment = !department || 
-        (teacher.departments && teacher.departments.includes(department)) || 
+      const matchesDepartment = !department ||
+        (teacher.departments && teacher.departments.includes(department)) ||
         tDeptId === department;
 
       const teachesBatch = !batch || (teacher.batches && teacher.batches.includes(batch));
@@ -114,7 +119,7 @@ export default function ManageTeachers() {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       const data = await response.json();
       if (data.success) {
         toast.success("Teacher deleted successfully");
@@ -131,29 +136,29 @@ export default function ManageTeachers() {
   const handleSaveTeacher = async (teacherData) => {
     // Add role explicitly
     teacherData.role = "teacher";
-    
+
     try {
       const token = localStorage.getItem("token");
       const isEdit = !!teacherToEdit;
-      const url = isEdit 
+      const url = isEdit
         ? `${import.meta.env.VITE_API_URL}/users/${teacherToEdit._id}`
         : `${import.meta.env.VITE_API_URL}/users`;
-        
+
       const response = await fetch(url, {
         method: isEdit ? "PATCH" : "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(teacherData)
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         toast.success(`Teacher ${isEdit ? "updated" : "added"} successfully`);
         // Refresh data to get the populated department
-        fetchData(); 
+        fetchData();
         setIsModalOpen(false);
       } else {
         toast.error(data.message || "Failed to save teacher");
@@ -182,7 +187,7 @@ export default function ManageTeachers() {
             setGroup={setGroup}
             groups={groups}
           />
-          
+
           {isLoading ? (
             <div className="flex justify-center py-20">
                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00529b]"></div>
@@ -198,14 +203,16 @@ export default function ManageTeachers() {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
+                totalItems={filteredTeachers.length}
+                itemsPerPage={PAGE_SIZE}
               />
             </>
           )}
         </div>
       </div>
 
-      <DeleteConfirmationModal 
-        isOpen={!!teacherToDelete} 
+      <DeleteConfirmationModal
+        isOpen={!!teacherToDelete}
         onClose={() => setTeacherToDelete(null)}
         onConfirm={confirmDelete}
         title="Delete Teacher"
