@@ -78,7 +78,8 @@ const CreateDepartment = () => {
     if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
     try {
       const token = localStorage.getItem("token");
-      const url = `${import.meta.env.VITE_API_URL}/${type}s/${item._id}`;
+      const endpoint = type === "batch" ? "batches" : `${type}s`;
+      const url = `${import.meta.env.VITE_API_URL}/${endpoint}/${item._id}`;
       const res = await fetch(url, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
         if (type === "department") setDepartments(prev => prev.filter(d => d._id !== item._id));
