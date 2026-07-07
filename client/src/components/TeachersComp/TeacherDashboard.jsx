@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 export default function TeacherDashboard() {
   const navigate = useNavigate();
   const [teacherName, setTeacherName] = useState("Teacher");
@@ -105,26 +104,13 @@ export default function TeacherDashboard() {
             </div>
           </div>
 
-          {/* Card 4: Pending Classes */}
-          <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
-            <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-500">Pending Classes</p>
-              <p className="text-2xl font-bold text-slate-950 mt-0.5">1</p>
-            </div>
-          </div>
-
         </div>
 
         {/* --- MAIN CONTENT AREA --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Column: My Classes List */}
-          <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          {/* <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
             <h2 className="text-lg font-bold text-slate-950 mb-4">My Classes</h2>
             
             <div className="divide-y divide-slate-100">
@@ -141,7 +127,7 @@ export default function TeacherDashboard() {
                 View All Classes
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Right Column: Quick Actions */}
           <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
@@ -151,7 +137,7 @@ export default function TeacherDashboard() {
               {/* Action 1: Take Attendance */}
               <button 
                 onClick={() => navigate('/teacher/mark-attendance')}
-                className="flex items-center justify-start gap-3 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
+                className="flex items-center justify-start gap-3 w-full bg-black/90 hover:bg-black text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
               >
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">Take Attendance</span>
@@ -160,7 +146,7 @@ export default function TeacherDashboard() {
               {/* Action 2: View Students */}
               <button 
                 onClick={() => navigate('/teacher/managestudent')}
-                className="flex items-center justify-start gap-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
+                className="flex items-center justify-start gap-3 w-full bg-black/90 hover:bg-black text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
               >
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">View Students</span>
@@ -169,7 +155,7 @@ export default function TeacherDashboard() {
               {/* Action 3: Attendance Reports */}
               <button 
                 onClick={() => navigate('/teacher/reports')}
-                className="flex items-center justify-start gap-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
+                className="flex items-center justify-start gap-3 w-full bg-black/90 hover:bg-black text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
               >
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">Attendance Reports</span>
