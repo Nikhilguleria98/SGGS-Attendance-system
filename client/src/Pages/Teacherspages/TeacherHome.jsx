@@ -1,11 +1,13 @@
 import React from 'react'
-import StudentList from '../../components/TeachersComp/ManageStudent/StudentList'
+import ManageStudentsPage from '../ADMINpages/ManageStudentsPage'
+
+
 
 const TeacherHome = () => {
   return (
     <div>
-      <StudentList/>
       
+      <ManageStudentsPage />
     </div>
   )
 }
