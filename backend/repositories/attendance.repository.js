@@ -1,5 +1,6 @@
 const Attendance = require("../models/Attendance");
 require("../models/Subject");
+require("../models/Department");
 
 class AttendanceRepository {
     async create(data) {
@@ -33,6 +34,16 @@ class AttendanceRepository {
 
     async deleteById(id) {
         return await Attendance.findByIdAndDelete(id);
+    }
+
+    async findAllForReport(){
+        return await Attendance.find()
+        .populate({
+            path: "student",
+            select: "firstName lastName rollNumber section batch department",
+            populate: { path: "department", select: "name" },
+        })
+        .populate("subject", "name code");
     }
 }
 

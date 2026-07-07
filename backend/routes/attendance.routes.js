@@ -27,6 +27,7 @@ router.get(
     authorize("hod", "teacher", "student"),
     attendanceController.getAttendance
 );
+router.get("/report", authorize("hod", "teacher"), attendanceController.getStudentReport);
 
 router.get(
     "/:id",
@@ -48,5 +49,6 @@ router.delete(
     validate(attendanceIdSchema),
     attendanceController.deleteAttendance
 );
+
 
 module.exports = router;

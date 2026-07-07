@@ -1,6 +1,7 @@
 const attendanceService = require("../services/attendance.service");
 const asyncHandler = require("../utils/asyncHandler");
 const { success } = require("../utils/response");
+require("../models/Department");
 
 exports.markAttendance = asyncHandler(async (req, res) => {
     const attendance = await attendanceService.markAttendance(
@@ -60,5 +61,16 @@ exports.deleteAttendance = asyncHandler(async (req, res) => {
         res,
         200,
         "Attendance deleted successfully"
+    );
+});
+
+exports.getStudentReport = asyncHandler(async (req, res) => {
+    const report = await attendanceService.getStudentAttendanceReport();
+
+    return success(
+        res,
+        200,
+        "Attendance report fetched successfully",
+        report
     );
 });
