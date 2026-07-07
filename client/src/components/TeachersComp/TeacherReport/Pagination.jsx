@@ -8,24 +8,33 @@ const Pagination = ({ currentPage, totalPages, onPageChange, totalItems, itemsPe
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
+  const pages = [];
+  const maxVisible = 3; // change this to whatever total-pages threshold you want
 
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-      return pages;
-    }
-
-    if (currentPage <= 3) {
-      pages.push(1, 2, 3, 4, "...", totalPages);
-    } else if (currentPage >= totalPages - 2) {
-      pages.push(1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-    } else {
-      pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
-    }
-
+  if (totalPages <= maxVisible) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
     return pages;
-  };
+  }
+
+  const siblingCount = 1; // how many pages to show around currentPage
+  const leftSibling = Math.max(currentPage - siblingCount, 1);
+  const rightSibling = Math.min(currentPage + siblingCount, totalPages);
+
+  const showLeftEllipsis = leftSibling > 2;
+  const showRightEllipsis = rightSibling < totalPages - 1;
+
+  pages.push(1);
+  if (showLeftEllipsis) pages.push("...");
+
+  for (let i = Math.max(leftSibling, 2); i <= Math.min(rightSibling, totalPages - 1); i++) {
+    pages.push(i);
+  }
+
+  if (showRightEllipsis) pages.push("...");
+  if (totalPages > 1) pages.push(totalPages);
+
+  return pages;
+};
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm px-6 py-4 mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
