@@ -33,7 +33,7 @@ const HeroSection = () => {
     <div className="w-full bg-[#FAFAFA] font-sans overflow-x-hidden">
 
       {/* ── HERO ── */}
-      <section className="relative w-full min-h-screen flex flex-col lg:flex-row items-center justify-between pt-20 pb-56 sm:pb-64 lg:pb-40 xl:pb-48 overflow-hidden">
+      <section className="relative flex min-h-screen w-full flex-col items-center justify-between overflow-hidden pt-20 pb-20 sm:pb-24 lg:flex-row lg:pb-16">
 
         {/* Left Content */}
         <div className="w-full lg:w-1/2 px-5 sm:px-8 md:px-12 lg:px-14 xl:px-20 2xl:px-28 z-20 order-2 lg:order-1 mt-8 lg:mt-0">
@@ -203,7 +203,7 @@ const HeroSection = () => {
           </div>
 
           {/* Scrolling ticker */}
-          <div className="relative flex-1 overflow-hidden py-2 sm:py-2.5">
+          {/* <div className="relative flex-1 overflow-hidden py-2 sm:py-2.5">
             <motion.div
               className="flex gap-8 whitespace-nowrap"
               animate={{ x: ["0%", "-50%"] }}
@@ -229,7 +229,7 @@ const HeroSection = () => {
                 </span>
               ))}
             </motion.div>
-          </div>
+          </div> */}
 
           {/* Arrow button */}
           <button className="shrink-0 px-3 sm:px-4 py-2 sm:py-2.5 text-white/60 hover:text-white border-l border-white/10 transition-colors">

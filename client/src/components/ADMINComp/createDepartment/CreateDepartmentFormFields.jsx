@@ -148,7 +148,7 @@ const CreateDepartmentFormFields = ({ onSubmitSuccess, initialData }) => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/hod/dashboard")}
                 className="px-5 py-2.5 bg-[#00529b] hover:bg-[#003d73] text-white font-semibold rounded-xl text-sm transition-all cursor-pointer"
               >
                 Go to Home

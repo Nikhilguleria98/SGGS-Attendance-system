@@ -1,7 +1,11 @@
-import React from "react";
+import React,{useState} from "react";
 import { Edit2, Trash2 } from "lucide-react";
-
+import DeleteConfirmationModal from "../Common/DeleteConfirmationModal";
 export default function DepartmentTable({ departments, onEdit, onDelete }) {
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    department: null,
+  });
   if (!departments || departments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -33,7 +37,7 @@ export default function DepartmentTable({ departments, onEdit, onDelete }) {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {departments.map((dept) => (
-              <tr 
+              <tr
                 key={dept._id}
                 className="hover:bg-blue-50/30 transition-colors"
               >
@@ -65,7 +69,12 @@ export default function DepartmentTable({ departments, onEdit, onDelete }) {
                     )}
                     {onDelete && (
                       <button
-                        onClick={() => onDelete(dept)}
+                        onClick={() =>
+                          setDeleteModal({
+                            open: true,
+                            department: dept,
+                          })
+                        }
                         className="text-gray-400 hover:text-red-600 transition-colors"
                         title="Delete Department"
                       >
@@ -79,6 +88,26 @@ export default function DepartmentTable({ departments, onEdit, onDelete }) {
           </tbody>
         </table>
       </div>
+      <DeleteConfirmationModal
+  isOpen={deleteModal.open}
+  title="Delete Department"
+  message={`Are you sure you want to delete "${deleteModal.department?.name}"? This action cannot be undone.`}
+  onClose={() =>
+    setDeleteModal({
+      open: false,
+      department: null,
+    })
+  }
+  onConfirm={() => {
+    onDelete(deleteModal.department);
+
+    setDeleteModal({
+      open: false,
+      department: null,
+    });
+  }}
+/>
     </div>
+    
   );
 }
