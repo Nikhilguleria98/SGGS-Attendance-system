@@ -75,14 +75,12 @@ export default function ManageTeachers() {
       const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
       
       const tDeptId = typeof teacher.department === "object" ? teacher.department?._id : teacher.department;
-      const matchesDepartment = !department || tDeptId === department;
+      const matchesDepartment = !department || 
+        (teacher.departments && teacher.departments.includes(department)) || 
+        tDeptId === department;
 
-      // Teachers may have multiple subjects/batches/groups in an array, 
-      // but for filtering we check if they teach in the selected batch/group
-      // If we don't have assignments in the user object natively, we can skip or filter based on assignments if populated.
-      // Usually teachers have `subjects` array containing { subject, department, batch, group }
-      const teachesBatch = !batch || (teacher.subjects && teacher.subjects.some(sub => sub.batch === batch));
-      const teachesGroup = !group || (teacher.subjects && teacher.subjects.some(sub => sub.group === group));
+      const teachesBatch = !batch || (teacher.batches && teacher.batches.includes(batch));
+      const teachesGroup = !group || (teacher.groups && teacher.groups.includes(group));
 
       return matchesSearch && matchesDepartment && teachesBatch && teachesGroup;
     });

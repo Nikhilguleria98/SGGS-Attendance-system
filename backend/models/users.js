@@ -122,6 +122,7 @@ const userSchema = new mongoose.Schema(
         groups: { type: Array, default: [] },
         subjects: { type: Array, default: [] },
         assignments: { type: Array, default: [] },
+        departments: { type: Array, default: [] },
 
         department: {
             type: mongoose.Schema.Types.ObjectId,
