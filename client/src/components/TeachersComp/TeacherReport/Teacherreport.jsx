@@ -4,6 +4,7 @@ import Header from "./Header";
 import FilterBar from "./FilterBar";
 import StatCard from "./StatCard";
 import ReportTable from "./ReportTable";
+import Pagination from "./Pagination";
 
 const TeacherReport = () => {
   const [students, setStudents] = useState([]);
@@ -15,6 +16,9 @@ const TeacherReport = () => {
     section: "",
     subject: "",
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -66,6 +70,11 @@ const TeacherReport = () => {
     );
   });
 
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
   const totalStudents = filteredStudents.length;
 
   const avgAttendance =
@@ -81,6 +90,13 @@ const TeacherReport = () => {
   const lowAttendance = filteredStudents.filter(
     (student) => (student.present / student.totalClasses) * 100 < 75
   ).length;
+
+  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+
+  const paginatedStudents = filteredStudents.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="p-4 md:p-8 min-h-screen bg-[#f8f9fa]">
@@ -115,7 +131,15 @@ const TeacherReport = () => {
           />
         </div>
 
-        <ReportTable students={filteredStudents} />
+        <ReportTable students={paginatedStudents} />
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          totalItems={filteredStudents.length}
+          itemsPerPage={itemsPerPage}
+        />
       </div>
     </div>
   );

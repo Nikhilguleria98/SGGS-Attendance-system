@@ -1,7 +1,53 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 
 const FilterBar = ({ filters, onChange }) => {
+  const [departments, setDepartments] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [groups, setGroups] = useState([]);
+
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const [deptsRes, subsRes, batchesRes, groupsRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/departments`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${import.meta.env.VITE_API_URL}/subjects`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${import.meta.env.VITE_API_URL}/batches`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        const deptsData = await deptsRes.json();
+        const subsData = await subsRes.json();
+
+        if (deptsData.success) setDepartments(deptsData.data);
+        if (subsData.success) setSubjects(subsData.data);
+
+        if (batchesRes.ok) {
+          const batchesData = await batchesRes.json();
+          if (batchesData.success) setBatches(batchesData.data);
+        }
+        if (groupsRes.ok) {
+          const groupsData = await groupsRes.json();
+          if (groupsData.success) setGroups(groupsData.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch filter options", err);
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -16,9 +62,11 @@ const FilterBar = ({ filters, onChange }) => {
             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
           >
             <option value="">Select Department</option>
-            <option value="CSE">CSE</option>
-            <option value="ECE">ECE</option>
-            <option value="ME">ME</option>
+            {departments.map((dept) => (
+              <option key={dept._id} value={dept.name}>
+                {dept.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -33,9 +81,11 @@ const FilterBar = ({ filters, onChange }) => {
             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
           >
             <option value="">Select Batch</option>
-            <option value="2022-2026">2022-2026</option>
-            <option value="2023-2027">2023-2027</option>
-            <option value="2024-2028">2024-2028</option>
+            {batches.map((b) => (
+              <option key={b._id} value={b.name}>
+                {b.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -50,8 +100,11 @@ const FilterBar = ({ filters, onChange }) => {
             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
           >
             <option value="">Select Section</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
+            {groups.map((g) => (
+              <option key={g._id} value={g.name}>
+                {g.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -66,9 +119,11 @@ const FilterBar = ({ filters, onChange }) => {
             className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
           >
             <option value="">Select Subject</option>
-            <option value="DBMS">DBMS</option>
-            <option value="OS">OS</option>
-            <option value="AI">AI</option>
+            {subjects.map((sub) => (
+              <option key={sub._id} value={sub.name}>
+                {sub.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>

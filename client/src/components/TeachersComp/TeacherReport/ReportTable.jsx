@@ -21,7 +21,6 @@ const ReportTable = ({ students }) => {
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Section</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Subject</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Attendance</th>
-              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Status</th>
             </tr>
           </thead>
 
