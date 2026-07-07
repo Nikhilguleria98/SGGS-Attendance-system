@@ -22,12 +22,6 @@ const StudentProfile = () => {
             setFormData({
               firstName: data.data.firstName || "",
               lastName: data.data.lastName || "",
-              bloodGroup: data.data.bloodGroup || "",
-              religion: data.data.religion || "",
-              dob: data.data.dob ? new Date(data.data.dob).toISOString().split('T')[0] : "",
-              category: data.data.category || "",
-              address: data.data.address || "",
-              phone: data.data.phone || "",
             });
           }
         } catch (error) {
@@ -126,7 +120,7 @@ const StudentProfile = () => {
                 <CheckCircle size={22} className="text-blue-500" />
               </div>
               <p className="text-[#D90429] text-lg font-semibold">Student</p>
-              <p className="text-gray-600 text-sm mt-2">Department: {departmentName}</p>
+              <p className="text-gray-600 text-sm mt-2">Department: {departmentName || "N/A"}</p>
               <p className="text-gray-500 text-sm">Roll No: {userData.rollNumber || "N/A"}</p>
               <p className="text-gray-500 text-sm">Semester {userData.semester || "N/A"}</p>
             </div>
@@ -144,30 +138,15 @@ const StudentProfile = () => {
                   <label className="block"><span className="text-sm text-gray-500">Last Name</span>
                     <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full mt-1 p-2 border rounded" />
                   </label>
-                  <label className="block"><span className="text-sm text-gray-500">Date of Birth</span>
-                    <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="w-full mt-1 p-2 border rounded" />
-                  </label>
-                  <label className="block"><span className="text-sm text-gray-500">Phone</span>
-                    <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="w-full mt-1 p-2 border rounded" />
-                  </label>
-                  <label className="block md:col-span-2"><span className="text-sm text-gray-500">Address</span>
-                    <input type="text" name="address" value={formData.address} onChange={handleChange} className="w-full mt-1 p-2 border rounded" />
-                  </label>
                 </div>
               ) : (
                 <InfoGrid data={[
                   ["Full Name", name],
-                  ["Blood Group", userData.bloodGroup || "N/A"],
-                  ["Religion", userData.religion || "N/A"],
-                  ["Date of Birth", userData.dob ? new Date(userData.dob).toLocaleDateString() : "N/A"],
-                  ["Category", userData.category || "N/A"],
-                  ["Address", userData.address || "N/A"]
                 ]} />
               )}
             </Card>
             <Card title="Academic Information">
               <InfoGrid data={[
-                ["Program", userData.program || "N/A"],
                 ["Department", departmentName],
                 ["Semester", userData.semester || "N/A"],
                 ["Section", userData.section || "N/A"],
@@ -250,13 +229,6 @@ const StudentProfile = () => {
             </Card>
             <Card title="Contact Information">
               <div className="space-y-5">
-                <div className="flex gap-3 items-center">
-                  <Phone size={18} className="text-[#102B63]" />
-                  <div>
-                    <p className="text-xs text-gray-500">Mobile Number</p>
-                    <p className="font-semibold text-sm">{userData.phone || "N/A"}</p>
-                  </div>
-                </div>
                 <div className="flex gap-3 items-center">
                   <Mail size={18} className="text-[#102B63]" />
                   <div>
