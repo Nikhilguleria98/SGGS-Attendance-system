@@ -209,10 +209,12 @@ const LoginDrawer = ({ isOpen, onClose }) => {
                     )}
                   </button>
                 </div>
-
+                      <div>
+                        <span className="text-[#00529b] hover:text-[#00529b]/80 "><a href="">Forgot Password</a></span>
+                      </div>
                 <button
                   type="submit"
-                  className="w-full bg-[#00529b] text-white py-3 rounded-lg font-bold"
+                  className="w-full bg-[#00529b] text-white py-3 rounded-lg font-bold cursor-pointer"
                 >
                   Login
                 </button>

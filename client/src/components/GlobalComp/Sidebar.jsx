@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState }  from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LogOut,
@@ -21,6 +21,7 @@ const Sidebar = ({
   loginPath = "/",
 }) => {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Resolve role dynamically and map config
   const activeRole = (role || localStorage.getItem("role") || "student").toLowerCase();
@@ -33,6 +34,16 @@ const Sidebar = ({
 
     setIsMobileOpen(false);
     navigate(loginPath);
+  };
+// Confirm logout
+  const confirmLogout = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to logout?"
+    );
+  
+    if (confirmed) {
+      handleLogout();
+    }
   };
 
   return (
@@ -156,7 +167,7 @@ const Sidebar = ({
         {/* Logout */}
         <div className="border-t border-gray-700/50 p-3">
           <button
-            onClick={handleLogout}
+            onClick={() => setShowLogoutModal(true)}
             className="
               flex w-full items-center gap-3
               rounded-lg
@@ -185,6 +196,7 @@ const Sidebar = ({
             )}
           </button>
         </div>
+        
 
         {/* Desktop Collapse Button */}
         <button
@@ -214,6 +226,38 @@ const Sidebar = ({
           )}
         </button>
       </aside>
+      {showLogoutModal && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div className="w-[90%] max-w-md rounded-xl bg-white p-6 shadow-2xl">
+      <h2 className="text-xl font-semibold text-gray-900">
+        Confirm Logout
+      </h2>
+
+      <p className="mt-3 text-gray-600">
+        Are you sure you want to logout from your account?
+      </p>
+
+      <div className="mt-6 flex justify-end gap-3">
+        <button
+          onClick={() => setShowLogoutModal(false)}
+          className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            setShowLogoutModal(false);
+            handleLogout();
+          }}
+          className="rounded-lg bg-[#c00021] px-4 py-2 text-white transition hover:bg-[#a0001a]"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 };
