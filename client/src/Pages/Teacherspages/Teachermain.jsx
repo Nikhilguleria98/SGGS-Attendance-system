@@ -1,14 +1,14 @@
-import React from 'react'
+
 import TeacherDashboard from '../../components/TeachersComp/TeacherDashboard'
-import StudentReportPage from '../../components/TeachersComp/TeacherReport'
+import TeacherReport from '../../components/TeachersComp/TeacherReport/Teacherreport'
 
 const Teachermain = () => {
   return (
     <div>
         <TeacherDashboard/>
-        <StudentReportPage/>
+        <TeacherReport/>
     </div>
   )
 }
 
-export default Teachermain
+export default Teachermain;
