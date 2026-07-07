@@ -11,6 +11,7 @@ const MarkAttendance = () => {
     batch: '',
     group: '',
     subject: '',
+    lecture: '',
     date: new Date().toISOString().split('T')[0]
   });
 
@@ -113,6 +114,10 @@ const MarkAttendance = () => {
       toast.error("Please select a subject");
       return;
     }
+    if (!filters.lecture) {
+      toast.error("Please select a lecture");
+      return;
+    }
     if (!teacherId) {
       toast.error("Teacher ID not found. Please re-login.");
       return;
@@ -124,11 +129,14 @@ const MarkAttendance = () => {
     try {
       // Create an array of promises for each student
       const promises = students.map(student => {
+        const attendanceDateTime = new Date(filters.date);
+        attendanceDateTime.setUTCHours(parseInt(filters.lecture), 0, 0, 0);
+
         const payload = {
           student: student._id,
           teacher: teacherId,
           subject: filters.subject,
-          attendanceDate: new Date(filters.date).toISOString(),
+          attendanceDate: attendanceDateTime.toISOString(),
           status: attendanceData[student._id] || 'absent'
         };
 
