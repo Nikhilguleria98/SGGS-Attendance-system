@@ -1,7 +1,7 @@
 import React from "react";
 import { Edit2, Trash2 } from "lucide-react";
 
-export default function GroupTable({ groups, onDelete }) {
+export default function GroupTable({ groups, onDelete, onEdit }) {
   if (!groups || groups.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -46,6 +46,15 @@ export default function GroupTable({ groups, onDelete }) {
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-3">
+                    {onEdit && (
+                      <button
+                        onClick={() => onEdit(group)}
+                        className="text-gray-400 hover:text-[#00529b] transition-colors"
+                        title="Edit Group"
+                      >
+                        <Edit2 size={18} />
+                      </button>
+                    )}
                     {onDelete && (
                       <button
                          onClick={() => onDelete(group)}

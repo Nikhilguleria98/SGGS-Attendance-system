@@ -8,6 +8,7 @@ router.use(protect);
 
 router.get("/", authorize("hod", "teacher"), batchController.getBatches);
 router.post("/", authorize("hod"), batchController.createBatch);
+router.patch("/:id", authorize("hod"), batchController.updateBatch);
 router.delete("/:id", authorize("hod"), batchController.deleteBatch);
 
 module.exports = router;

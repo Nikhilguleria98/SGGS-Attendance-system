@@ -32,3 +32,28 @@ exports.deleteBatch = asyncHandler(async (req, res) => {
     await batch.deleteOne();
     return success(res, 200, "Batch deleted successfully");
 });
+
+exports.updateBatch = asyncHandler(async (req, res) => {
+    const { name, description } = req.body;
+    const batch = await Batch.findById(req.params.id);
+    
+    if (!batch) {
+        return res.status(404).json({ success: false, message: "Batch not found" });
+    }
+
+    if (name) {
+        // Check if name exists for another batch
+        const existing = await Batch.findOne({ name: name.toUpperCase(), _id: { $ne: req.params.id } });
+        if (existing) {
+            return res.status(400).json({ success: false, message: "Batch name already exists" });
+        }
+        batch.name = name;
+    }
+    
+    if (description !== undefined) {
+        batch.description = description;
+    }
+
+    await batch.save();
+    return success(res, 200, "Batch updated successfully", batch);
+});

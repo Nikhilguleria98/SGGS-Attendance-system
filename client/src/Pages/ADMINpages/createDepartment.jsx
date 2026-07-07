@@ -61,14 +61,16 @@ const CreateDepartment = () => {
   };
 
   const handleBatchSuccess = (newBatch) => {
-    toast.success("Batch created successfully!");
-    setBatches((prev) => [...prev, newBatch]);
+    toast.success(editData ? "Batch updated successfully!" : "Batch created successfully!");
+    if (editData) { setBatches(prev => prev.map(b => b._id === newBatch._id ? newBatch : b)); }
+    else { setBatches((prev) => [...prev, newBatch]); }
     setTimeout(() => setIsBatchModalOpen(false), 1500);
   };
 
   const handleGroupSuccess = (newGroup) => {
-    toast.success("Group created successfully!");
-    setGroups((prev) => [...prev, newGroup]);
+    toast.success(editData ? "Group updated successfully!" : "Group created successfully!");
+    if (editData) { setGroups(prev => prev.map(g => g._id === newGroup._id ? newGroup : g)); }
+    else { setGroups((prev) => [...prev, newGroup]); }
     setTimeout(() => setIsGroupModalOpen(false), 1500);
   };
 
@@ -150,12 +152,14 @@ const CreateDepartment = () => {
             {activeTab === "batches" && (
               <BatchTable 
                 batches={batches} 
+                onEdit={(batch) => { setEditData(batch); setIsBatchModalOpen(true); }}
                 onDelete={(batch) => handleDeleteItem("batch", batch)}
               />
             )}
             {activeTab === "groups" && (
               <GroupTable 
                 groups={groups} 
+                onEdit={(group) => { setEditData(group); setIsGroupModalOpen(true); }}
                 onDelete={(group) => handleDeleteItem("group", group)}
               />
             )}
@@ -186,17 +190,17 @@ const CreateDepartment = () => {
         
         {isBatchModalOpen && (
           <div className="fixed inset-0 z-50 flex justify-center items-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsBatchModalOpen(false)} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsBatchModalOpen(false); setEditData(null); }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
               <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Create New Batch</h2>
-                  <p className="text-sm text-gray-500 mt-1">Fill in the details to add a batch</p>
+                  <h2 className="text-xl font-bold text-gray-900">{editData ? "Edit Batch" : "Create New Batch"}</h2>
+                  <p className="text-sm text-gray-500 mt-1">Fill in the details to {editData ? "update" : "add"} a batch</p>
                 </div>
                 <button onClick={() => setIsBatchModalOpen(false)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"><X size={20} /></button>
               </div>
               <div className="p-2">
-                <CreateBatchFormFields onSubmitSuccess={handleBatchSuccess} />
+                <CreateBatchFormFields onSubmitSuccess={handleBatchSuccess} initialData={editData} />
               </div>
             </motion.div>
           </div>
@@ -204,17 +208,17 @@ const CreateDepartment = () => {
 
         {isGroupModalOpen && (
           <div className="fixed inset-0 z-50 flex justify-center items-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsGroupModalOpen(false)} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsGroupModalOpen(false); setEditData(null); }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
               <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Create New Group</h2>
-                  <p className="text-sm text-gray-500 mt-1">Fill in the details to add a group</p>
+                  <h2 className="text-xl font-bold text-gray-900">{editData ? "Edit Group" : "Create New Group"}</h2>
+                  <p className="text-sm text-gray-500 mt-1">Fill in the details to {editData ? "update" : "add"} a group</p>
                 </div>
                 <button onClick={() => setIsGroupModalOpen(false)} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"><X size={20} /></button>
               </div>
               <div className="p-2">
-                <CreateGroupFormFields onSubmitSuccess={handleGroupSuccess} />
+                <CreateGroupFormFields onSubmitSuccess={handleGroupSuccess} initialData={editData} />
               </div>
             </motion.div>
           </div>

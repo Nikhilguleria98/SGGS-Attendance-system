@@ -32,3 +32,28 @@ exports.deleteGroup = asyncHandler(async (req, res) => {
     await group.deleteOne();
     return success(res, 200, "Group deleted successfully");
 });
+
+exports.updateGroup = asyncHandler(async (req, res) => {
+    const { name, description } = req.body;
+    const group = await Group.findById(req.params.id);
+    
+    if (!group) {
+        return res.status(404).json({ success: false, message: "Group not found" });
+    }
+
+    if (name) {
+        // Check if name exists for another group
+        const existing = await Group.findOne({ name: name.toUpperCase(), _id: { $ne: req.params.id } });
+        if (existing) {
+            return res.status(400).json({ success: false, message: "Group name already exists" });
+        }
+        group.name = name;
+    }
+    
+    if (description !== undefined) {
+        group.description = description;
+    }
+
+    await group.save();
+    return success(res, 200, "Group updated successfully", group);
+});

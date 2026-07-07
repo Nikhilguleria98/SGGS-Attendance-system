@@ -7,9 +7,18 @@ const CreateGroupFormFields = ({ onSubmitSuccess, initialData }) => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    name: initialData ? initialData.name : "",
+    description: initialData && initialData.description ? initialData.description : "",
   });
+
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name || "",
+        description: initialData.description || "",
+      });
+    }
+  }, [initialData]);
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
