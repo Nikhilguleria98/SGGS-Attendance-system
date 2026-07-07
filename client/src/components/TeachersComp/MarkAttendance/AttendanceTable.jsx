@@ -27,7 +27,7 @@ const AttendanceTable = ({ students, attendanceData, handleStatusChange }) => {
                   <tr key={student._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4 font-medium">{student.firstName} {student.lastName || ''}</td>
-                    <td className="px-6 py-4 text-gray-500">{student.rollNo || '-'}</td>
+                    <td className="px-6 py-4 text-gray-500">{student.rollNo || student.rollNumber || '-'}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-center gap-4">
                         <button 
