@@ -24,11 +24,6 @@ const ReportRow = ({ student }) => {
       <td className="px-6 py-5">{student.section}</td>
       <td className="px-6 py-5">{student.subject}</td>
       <td className="px-6 py-5">{attendance}%</td>
-      <td className="px-6 py-5">
-        <span className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${badgeClass}`}>
-          {status}
-        </span>
-      </td>
     </tr>
   );
 };
