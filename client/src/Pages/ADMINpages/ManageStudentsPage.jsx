@@ -22,6 +22,8 @@ const columns = [
 export default function ManageStudentsPage() {
   const [students, setStudents] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [groups, setGroups] = useState([]);
 
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
@@ -43,11 +45,17 @@ export default function ManageStudentsPage() {
     try {
       const token = localStorage.getItem("token");
       
-      const [studentsRes, deptsRes] = await Promise.all([
+      const [studentsRes, deptsRes, batchesRes, groupsRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
         fetch(`${import.meta.env.VITE_API_URL}/departments`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${import.meta.env.VITE_API_URL}/batches`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -61,13 +69,13 @@ export default function ManageStudentsPage() {
 
       const studentsData = await studentsRes.json();
       const deptsData = await deptsRes.json();
+      const batchesData = await batchesRes.json();
+      const groupsData = await groupsRes.json();
 
-      if (studentsData.success) {
-        setStudents(studentsData.data);
-      }
-      if (deptsData.success) {
-        setDepartments(deptsData.data);
-      }
+      if (studentsData.success) setStudents(studentsData.data);
+      if (deptsData.success) setDepartments(deptsData.data);
+      if (batchesData.success) setBatches(batchesData.data);
+      if (groupsData.success) setGroups(groupsData.data);
 
     } catch (err) {
       console.error(err);
@@ -180,6 +188,8 @@ export default function ManageStudentsPage() {
             onSave={handleSaveStudent}
             initialData={studentToEdit}
             departments={departments}
+            batches={batches}
+            groups={groups}
           />
         ) : (
           <div className="bg-white rounded-xl shadow-sm p-6">

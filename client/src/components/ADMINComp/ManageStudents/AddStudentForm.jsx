@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-const AddStudentForm = ({ onCancel, onSave, initialData, departments = [] }) => {
+const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batches = [], groups = [] }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -184,9 +184,9 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [] }) => 
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
               >
                 <option value="">Select batch</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
+                {batches.map(b => (
+                  <option key={b._id} value={b.name}>{b.name}</option>
+                ))}
               </select>
             </div>
             <div>
@@ -197,9 +197,9 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [] }) => 
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
               >
                 <option value="">Select group</option>
-                <option value="A">Group A</option>
-                <option value="B">Group B</option>
-                <option value="C">Group C</option>
+                {groups.map(g => (
+                  <option key={g._id} value={g.name}>{g.name}</option>
+                ))}
               </select>
             </div>
           </div>
