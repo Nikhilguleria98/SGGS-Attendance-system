@@ -8,7 +8,8 @@ import toast from 'react-hot-toast';
 const MarkAttendance = () => {
   const [filters, setFilters] = useState({
     department: '',
-    section: '',
+    batch: '',
+    group: '',
     subject: '',
     date: new Date().toISOString().split('T')[0]
   });
@@ -48,7 +49,22 @@ const MarkAttendance = () => {
           // Client side filtering for department/section if needed
           let filtered = data.data;
           if (filters.department) {
-            filtered = filtered.filter(s => s.department && s.department._id === filters.department);
+            filtered = filtered.filter(s => {
+              const deptId = typeof s.department === "object" ? s.department?._id : s.department;
+              return deptId === filters.department;
+            });
+          }
+          if (filters.batch) {
+            filtered = filtered.filter(s => {
+              const batchNameOrId = s.batch || s.batches?.[0]; // or if batch is saved as ID, we can compare directly
+              return batchNameOrId === filters.batch;
+            });
+          }
+          if (filters.group) {
+            filtered = filtered.filter(s => {
+              const groupNameOrId = s.group || s.groups?.[0] || s.section;
+              return groupNameOrId === filters.group;
+            });
           }
           setStudents(filtered);
           
@@ -65,7 +81,7 @@ const MarkAttendance = () => {
     };
     
     fetchStudents();
-  }, [filters.department, filters.section]);
+  }, [filters.department, filters.batch, filters.group]);
 
   useEffect(() => {
     let p = 0;

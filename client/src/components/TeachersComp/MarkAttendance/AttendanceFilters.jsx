@@ -4,20 +4,33 @@ import { Calendar } from 'lucide-react';
 const AttendanceFilters = ({ filters, setFilters }) => {
   const [departments, setDepartments] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [groups, setGroups] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const [deptsRes, subsRes] = await Promise.all([
+        const [deptsRes, subsRes, batchesRes, groupsRes] = await Promise.all([
           fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers: { Authorization: `Bearer ${token}` } }),
-          fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } })
+          fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${import.meta.env.VITE_API_URL}/batches`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${import.meta.env.VITE_API_URL}/groups`, { headers: { Authorization: `Bearer ${token}` } })
         ]);
         const deptsData = await deptsRes.json();
         const subsData = await subsRes.json();
 
         if (deptsData.success) setDepartments(deptsData.data);
         if (subsData.success) setSubjects(subsData.data);
+        
+        if (batchesRes.ok) {
+          const batchesData = await batchesRes.json();
+          if (batchesData.success) setBatches(batchesData.data);
+        }
+        if (groupsRes.ok) {
+          const groupsData = await groupsRes.json();
+          if (groupsData.success) setGroups(groupsData.data);
+        }
       } catch (err) {
         console.error("Failed to fetch filters data", err);
       }
@@ -48,20 +61,32 @@ const AttendanceFilters = ({ filters, setFilters }) => {
         </div>
        
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Batch</label>
           <select 
-            name="section" 
-            value={filters.section} 
+            name="batch" 
+            value={filters.batch || ""} 
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
+          >
+            <option value="">Select Batch</option>
+            {batches.map(b => (
+              <option key={b._id} value={b.name}>{b.name}</option>
+            ))}
+          </select>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Group</label>
+          <select 
+            name="group" 
+            value={filters.group || ""} 
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
           >
             <option value="">Select Group</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="E">E</option>
-            <option value="F">F</option>
+            {groups.map(g => (
+              <option key={g._id} value={g.name}>{g.name}</option>
+            ))}
           </select>
         </div>
         <div>
