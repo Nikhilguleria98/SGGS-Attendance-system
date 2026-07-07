@@ -12,6 +12,8 @@ const PAGE_SIZE = 5;
 export default function ManageTeachers() {
   const [teachers, setTeachers] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [groups, setGroups] = useState([]);
   
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
@@ -33,24 +35,30 @@ export default function ManageTeachers() {
     try {
       const token = localStorage.getItem("token");
       
-      const [teachersRes, deptsRes] = await Promise.all([
+      const [teachersRes, deptsRes, batchesRes, groupsRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/users?role=teacher`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
         fetch(`${import.meta.env.VITE_API_URL}/departments`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${import.meta.env.VITE_API_URL}/batches`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
 
       const teachersData = await teachersRes.json();
       const deptsData = await deptsRes.json();
+      const batchesData = await batchesRes.json();
+      const groupsData = await groupsRes.json();
 
-      if (teachersData.success) {
-        setTeachers(teachersData.data);
-      }
-      if (deptsData.success) {
-        setDepartments(deptsData.data);
-      }
+      if (teachersData.success) setTeachers(teachersData.data);
+      if (deptsData.success) setDepartments(deptsData.data);
+      if (batchesData.success) setBatches(batchesData.data);
+      if (groupsData.success) setGroups(groupsData.data);
     } catch (err) {
       console.error(err);
       toast.error("Failed to load data");
@@ -198,6 +206,8 @@ export default function ManageTeachers() {
         initialData={teacherToEdit}
         onSave={handleSaveTeacher}
         departments={departments}
+        batches={batches}
+        groups={groups}
       />
     </div>
   );

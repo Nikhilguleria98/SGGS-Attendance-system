@@ -2,20 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Trash2, Plus } from 'lucide-react';
 import MultiSelect from '../Common/MultiSelect';
 
-// Mock standard options for structural choices
-const BATCH_OPTIONS = [
-  { label: '2023', value: '2023' },
-  { label: '2024', value: '2024' },
-  { label: '2025', value: '2025' }
-];
-
-const GROUP_OPTIONS = [
-  { label: 'A', value: 'A' },
-  { label: 'B', value: 'B' },
-  { label: 'C', value: 'C' }
-];
-
-export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [] }) {
+export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], groups = [] }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -218,7 +205,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                           className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
                         >
                           <option value="">Select batch</option>
-                          {BATCH_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                          {batches.map(b => <option key={b._id} value={b.name}>{b.name}</option>)}
                         </select>
                       </td>
                       <td className="py-3 px-2">
@@ -228,7 +215,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                           className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
                         >
                           <option value="">Select group</option>
-                          {GROUP_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                          {groups.map(g => <option key={g._id} value={g.name}>{g.name}</option>)}
                         </select>
                       </td>
 
