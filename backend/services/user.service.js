@@ -9,6 +9,22 @@ class UserService {
             throw new ApiError(409, "Email already exists");
         }
 
+        if (userData.subjects && Array.isArray(userData.subjects)) {
+            const Subject = require("../models/Subject");
+            for (const subjectName of userData.subjects) {
+                const existingSubject = await Subject.findOne({ name: { $regex: new RegExp(`^${subjectName}$`, "i") } });
+                if (!existingSubject && userData.department) {
+                    const code = subjectName.replace(/\s+/g, '').substring(0, 4).toUpperCase() + Math.floor(Math.random() * 1000);
+                    await Subject.create({
+                        name: subjectName,
+                        code: code,
+                        department: userData.department,
+                        semester: 1
+                    });
+                }
+            }
+        }
+
         return await userRepository.create(userData);
     }
 
@@ -40,6 +56,25 @@ class UserService {
 
         for (const key in updateData) {
             user[key] = updateData[key];
+        }
+
+        if (updateData.subjects && Array.isArray(updateData.subjects)) {
+            const Subject = require("../models/Subject");
+            for (const subjectName of updateData.subjects) {
+                const existingSubject = await Subject.findOne({ name: { $regex: new RegExp(`^${subjectName}$`, "i") } });
+                if (!existingSubject) {
+                    const deptId = updateData.department || user.department;
+                    if (deptId) {
+                        const code = subjectName.replace(/\s+/g, '').substring(0, 4).toUpperCase() + Math.floor(Math.random() * 1000);
+                        await Subject.create({
+                            name: subjectName,
+                            code: code,
+                            department: deptId,
+                            semester: 1
+                        });
+                    }
+                }
+            }
         }
         
         await user.save();
