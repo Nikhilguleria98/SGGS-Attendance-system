@@ -17,6 +17,8 @@ export default function ManageTeachers() {
   
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
+  const [batch, setBatch] = useState("");
+  const [group, setGroup] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [teacherToDelete, setTeacherToDelete] = useState(null);
   
@@ -68,17 +70,23 @@ export default function ManageTeachers() {
   };
 
   const filteredTeachers = useMemo(() => {
-    return teachers.filter((t) => {
-      const name = t.firstName + " " + t.lastName;
+    return teachers.filter((teacher) => {
+      const name = teacher.firstName + " " + (teacher.lastName || "");
       const matchesSearch = name.toLowerCase().includes(search.toLowerCase());
       
-      // t.department could be an ID or populated object, depending on backend
-      const tDeptId = typeof t.department === "object" ? t.department?._id : t.department;
-      const matchesDept = !department || tDeptId === department;
-      
-      return matchesSearch && matchesDept;
+      const tDeptId = typeof teacher.department === "object" ? teacher.department?._id : teacher.department;
+      const matchesDepartment = !department || tDeptId === department;
+
+      // Teachers may have multiple subjects/batches/groups in an array, 
+      // but for filtering we check if they teach in the selected batch/group
+      // If we don't have assignments in the user object natively, we can skip or filter based on assignments if populated.
+      // Usually teachers have `subjects` array containing { subject, department, batch, group }
+      const teachesBatch = !batch || (teacher.subjects && teacher.subjects.some(sub => sub.batch === batch));
+      const teachesGroup = !group || (teacher.subjects && teacher.subjects.some(sub => sub.group === group));
+
+      return matchesSearch && matchesDepartment && teachesBatch && teachesGroup;
     });
-  }, [teachers, search, department]);
+  }, [teachers, search, department, batch, group]);
 
   const totalPages = Math.max(1, Math.ceil(filteredTeachers.length / PAGE_SIZE));
   const paginatedTeachers = filteredTeachers.slice(
@@ -169,6 +177,12 @@ export default function ManageTeachers() {
             department={department}
             setDepartment={setDepartment}
             departments={departments}
+            batch={batch}
+            setBatch={setBatch}
+            batches={batches}
+            group={group}
+            setGroup={setGroup}
+            groups={groups}
           />
           
           {isLoading ? (

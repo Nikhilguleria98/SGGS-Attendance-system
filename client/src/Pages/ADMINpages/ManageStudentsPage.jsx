@@ -27,6 +27,8 @@ export default function ManageStudentsPage() {
 
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
+  const [batch, setBatch] = useState("");
+  const [group, setGroup] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [studentToDelete, setStudentToDelete] = useState(null);
   
@@ -93,9 +95,15 @@ export default function ManageStudentsPage() {
       const sDeptId = typeof student.department === "object" ? student.department?._id : student.department;
       const matchesDepartment = !department || sDeptId === department;
 
-      return matchesSearch && matchesDepartment;
+      const sBatch = student.batch || student.batches?.[0];
+      const matchesBatch = !batch || sBatch === batch;
+
+      const sGroup = student.group || student.groups?.[0] || student.section;
+      const matchesGroup = !group || sGroup === group;
+
+      return matchesSearch && matchesDepartment && matchesBatch && matchesGroup;
     });
-  }, [students, search, department]);
+  }, [students, search, department, batch, group]);
 
   const totalPages = Math.max(
     1,
@@ -201,6 +209,12 @@ export default function ManageStudentsPage() {
               department={department}
               setDepartment={setDepartment}
               departments={departments}
+              batch={batch}
+              setBatch={setBatch}
+              batches={batches}
+              group={group}
+              setGroup={setGroup}
+              groups={groups}
             />
             
             {isLoading ? (
