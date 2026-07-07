@@ -121,14 +121,14 @@ const TeacherProfessionalInformation = ({ user }) => {
           <label className="block text-sm font-medium text-gray-500 mb-1">Joining Date</label>
           <p className="text-gray-900 font-medium">{formData.joiningDate ? new Date(formData.joiningDate).toLocaleDateString() : '-'} <span className="text-xs text-gray-400 ml-2"></span></p>
         </div>
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-500 mb-1">Specialization</label>
           {isEditing ? (
             <input type="text" name="specialization" value={formData.specialization} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a]" />
           ) : (
             <p className="text-gray-900 font-medium">{formData.specialization || '-'}</p>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -55,9 +55,13 @@ const AttendanceFilters = ({ filters, setFilters }) => {
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
           >
-            <option value="">Select Section</option>
-            <option value="A">Section A</option>
-            <option value="B">Section B</option>
+            <option value="">Select Group</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
           </select>
         </div>
         <div>
