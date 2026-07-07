@@ -4,6 +4,7 @@ import { Edit2, Save, X, CheckCircle } from 'lucide-react';
 const TeacherProfessionalInformation = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [formData, setFormData] = useState({
     employeeId: '',
@@ -32,10 +33,31 @@ const TeacherProfessionalInformation = ({ user }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${user._id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ 
+          designation: formData.designation, 
+          specialization: formData.specialization 
+        })
+      });
+      
+      if (response.ok) {
+        setIsEditing(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
+      } else {
+        alert("Failed to update professional information");
+      }
+    } catch (error) {
+      alert("Failed to update professional information");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -59,9 +81,10 @@ const TeacherProfessionalInformation = ({ user }) => {
             </button>
             <button 
               onClick={handleSave}
+              disabled={isSaving}
               className="flex items-center gap-1 bg-[#162b4a] text-white px-3 py-1.5 rounded-lg transition-colors text-sm hover:bg-[#0f1d33]"
             >
-              <Save size={16} /> Save
+              <Save size={16} /> {isSaving ? 'Saving...' : 'Save'}
             </button>
           </div>
         )}

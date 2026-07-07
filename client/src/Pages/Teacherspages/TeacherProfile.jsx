@@ -58,7 +58,7 @@ const TeacherProfile = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <TeacherPersonalInformation user={userData} />
             <TeacherProfessionalInformation user={userData} />
-            <TeacherAccountSecurity />
+            <TeacherAccountSecurity user={userData} />
           </div>
           
           <div className="lg:col-span-1 flex flex-col gap-6">
