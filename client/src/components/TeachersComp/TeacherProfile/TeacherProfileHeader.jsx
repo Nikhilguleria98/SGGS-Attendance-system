@@ -11,13 +11,11 @@ const TeacherProfileHeader = ({ user, onEdit }) => {
             alt="Profile" 
             className="w-24 h-24 rounded-full object-cover border-4 border-gray-50"
           />
-          <div className="absolute bottom-1 right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white" title="Active Status"></div>
         </div>
         
         <div className="flex flex-col">
           <div className="flex items-center gap-2 mb-1">
             <h2 className="text-2xl font-bold text-[#162b4a]">{user?.firstName} {user?.lastName || ''}</h2>
-            <BadgeCheck className="text-blue-500" size={20} />
           </div>
           <p className="text-[#c00021] font-semibold text-lg">{user?.designation || (user?.role === 'hod' ? 'Head of Department' : 'Teacher')}</p>
           <p className="text-gray-500 text-sm">Department: {user?.department?.name || 'CSE'}</p>
