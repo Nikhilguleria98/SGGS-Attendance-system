@@ -7,18 +7,40 @@ class AttendanceRepository {
         return await Attendance.create(data);
     }
 
+    async findOne(filter) {
+        return await Attendance.findOne(filter)
+            .populate("student", "firstName lastName rollNumber")
+            .populate({
+                path: "assignment",
+                populate: [
+                    { path: "teacher", select: "firstName lastName employeeId" },
+                    { path: "subject", select: "name code" }
+                ]
+            });
+    }
+
     async findAll() {
         return await Attendance.find()
             .populate("student", "firstName lastName rollNumber")
-            .populate("teacher", "firstName lastName employeeId")
-            .populate("subject", "name code");
+            .populate({
+                path: "assignment",
+                populate: [
+                    { path: "teacher", select: "firstName lastName employeeId" },
+                    { path: "subject", select: "name code" }
+                ]
+            });
     }
 
     async findById(id) {
         return await Attendance.findById(id)
             .populate("student", "firstName lastName rollNumber")
-            .populate("teacher", "firstName lastName employeeId")
-            .populate("subject", "name code");
+            .populate({
+                path: "assignment",
+                populate: [
+                    { path: "teacher", select: "firstName lastName employeeId" },
+                    { path: "subject", select: "name code" }
+                ]
+            });
     }
 
     async updateById(id, data) {
@@ -36,15 +58,7 @@ class AttendanceRepository {
         return await Attendance.findByIdAndDelete(id);
     }
 
-    async findAllForReport(){
-        return await Attendance.find()
-        .populate({
-            path: "student",
-            select: "firstName lastName rollNumber section batch department",
-            populate: { path: "department", select: "name" },
-        })
-        .populate("subject", "name code");
-    }
+
 }
 
 module.exports = new AttendanceRepository();

@@ -2,15 +2,9 @@ const mongoose = require("mongoose");
 
 const attendanceSchema = new mongoose.Schema(
     {
-        teacher: {
+        assignment: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-
-        subject: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Subject",
+            ref: "TeacherAssignment",
             required: true,
         },
 
@@ -54,8 +48,7 @@ const attendanceSchema = new mongoose.Schema(
 // in the same class on the same day
 attendanceSchema.index(
     {
-        teacher: 1,
-        subject: 1,
+        assignment: 1,
         student: 1,
         attendanceDate: 1,
     },
@@ -66,8 +59,7 @@ attendanceSchema.index(
 
 // Frequently used queries
 attendanceSchema.index({
-    teacher: 1,
-    subject: 1,
+    assignment: 1,
     attendanceDate: 1,
 });
 

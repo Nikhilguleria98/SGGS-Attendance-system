@@ -8,7 +8,9 @@ import Pagination from "./Pagination";
 
 const TeacherReport = () => {
   const [students, setStudents] = useState([]);
-
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  
   const [filters, setFilters] = useState({
     search: "",
     department: "",
@@ -24,9 +26,20 @@ const TeacherReport = () => {
     const fetchReport = async () => {
       try {
         const token = localStorage.getItem("token");
+        
+        // Build query string
+        const params = new URLSearchParams({
+          page: currentPage,
+          limit: itemsPerPage
+        });
+        
+        if (filters.department) params.append("department", filters.department);
+        if (filters.batch) params.append("batch", filters.batch);
+        if (filters.section) params.append("section", filters.section);
+        if (filters.subject) params.append("subject", filters.subject);
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/attendance/report`,
+          `${import.meta.env.VITE_API_URL}/attendance/report?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -37,7 +50,18 @@ const TeacherReport = () => {
         const data = await res.json();
 
         if (data.success) {
-          setStudents(data.data || []);
+          // If the user searches by name/roll, we filter it locally for now if backend doesn't support text search
+          let results = data.data.data || [];
+          if (filters.search) {
+             results = results.filter(s => 
+               s.student.toLowerCase().includes(filters.search.toLowerCase()) || 
+               s.rollNumber.toLowerCase().includes(filters.search.toLowerCase())
+             );
+          }
+
+          setStudents(results);
+          setTotalStudents(data.data.total || 0);
+          setTotalPages(data.data.totalPages || 1);
         } else {
           console.error("Failed to fetch attendance report:", data.message);
         }
@@ -47,7 +71,7 @@ const TeacherReport = () => {
     };
 
     fetchReport();
-  }, []);
+  }, [currentPage, filters.department, filters.batch, filters.section, filters.subject, filters.search]);
 
   const handleChange = (e) => {
     setFilters({
@@ -56,47 +80,24 @@ const TeacherReport = () => {
     });
   };
 
-  const filteredStudents = students.filter((student) => {
-    const searchMatch =
-      student.studentName.toLowerCase().includes(filters.search.toLowerCase()) ||
-      student.rollNo.toLowerCase().includes(filters.search.toLowerCase());
-
-    return (
-      searchMatch &&
-      (filters.department === "" || student.department === filters.department) &&
-      (filters.batch === "" || student.batch === filters.batch) &&
-      (filters.section === "" || student.section === filters.section) &&
-      (filters.subject === "" || student.subject === filters.subject)
-    );
-  });
-
   // Reset to page 1 whenever filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters]);
-
-  const totalStudents = filteredStudents.length;
+  }, [filters.department, filters.batch, filters.section, filters.subject, filters.search]);
 
   const avgAttendance =
-    totalStudents > 0
+    students.length > 0
       ? Math.round(
-          filteredStudents.reduce(
-            (sum, student) => sum + (student.present / student.totalClasses) * 100,
+          students.reduce(
+            (sum, student) => sum + student.percentage,
             0
-          ) / totalStudents
+          ) / students.length
         )
       : 0;
 
-  const lowAttendance = filteredStudents.filter(
-    (student) => (student.present / student.totalClasses) * 100 < 75
+  const lowAttendance = students.filter(
+    (student) => student.percentage < 75
   ).length;
-
-  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
-
-  const paginatedStudents = filteredStudents.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   return (
     <div className="p-4 md:p-8 min-h-screen bg-[#f8f9fa]">
@@ -118,7 +119,7 @@ const TeacherReport = () => {
             icon={<CheckCircle size={24} />}
             iconBg="bg-green-100"
             iconColor="text-green-600"
-            label="Avg Attendance"
+            label="Avg Attendance (Current Page)"
             value={`${avgAttendance}%`}
           />
 
@@ -126,18 +127,18 @@ const TeacherReport = () => {
             icon={<AlertCircle size={24} />}
             iconBg="bg-red-100"
             iconColor="text-red-600"
-            label="Low Attendance"
+            label="Low Attendance (Current Page)"
             value={lowAttendance}
           />
         </div>
 
-        <ReportTable students={paginatedStudents} />
+        <ReportTable students={students} />
 
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
-          totalItems={filteredStudents.length}
+          totalItems={totalStudents}
           itemsPerPage={itemsPerPage}
         />
       </div>

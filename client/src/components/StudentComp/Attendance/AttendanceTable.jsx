@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-const computePercentage = (attended, delivered) =>
-  delivered === 0 ? 0 : (attended / delivered) * 100;
-
 export default function AttendanceCards() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,15 +8,19 @@ export default function AttendanceCards() {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        // Replace this URL with your backend API
-        const response = await fetch("http://localhost:8080/api/attendance");
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:8080/api/attendance/student-dashboard", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch attendance records");
         }
 
-        const data = await response.json();
-        setSubjects(data);
+        const resData = await response.json();
+        setSubjects(resData.data || []);
       } catch (err) {
         setError(err.message || "Something went wrong");
       } finally {
@@ -66,16 +67,10 @@ export default function AttendanceCards() {
             gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
           }}
         >
-          {subjects.map((item) => {
-            const absent = item.delivered - item.attended;
-            const percentage = computePercentage(
-              item.attended,
-              item.delivered
-            );
-
+          {subjects.map((item, index) => {
             return (
               <div
-                key={item.id}
+                key={index}
                 className="bg-white rounded-2xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)] overflow-hidden flex flex-col w-full"
               >
                 {/* Title */}
@@ -85,43 +80,27 @@ export default function AttendanceCards() {
                   </h3>
 
                   <span className="font-semibold text-slate-700 whitespace-nowrap">
-                    {item.code}
+                    {item.subjectCode}
                   </span>
                 </div>
 
-                {/* Teacher & Dates */}
+                {/* Teacher */}
                 <div className="px-5 py-3 space-y-2 border-b border-[#EEF2F7] text-sm">
                   <Row label="Teacher" value={item.teacher} />
-
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-slate-600">
-                    <span>
-                      <span className="font-semibold text-slate-700">
-                        From :
-                      </span>{" "}
-                      {item.fromDate}
-                    </span>
-
-                    <span>
-                      <span className="font-semibold text-slate-700">
-                        TO :
-                      </span>{" "}
-                      {item.toDate}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Attendance */}
                 <div className="px-5 py-3 space-y-2 border-b border-[#EEF2F7] text-sm">
                   <Row label="Delivered" value={item.delivered} />
                   <Row label="Attended" value={item.attended} />
-                  <Row label="Absent" value={absent} />
+                  <Row label="Absent" value={item.absent} />
                 </div>
 
                 {/* Percentage */}
                 <div className="px-5 py-3 text-sm">
                   <Row
                     label="Total Percentage"
-                    value={`${percentage.toFixed(2)}%`}
+                    value={`${item.percentage}%`}
                     valueClassName="font-semibold text-[#17356D]"
                   />
                 </div>

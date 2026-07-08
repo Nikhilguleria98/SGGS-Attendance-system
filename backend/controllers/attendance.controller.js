@@ -63,14 +63,4 @@ exports.deleteAttendance = asyncHandler(async (req, res) => {
         "Attendance deleted successfully"
     );
 });
-
-exports.getStudentReport = asyncHandler(async (req, res) => {
-    const report = await attendanceService.getStudentAttendanceReport();
-
-    return success(
-        res,
-        200,
-        "Attendance report fetched successfully",
-        report
-    );
-});
+
