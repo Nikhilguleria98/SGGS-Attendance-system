@@ -1,5 +1,4 @@
 import AttendanceTable from "../../components/StudentComp/Attendance/AttendanceTable";
-import RecentAttendance from "../../components/StudentComp/Attendance/RecentAttendance";
 
 export default function AttendanceDashboard() {
   return (
