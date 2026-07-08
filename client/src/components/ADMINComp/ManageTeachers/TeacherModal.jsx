@@ -3,6 +3,13 @@ import { X, Trash2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import MultiSelect from '../Common/MultiSelect';
 
+// Map objects to strings so MultiSelect matches them accurately
+const extractNames = (val) => {
+  if (!val) return [];
+  if (!Array.isArray(val)) val = [val];
+  return val.map(v => (typeof v === 'object' && v !== null) ? (v.name || String(v)) : String(v));
+};
+
 export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], groups = [], isSaving }) {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -48,16 +55,31 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
           lastName: initialData.lastName || '',
           email: initialData.email || '',
           password: '', // blank password on edit
-          departments: initialData.departments || (initialData.department ? [typeof initialData.department === 'object' ? initialData.department._id : initialData.department] : [])
+          departments: initialData.departments 
+            ? initialData.departments.map(d => typeof d === 'object' ? d._id : d)
+            : (initialData.department ? [typeof initialData.department === 'object' ? initialData.department._id : initialData.department] : [])
         });
         
-        // Mock assignments based on initialData for demo purposes, if stored
-        setAssignments([{ 
-          id: Date.now(), 
-          batches: initialData.batches || [], 
-          groups: initialData.groups || [], 
-          subjects: initialData.subjects || [] 
-        }]);
+        let initialAssignments = [];
+        // If the teacher has structured assignments attached to them:
+        if (initialData.assignments && Array.isArray(initialData.assignments) && initialData.assignments.length > 0) {
+          initialAssignments = initialData.assignments.map(a => ({
+             id: a._id || Math.random(),
+             batches: extractNames(a.batches || a.batch),
+             groups: extractNames(a.groups || a.group),
+             subjects: extractNames(a.subjects || a.subject)
+          }));
+        } else {
+          // Fallback flattening mechanism for single/flat arrays
+          initialAssignments = [{ 
+            id: Date.now(), 
+            batches: extractNames(initialData.batches), 
+            groups: extractNames(initialData.groups), 
+            subjects: extractNames(initialData.subjects) 
+          }];
+        }
+        setAssignments(initialAssignments);
+
       } else {
         setFormData({ firstName: '', lastName: '', email: '', password: '', departments: [] });
         setAssignments([{ id: Date.now(), batches: [], groups: [], subjects: [] }]);

@@ -1,10 +1,15 @@
 import React from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
+// Safe extraction helper to prevent [object Object] renders
+const extractNames = (val) => {
+  if (!val) return [];
+  if (!Array.isArray(val)) val = [val];
+  return val.map(v => (typeof v === 'object' && v !== null) ? (v.name || v.title || v.subject || String(v)) : String(v));
+};
+
 export default function TeacherRow({ teacher, departments, index, onEdit, onDelete }) {
-  // Mock subjects if none exist to match Figma visually
-  const subjects = (teacher.subjects && teacher.subjects.length > 0) ? teacher.subjects : [];
-  
+  const subjects = extractNames(teacher.subjects);
   const displaySubjects = subjects.slice(0, 3);
   const overflowCount = subjects.length - 3;
 
@@ -17,17 +22,20 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
       }).join(", ")
     : (typeof teacher.department === 'object' ? teacher.department?.name : teacher.department);
 
+  const batches = extractNames(teacher.batches || teacher.batch);
+  const groups = extractNames(teacher.groups || teacher.group);
+
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 text-sm">
       <td className="py-4 px-4 font-semibold text-[#162b4a]">{index + 1}</td>
       <td className="py-4 px-4 font-bold text-[#162b4a]">{teacherName}</td>
       <td className="py-4 px-4 text-gray-600">{teacher.email}</td>
-      <td className="py-4 px-4 text-gray-600">{deptName}</td>
+      <td className="py-4 px-4 text-gray-600">{deptName || "-"}</td>
       <td className="py-4 px-4 text-gray-600">
-        {teacher.batches?.join(", ") || teacher.batch}
+        {batches.length > 0 ? batches.join(", ") : "-"}
       </td>
       <td className="py-4 px-4 text-gray-600">
-        {teacher.groups?.join(", ") || "-"}
+        {groups.length > 0 ? groups.join(", ") : "-"}
       </td>
 
       <td className="py-4 px-4">
@@ -42,6 +50,7 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
               +{overflowCount}
             </span>
           )}
+          {displaySubjects.length === 0 && <span className="text-gray-400">-</span>}
         </div>
       </td>
       <td className="py-4 px-4">
