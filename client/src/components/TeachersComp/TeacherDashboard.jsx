@@ -137,7 +137,7 @@ export default function TeacherDashboard() {
               {/* Action 1: Take Attendance */}
               <button 
                 onClick={() => navigate('/teacher/mark-attendance')}
-                className="flex items-center justify-start gap-3 w-full bg-black/90 hover:bg-black text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
+                className="flex items-center justify-start gap-3 w-full bg-[#162b4a] text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
               >
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">Take Attendance</span>
@@ -146,7 +146,7 @@ export default function TeacherDashboard() {
               {/* Action 2: View Students */}
               <button 
                 onClick={() => navigate('/teacher/managestudent')}
-                className="flex items-center justify-start gap-3 w-full bg-black/90 hover:bg-black text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
+                className="flex items-center justify-start gap-3 w-full bg-[#162b4a] text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
               >
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">View Students</span>
@@ -155,7 +155,7 @@ export default function TeacherDashboard() {
               {/* Action 3: Attendance Reports */}
               <button 
                 onClick={() => navigate('/teacher/reports')}
-                className="flex items-center justify-start gap-3 w-full bg-black/90 hover:bg-black text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
+                className="flex items-center justify-start gap-3 w-full bg-[#162b4a] text-white font-medium px-5 py-3.5 rounded-xl shadow-sm transition-all active:scale-[0.99]"
               >
                 <span className="text-xl font-light">+</span>
                 <span className="text-sm font-semibold">Attendance Reports</span>
