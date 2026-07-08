@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "./components/GlobalComp/DashboardLayout";
 import PublicLayout from "./components/GlobalComp/PublicLayout";
 import ProtectedRoute from "./components/GlobalComp/ProtectedRoute/ProtectedRoute";
+import LoginDrawer from "./components/GlobalComp/logincomp/LoginDrawer";
 
 // HOD Pages
 import HodDashboardPage from "./Pages/ADMINpages/HodDashboardPage";
@@ -69,6 +70,7 @@ const App = () => {
         <Route path="/" element={<Landingpage />} />
         <Route path="/about-us" element={<Aboutuspage />} />
         <Route path="/contact-us" element={<Contactuspage />} />
+      <Route path="/login" element={<LoginDrawer />} />
       </Route>
     </Routes>
   );

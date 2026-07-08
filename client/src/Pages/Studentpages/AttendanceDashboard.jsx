@@ -25,9 +25,7 @@ export default function AttendanceDashboard() {
             <AttendanceTable />
           </div>
 
-          <div>
-            <RecentAttendance />
-          </div>
+          
 
         </div>
 

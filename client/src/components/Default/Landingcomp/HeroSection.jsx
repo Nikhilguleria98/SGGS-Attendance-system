@@ -1,18 +1,21 @@
-import React from "react";
 import { motion } from "framer-motion";
 import {
-  Users,
-  UserSquare2,
-  ShieldCheck,
   ArrowRight,
   Building2,
   CalendarCheck,
+  ShieldCheck,
+  UserSquare2,
+  Users,
 } from "lucide-react";
+import React,{useState} from "react";
+import { useNavigate } from "react-router-dom";
+import LoginDrawer from "../../GlobalComp/logincomp/LoginDrawer";
 
 // Replace with your actual asset path
 import campusImage from "../../../assets/sggscampus.png";
-
 const HeroSection = () => {
+  const navigate=useNavigate();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -32,7 +35,6 @@ const HeroSection = () => {
 
   return (
     <div className="w-full bg-[#FAFAFA] font-sans flex flex-col min-h-screen overflow-x-hidden">
-      
       {/* ── 1. HERO MAIN AREA ── */}
       {/* Both top (pt-0) and bottom (pb-0) padding removed for a flush layout */}
       <section className="relative w-full pt-0 pb-0 flex-grow flex flex-col justify-center">
@@ -80,7 +82,7 @@ const HeroSection = () => {
                 variants={itemVariants}
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
               >
-                <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#c8102e] hover:bg-[#a00d24] text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-red-100 group">
+                <button onClick={() => setIsLoginOpen(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#c8102e] hover:bg-[#a00d24] text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-red-100 group">
                   Get Started 
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
@@ -176,8 +178,8 @@ const HeroSection = () => {
             <ArrowRight size={18} />
           </button>
         </div>
-
       </div>
+      <LoginDrawer isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 };
