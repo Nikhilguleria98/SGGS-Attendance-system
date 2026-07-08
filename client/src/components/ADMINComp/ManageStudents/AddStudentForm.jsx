@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import DeleteConfirmationModal from '../Common/DeleteConfirmationModal';
 
-const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batches = [], groups = [] }) => {
+const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batches = [], groups = [], isSaving }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,6 +17,7 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
   });
   
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -40,24 +42,21 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const processSave = () => {
     const finalData = { ...formData };
-    
     if (!finalData.password) {
       delete finalData.password;
     }
-    
-    if (initialData) {
-      if (!window.confirm("Are you sure you want to update this student's details?")) {
-        return;
-      }
-    }
-    
-    // Convert batch and group to arrays if backend expects them, else leave as strings based on how user's model is structured.
-    // For students, the backend might just accept string fields, or we might need to send them as arrays. We will send as is and the controller should handle it.
-    
     onSave(finalData);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (initialData) {
+      setShowConfirmModal(true);
+    } else {
+      processSave();
+    }
   };
 
   return (
@@ -230,18 +229,34 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
         <div className="flex items-center gap-4 mt-8">
           <button 
             type="button" onClick={onCancel}
-            className="px-6 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            disabled={isSaving}
+            className="px-6 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button 
             type="submit"
-            className="px-6 py-2.5 rounded-lg bg-[#c00021] text-sm font-medium text-white hover:bg-red-800 transition-colors"
+            disabled={isSaving}
+            className={`px-6 py-2.5 rounded-lg text-sm font-medium text-white transition-colors ${
+              isSaving ? 'bg-red-400 cursor-not-allowed' : 'bg-[#c00021] hover:bg-red-800'
+            }`}
           >
-            {initialData ? 'Save Changes' : 'Save Student'}
+            {isSaving ? (initialData ? 'Updating...' : 'Saving...') : (initialData ? 'Save Changes' : 'Save Student')}
           </button>
         </div>
       </form>
+
+      <DeleteConfirmationModal 
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={() => {
+          setShowConfirmModal(false);
+          processSave();
+        }}
+        isDeleting={isSaving}
+        title="Update Student"
+        message={`Are you sure you want to update the details for ${formData.firstName}?`}
+      />
     </div>
   );
 };

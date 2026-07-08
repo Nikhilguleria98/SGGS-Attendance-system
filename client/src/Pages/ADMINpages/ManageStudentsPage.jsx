@@ -153,7 +153,11 @@ export default function ManageStudentsPage() {
     setIsAddingStudent(true);
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSaveStudent = async (studentData) => {
+    if (isSaving) return;
+    setIsSaving(true);
     studentData.role = "student";
     
     try {
@@ -184,6 +188,8 @@ export default function ManageStudentsPage() {
     } catch (err) {
       console.error(err);
       toast.error("Server error");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -198,6 +204,7 @@ export default function ManageStudentsPage() {
             departments={departments}
             batches={batches}
             groups={groups}
+            isSaving={isSaving}
           />
         ) : (
           <div className="bg-white rounded-xl shadow-sm p-6">

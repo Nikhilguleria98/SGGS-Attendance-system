@@ -123,7 +123,11 @@ const StudentList = () => {
     }
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleSaveStudent = async (studentData) => {
+    if (isSaving) return;
+    setIsSaving(true);
     studentData.role = "student";
     
     try {
@@ -154,6 +158,8 @@ const StudentList = () => {
     } catch (err) {
       console.error(err);
       toast.error("Server error");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -166,6 +172,7 @@ const StudentList = () => {
         departments={departments}
         batches={batches}
         groups={groups}
+        isSaving={isSaving}
       />
     );
   }
