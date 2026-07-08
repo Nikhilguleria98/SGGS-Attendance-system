@@ -1,6 +1,6 @@
 import TeacherRow from "./TeacherRow";
 
-export default function TeacherTable({ teachers, onEdit, onDelete }) {
+export default function TeacherTable({ teachers, departments, onEdit, onDelete }) {
   const columns = ["#", "Teacher Name", "Email", "Department", "Batches", "Groups", "Subjects", "Actions"];
 
   return (
@@ -27,6 +27,7 @@ export default function TeacherTable({ teachers, onEdit, onDelete }) {
               <TeacherRow
                 key={teacher.id}
                 teacher={teacher}
+                departments={departments}
                 index={index}
                 onEdit={onEdit}
                 onDelete={onDelete}

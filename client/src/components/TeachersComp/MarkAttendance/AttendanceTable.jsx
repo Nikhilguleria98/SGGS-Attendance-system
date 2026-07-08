@@ -34,7 +34,7 @@ const AttendanceTable = ({ students, attendanceData, handleStatusChange }) => {
                           onClick={() => handleStatusChange(student._id, 'present')}
                           className={`px-6 py-2 rounded-lg font-medium transition-all ${
                             status === 'present' 
-                              ? 'bg-green-50 text-green-600 border border-green-200' 
+                              ? 'bg-green-600 text-white border border-green-600' 
                               : 'border border-gray-300 text-green-600 hover:bg-green-50'
                           }`}
                         >

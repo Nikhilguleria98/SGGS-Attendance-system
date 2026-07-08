@@ -185,7 +185,7 @@ const MarkAttendance = () => {
         <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8">
           <button 
             onClick={() => markAll('present')}
-            className="flex items-center gap-2 px-6 py-2 rounded-lg font-medium border border-green-300 text-green-700 hover:bg-green-50 transition-colors"
+            className="flex items-center gap-2 px-6 py-2 rounded-lg font-medium border border-green-600 bg-green-600 text-white hover:bg-green-700 transition-colors"
           >
             <Users size={18} />
             Mark All Present

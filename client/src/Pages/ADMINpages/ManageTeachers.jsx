@@ -25,6 +25,7 @@ export default function ManageTeachers() {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [teacherToEdit, setTeacherToEdit] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -134,6 +135,8 @@ export default function ManageTeachers() {
   };
 
   const handleSaveTeacher = async (teacherData) => {
+    if (isSaving) return;
+    setIsSaving(true);
     // Add role explicitly
     teacherData.role = "teacher";
 
@@ -166,6 +169,8 @@ export default function ManageTeachers() {
     } catch (err) {
       console.error(err);
       toast.error("Server error");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -196,6 +201,7 @@ export default function ManageTeachers() {
             <>
               <TeacherTable
                 teachers={paginatedTeachers}
+                departments={departments}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
@@ -227,6 +233,7 @@ export default function ManageTeachers() {
         departments={departments}
         batches={batches}
         groups={groups}
+        isSaving={isSaving}
       />
     </div>
   );

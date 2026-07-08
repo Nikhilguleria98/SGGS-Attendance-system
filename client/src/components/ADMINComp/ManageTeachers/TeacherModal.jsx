@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Trash2, Plus } from 'lucide-react';
 import MultiSelect from '../Common/MultiSelect';
 
-export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], groups = [] }) {
+export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], groups = [], isSaving }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -247,15 +247,19 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
         <div className="p-6 border-t border-gray-100 flex items-center gap-3">
           <button 
             onClick={onClose}
-            className="px-6 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            disabled={isSaving}
+            className="px-6 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button 
             onClick={handleSubmit}
-            className="px-6 py-2 rounded-lg bg-[#c00021] text-sm font-medium text-white hover:bg-red-800 transition-colors"
+            disabled={isSaving}
+            className={`px-6 py-2 rounded-lg text-sm font-medium text-white transition-colors ${
+              isSaving ? 'bg-red-400 cursor-not-allowed' : 'bg-[#c00021] hover:bg-red-800'
+            }`}
           >
-            {initialData ? 'Save Changes' : 'Save Teacher'}
+            {isSaving ? 'Saving...' : (initialData ? 'Save Changes' : 'Save Teacher')}
           </button>
         </div>
       </div>

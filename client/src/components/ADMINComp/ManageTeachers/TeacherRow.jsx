@@ -1,7 +1,7 @@
 import React from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
-export default function TeacherRow({ teacher, index, onEdit, onDelete }) {
+export default function TeacherRow({ teacher, departments, index, onEdit, onDelete }) {
   // Mock subjects if none exist to match Figma visually
   const subjects = (teacher.subjects && teacher.subjects.length > 0) ? teacher.subjects : [];
   
@@ -9,7 +9,13 @@ export default function TeacherRow({ teacher, index, onEdit, onDelete }) {
   const overflowCount = subjects.length - 3;
 
   const teacherName = teacher.firstName ? `${teacher.firstName} ${teacher.lastName || ""}` : teacher.name;
-  const deptName = typeof teacher.department === 'object' ? teacher.department?.name : teacher.department;
+  
+  const deptName = teacher.departments?.length > 0
+    ? teacher.departments.map(id => {
+        const d = departments?.find(dep => dep._id === id);
+        return d ? d.name : (typeof id === 'object' ? id.name : id);
+      }).join(", ")
+    : (typeof teacher.department === 'object' ? teacher.department?.name : teacher.department);
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 text-sm">
