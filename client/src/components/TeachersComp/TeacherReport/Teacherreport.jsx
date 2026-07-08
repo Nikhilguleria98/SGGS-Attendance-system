@@ -8,6 +8,7 @@ import Pagination from "./Pagination";
 
 const TeacherReport = () => {
   const [students, setStudents] = useState([]);
+  const [allFetchedStudents, setAllFetchedStudents] = useState([]); // Keeps unfiltered original data
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   
@@ -17,6 +18,7 @@ const TeacherReport = () => {
     batch: "",
     section: "",
     subject: "",
+    lecture: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,13 +52,21 @@ const TeacherReport = () => {
         const data = await res.json();
 
         if (data.success) {
-          // If the user searches by name/roll, we filter it locally for now if backend doesn't support text search
-          let results = data.data.data || [];
+          // Store raw fetched batch so FilterBar can extract lecture dropdown options properly
+          let fetched = data.data.data || [];
+          setAllFetchedStudents(fetched);
+
+          let results = fetched;
+          
+          // Apply local filtering since backend lacks these specific capabilities
           if (filters.search) {
              results = results.filter(s => 
                s.student.toLowerCase().includes(filters.search.toLowerCase()) || 
                s.rollNumber.toLowerCase().includes(filters.search.toLowerCase())
              );
+          }
+          if (filters.lecture) {
+             results = results.filter(s => s.delivered.toString() === filters.lecture.toString());
           }
 
           setStudents(results);
@@ -71,7 +81,7 @@ const TeacherReport = () => {
     };
 
     fetchReport();
-  }, [currentPage, filters.department, filters.batch, filters.section, filters.subject, filters.search]);
+  }, [currentPage, filters.department, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
 
   const handleChange = (e) => {
     setFilters({
@@ -80,10 +90,10 @@ const TeacherReport = () => {
     });
   };
 
-  // Reset to page 1 whenever filters change
+  // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters.department, filters.batch, filters.section, filters.subject, filters.search]);
+  }, [filters.department, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
 
   const avgAttendance =
     students.length > 0
@@ -104,7 +114,11 @@ const TeacherReport = () => {
       <div className="max-w-7xl mx-auto">
         <Header />
 
-        <FilterBar filters={filters} onChange={handleChange} />
+        <FilterBar 
+          filters={filters} 
+          onChange={handleChange} 
+          availableData={allFetchedStudents} 
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <StatCard

@@ -26,7 +26,7 @@ const ReportTable = ({ students }) => {
 
           <tbody>
             {students.map((student) => (
-              <ReportRow key={student._id} student={student} />
+              <ReportRow key={student.rollNumber} student={student} />
             ))}
           </tbody>
         </table>
