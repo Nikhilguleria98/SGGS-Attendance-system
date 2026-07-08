@@ -80,6 +80,11 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
     setAssignments(assignments.map(a => a.id === id ? { ...a, [field]: value } : a));
   };
 
+  const handleNameChange = (field, value) => {
+    if (/\d/.test(value)) return;
+    setFormData({ ...formData, [field]: value });
+  };
+
   const handleSubmit = () => {
     const allSubjects = [...new Set(assignments.flatMap(a => a.subjects))];
     const allBatches = [...new Set(assignments.flatMap(a => a.batches).filter(Boolean))];
@@ -118,7 +123,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
               <input 
                 type="text" 
                 value={formData.firstName}
-                onChange={e => setFormData({...formData, firstName: e.target.value})}
+                onChange={e => handleNameChange('firstName', e.target.value)}
                 placeholder="First name" 
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#162b4a]" 
               />
@@ -130,7 +135,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
               <input 
                 type="text" 
                 value={formData.lastName}
-                onChange={e => setFormData({...formData, lastName: e.target.value})}
+                onChange={e => handleNameChange('lastName', e.target.value)}
                 placeholder="Last name" 
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#162b4a]" 
               />

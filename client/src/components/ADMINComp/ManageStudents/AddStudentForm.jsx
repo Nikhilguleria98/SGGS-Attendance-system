@@ -39,7 +39,11 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
   }, [initialData, departments]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if ((name === 'firstName' || name === 'lastName') && /\d/.test(value)) {
+      return;
+    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const processSave = () => {
