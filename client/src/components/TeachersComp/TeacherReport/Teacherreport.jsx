@@ -60,9 +60,10 @@ const TeacherReport = () => {
           
           // Apply local filtering since backend lacks these specific capabilities
           if (filters.search) {
+             const searchLower = filters.search.toLowerCase();
              results = results.filter(s => 
-               s.student.toLowerCase().includes(filters.search.toLowerCase()) || 
-               s.rollNumber.toLowerCase().includes(filters.search.toLowerCase())
+               (s.student || "").toLowerCase().includes(searchLower) || 
+               (s.rollNumber || "").toLowerCase().includes(searchLower)
              );
           }
           if (filters.lecture) {
