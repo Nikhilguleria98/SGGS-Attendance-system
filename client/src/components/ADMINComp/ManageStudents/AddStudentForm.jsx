@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
 import DeleteConfirmationModal from '../Common/DeleteConfirmationModal';
 
 const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batches = [], groups = [], isSaving }) => {
@@ -41,6 +42,7 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
   const handleChange = (e) => {
     const { name, value } = e.target;
     if ((name === 'firstName' || name === 'lastName') && /\d/.test(value)) {
+      toast.error('Please enter string only', { id: 'name-val' });
       return;
     }
     setFormData({ ...formData, [name]: value });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Trash2, Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import MultiSelect from '../Common/MultiSelect';
 
 export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], groups = [], isSaving }) {
@@ -81,7 +82,10 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   };
 
   const handleNameChange = (field, value) => {
-    if (/\d/.test(value)) return;
+    if (/\d/.test(value)) {
+      toast.error('Please enter string only', { id: 'name-val' });
+      return;
+    }
     setFormData({ ...formData, [field]: value });
   };
 
