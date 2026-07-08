@@ -6,10 +6,6 @@ const commonFields = require("./commonFields");
 
 const userSchema = new mongoose.Schema(
     {
-        // ==========================
-        // Personal Information
-        // ==========================
-
         firstName: {
             type: String,
             required: true,

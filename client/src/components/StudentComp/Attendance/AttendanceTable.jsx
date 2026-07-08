@@ -1,204 +1,151 @@
-import { useState } from "react";
-import { FiFilter } from "react-icons/fi";
+import React, { useEffect, useState } from "react";
 
-const subjects = [
-  {
-    id: 1,
-    subject: "Data Structures",
-    faculty: "Dr. Aman Sharma",
-    delivered: 45,
-    attended: 43,
-    percentage: 95,
-  },
-  {
-    id: 2,
-    subject: "Database Management",
-    faculty: "Dr. Rahul Mehta",
-    delivered: 40,
-    attended: 36,
-    percentage: 90,
-  },
-  {
-    id: 3,
-    subject: "Operating System",
-    faculty: "Dr. Priya Singh",
-    delivered: 42,
-    attended: 32,
-    percentage: 76,
-  },
-  {
-    id: 4,
-    subject: "Computer Networks",
-    faculty: "Dr. Karan Gupta",
-    delivered: 38,
-    attended: 24,
-    percentage: 63,
-  },
-  {
-    id: 5,
-    subject: "Software Engineering",
-    faculty: "Dr. Neha Verma",
-    delivered: 39,
-    attended: 38,
-    percentage: 97,
-  },
-];
+const computePercentage = (attended, delivered) =>
+  delivered === 0 ? 0 : (attended / delivered) * 100;
 
-const getStatus = (value) => {
-  if (value >= 90)
-    return {
-      text: "Excellent",
-      bg: "bg-green-100",
-      color: "text-green-700",
+export default function AttendanceCards() {
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        // Replace this URL with your backend API
+        const response = await fetch("http://localhost:8080/api/attendance");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch attendance records");
+        }
+
+        const data = await response.json();
+        setSubjects(data);
+      } catch (err) {
+        setError(err.message || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
     };
 
-  if (value >= 75)
-    return {
-      text: "Good",
-      bg: "bg-blue-100",
-      color: "text-blue-700",
-    };
+    fetchAttendance();
+  }, []);
 
-  return {
-    text: "Low",
-    bg: "bg-red-100",
-    color: "text-red-700",
-  };
-};
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-60 text-lg font-medium">
+        Loading attendance...
+      </div>
+    );
+  }
 
-export default function AttendanceTable() {
- 
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-60 text-red-600 font-medium">
+        {error}
+      </div>
+    );
+  }
 
-  
   return (
-    <div className="bg-white rounded-3xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
-
+    <div className="w-full">
       {/* Header */}
-
-      <div className="flex justify-between items-center p-6 border-b border-[#E7EDF5]">
-
-        <div>
-
-          <h2 className="text-2xl font-bold text-[#17356D]">
-            Subject Attendance
-          </h2>
-
-          <p className="text-gray-500 mt-1">
-            Subject-wise attendance details
-          </p>
-
-        </div>
-
-       <div className="flex items-center gap-4">
-
-    <button className="flex items-center gap-2 h-11 px-5 rounded-xl border border-[#E2E8F0] hover:bg-gray-50 transition">
-
-        <FiFilter />
-
-        Filter
-
-    </button>
-
-</div>
-
+      <div className="mb-6 px-1">
+        <h2 className="text-2xl font-bold text-[#17356D]">
+          Subject Attendance
+        </h2>
+        <p className="text-gray-500 mt-1">
+          Subject-wise attendance details
+        </p>
       </div>
 
-      {/* Table */}
+      {/* Cards Grid */}
+      <div className="max-w-[1500px] mx-auto">
+        <div
+          className="grid gap-6"
+          style={{
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          }}
+        >
+          {subjects.map((item) => {
+            const absent = item.delivered - item.attended;
+            const percentage = computePercentage(
+              item.attended,
+              item.delivered
+            );
 
-      <div className="overflow-x-auto">
-
-        <table className="w-full">
-
-          <thead className="bg-[#F8FAFC]">
-
-            <tr>
-
-              <th className="px-6 py-4 text-left text-slate-600">
-                Subject
-              </th>
-
-              <th className="px-6 py-4 text-left text-slate-600">
-                Faculty
-              </th>
-
-              <th className="px-6 py-4 text-center text-slate-600">
-                Delivered
-              </th>
-
-              <th className="px-6 py-4 text-center text-slate-600">
-                Attended
-              </th>
-
-              <th className="px-6 py-4 text-center text-slate-600">
-                %
-              </th>
-
-              <th className="px-6 py-4 text-center text-slate-600">
-                Status
-              </th>
-
-              
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {subjects.map((item) => {
-
-              const status = getStatus(
-                item.percentage
-              );
-
-              return (
-                <tr
-                  key={item.id}
-                  className="border-t hover:bg-[#F8FAFC] transition"
-                >
-
-                  <td className="px-6 py-5 font-semibold text-slate-700">
+            return (
+              <div
+                key={item.id}
+                className="bg-white rounded-2xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)] overflow-hidden flex flex-col w-full"
+              >
+                {/* Title */}
+                <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-4 border-b border-[#EEF2F7]">
+                  <h3 className="font-semibold text-[#17356D] leading-snug">
                     {item.subject}
-                  </td>
+                  </h3>
 
-                  <td className="px-6 py-5 text-slate-600">
-                    {item.faculty}
-                  </td>
+                  <span className="font-semibold text-slate-700 whitespace-nowrap">
+                    {item.code}
+                  </span>
+                </div>
 
-                  <td className="px-6 py-5 text-center">
-                    {item.delivered}
-                  </td>
+                {/* Teacher & Dates */}
+                <div className="px-5 py-3 space-y-2 border-b border-[#EEF2F7] text-sm">
+                  <Row label="Teacher" value={item.teacher} />
 
-                  <td className="px-6 py-5 text-center">
-                    {item.attended}
-                  </td>
-
-                  <td className="px-6 py-5 text-center font-semibold">
-                    {item.percentage}%
-                  </td>
-
-                  <td className="px-6 py-5 text-center">
-
-                    <span
-                      className={`${status.bg} ${status.color} px-4 py-2 rounded-full text-sm font-semibold`}
-                    >
-                      {status.text}
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-slate-600">
+                    <span>
+                      <span className="font-semibold text-slate-700">
+                        From :
+                      </span>{" "}
+                      {item.fromDate}
                     </span>
 
-                  </td>
+                    <span>
+                      <span className="font-semibold text-slate-700">
+                        TO :
+                      </span>{" "}
+                      {item.toDate}
+                    </span>
+                  </div>
+                </div>
 
-                  
+                {/* Attendance */}
+                <div className="px-5 py-3 space-y-2 border-b border-[#EEF2F7] text-sm">
+                  <Row label="Delivered" value={item.delivered} />
+                  <Row label="Attended" value={item.attended} />
+                  <Row label="Absent" value={absent} />
+                </div>
 
-                </tr>
-              );
-            })}
+                {/* Percentage */}
+                <div className="px-5 py-3 text-sm">
+                  <Row
+                    label="Total Percentage"
+                    value={`${percentage.toFixed(2)}%`}
+                    valueClassName="font-semibold text-[#17356D]"
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-          </tbody>
-
-        </table>
-
+        {!loading && subjects.length === 0 && (
+          <div className="text-center text-gray-500 mt-10">
+            No attendance records found.
+          </div>
+        )}
       </div>
+    </div>
+  );
+}
 
+function Row({ label, value, valueClassName = "" }) {
+  return (
+    <div className="flex items-baseline gap-2 text-slate-600">
+      <span className="font-semibold text-slate-700">{label} :</span>
+
+      <span className={valueClassName}>{value}</span>
     </div>
   );
 }
