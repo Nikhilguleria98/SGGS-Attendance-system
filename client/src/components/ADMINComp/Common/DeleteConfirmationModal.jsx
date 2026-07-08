@@ -1,7 +1,7 @@
 import React from "react";
 import { AlertTriangle, X } from "lucide-react";
 
-const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title, message, isDeleting }) => {
   if (!isOpen) return null;
 
   return (
@@ -17,7 +17,8 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title, message })
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              disabled={isDeleting}
+              className="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
             >
               <X size={20} />
             </button>
@@ -28,15 +29,19 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title, message })
           <div className="flex justify-end gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              disabled={isDeleting}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
-              className="px-4 py-2 text-sm font-medium text-white bg-[#c00021] rounded-lg hover:bg-red-800 transition-colors"
+              disabled={isDeleting}
+              className={`px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors ${
+                isDeleting ? 'bg-red-400 cursor-not-allowed' : 'bg-[#c00021] hover:bg-red-800'
+              }`}
             >
-              Delete
+              {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         </div>

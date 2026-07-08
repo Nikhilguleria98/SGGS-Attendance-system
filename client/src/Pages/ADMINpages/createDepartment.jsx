@@ -10,6 +10,7 @@ import CreateBatchFormFields from "../../components/ADMINComp/createDepartment/C
 import CreateGroupFormFields from "../../components/ADMINComp/createDepartment/CreateGroupFormFields";
 import CreateSubjectFormFields from "../../components/ADMINComp/createDepartment/CreateSubjectFormFields";
 import toast from "react-hot-toast";
+import DeleteConfirmationModal from "../../components/ADMINComp/Common/DeleteConfirmationModal";
 
 const CreateDepartment = () => {
   const [activeTab, setActiveTab] = useState("departments"); // "departments", "batches", "groups"
@@ -27,6 +28,9 @@ const CreateDepartment = () => {
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
 
   const [editData, setEditData] = useState(null);
+  
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -87,8 +91,14 @@ const CreateDepartment = () => {
     setTimeout(() => setIsSubjectModalOpen(false), 1500);
   };
 
-  const handleDeleteItem = async (type, item) => {
-    if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+  const handleDeleteItem = (type, item) => {
+    setItemToDelete({ type, item });
+  };
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+    const { type, item } = itemToDelete;
+    setIsDeleting(true);
     try {
       const token = localStorage.getItem("token");
       const endpoint = type === "batch" ? "batches" : `${type}s`;
@@ -104,6 +114,10 @@ const CreateDepartment = () => {
         toast.error(`Failed to delete ${type}`);
       }
     } catch(e) { toast.error("Failed to delete"); }
+    finally {
+      setIsDeleting(false);
+      setItemToDelete(null);
+    }
   };
 
   return (
@@ -272,6 +286,15 @@ const CreateDepartment = () => {
           </div>
         )}
       </AnimatePresence>
+
+      <DeleteConfirmationModal
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={confirmDelete}
+        isDeleting={isDeleting}
+        title={`Delete ${itemToDelete?.type ? itemToDelete.type.charAt(0).toUpperCase() + itemToDelete.type.slice(1) : 'Item'}`}
+        message={`Are you sure you want to delete ${itemToDelete?.item?.name || 'this item'}? This action cannot be undone.`}
+      />
     </div>
   );
 };

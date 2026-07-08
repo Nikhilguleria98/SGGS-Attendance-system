@@ -28,6 +28,7 @@ const createUserSchema = z.object({
         department: z
             .string()
             .optional(),
+        departments: z.any().optional(),
         batches: z.any().optional(),
         groups: z.any().optional(),
         subjects: z.any().optional(),
@@ -64,6 +65,7 @@ const updateUserSchema = z.object({
         phone: z.string().optional(),
         designation: z.string().optional(),
         department: z.string().optional(),
+        departments: z.any().optional(),
         batches: z.any().optional(),
         groups: z.any().optional(),
         subjects: z.any().optional(),
