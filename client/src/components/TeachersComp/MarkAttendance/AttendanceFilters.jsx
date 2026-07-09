@@ -75,11 +75,21 @@ const AttendanceFilters = ({ filters, setFilters }) => {
             className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#162b4a] text-sm text-gray-700"
           >
             <option value="">Select Assignment</option>
-            {assignments.map(a => (
-              <option key={a._id} value={a._id}>
-                {a.department?.name} • {a.subject?.name || "Subject"} • {a.semester?.name || `Sem ${a.semester?.number ?? a.semester}`} • Sec {a.section}
-              </option>
-            ))}
+            {assignments.map(a => {
+              const semLabel = a.semester?.name 
+                ? a.semester.name 
+                : a.semester?.number 
+                  ? `Semester ${a.semester.number}`
+                  : a.semester 
+                    ? `Semester ${a.semester}` 
+                    : "Unknown Semester";
+
+              return (
+                <option key={a._id} value={a._id}>
+                  {a.department?.name} • {a.subject?.name || "Subject"} • {semLabel} • Sec {a.section}
+                </option>
+              );
+            })}
           </select>
         </div>
         

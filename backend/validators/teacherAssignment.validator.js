@@ -17,9 +17,8 @@ const createTeacherAssignmentSchema = z.object({
             .regex(objectId, "Invalid department id"),
 
         semester: z
-            .number()
-            .min(1)
-            .max(8),
+            .string()
+            .regex(objectId, "Invalid semester id"),
 
         batch: z
             .string()
@@ -60,9 +59,8 @@ const updateTeacherAssignmentSchema = z.object({
             .optional(),
 
         semester: z
-            .number()
-            .min(1)
-            .max(8)
+            .string()
+            .regex(objectId, "Invalid semester id")
             .optional(),
 
         batch: z

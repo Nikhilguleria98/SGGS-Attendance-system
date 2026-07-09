@@ -17,9 +17,8 @@ const createSubjectSchema = z.object({
             .regex(objectId, "Invalid department id"),
 
         semester: z
-            .number()
-            .min(1)
-            .max(8),
+            .string()
+            .regex(objectId, "Invalid semester id"),
 
         credits: z
             .number()
@@ -51,9 +50,8 @@ const updateSubjectSchema = z.object({
             .optional(),
 
         semester: z
-            .number()
-            .min(1)
-            .max(8)
+            .string()
+            .regex(objectId, "Invalid semester id")
             .optional(),
 
         credits: z
