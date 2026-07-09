@@ -1,29 +1,41 @@
 import React from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
-// Safe extraction helper to prevent [object Object] renders
-const extractNames = (val) => {
-  if (!val) return [];
-  if (!Array.isArray(val)) val = [val];
-  return val.map(v => (typeof v === 'object' && v !== null) ? (v.name || v.title || v.subject || String(v)) : String(v));
-};
-
 export default function TeacherRow({ teacher, departments, index, onEdit, onDelete }) {
-  const subjects = extractNames(teacher.subjects);
-  const displaySubjects = subjects.slice(0, 3);
-  const overflowCount = subjects.length - 3;
+  const assignments = teacher.assignments || [];
+
+  const uniqueDepartments = [...new Set(
+    assignments
+      .map(a => a.department?.name || a.department)
+      .filter(Boolean)
+  )];
+
+  const uniqueSubjects = [...new Set(
+    assignments
+      .map(a => a.subject?.name || a.subject)
+      .filter(Boolean)
+  )];
+
+  const uniqueBatches = [...new Set(
+    assignments
+      .map(a => a.batch)
+      .filter(Boolean)
+  )];
+
+  const uniqueGroups = [...new Set(
+    assignments
+      .map(a => a.section)
+      .filter(Boolean)
+  )];
+
+  const displaySubjects = uniqueSubjects.slice(0, 3);
+  const overflowCount = uniqueSubjects.length - 3;
 
   const teacherName = teacher.firstName ? `${teacher.firstName} ${teacher.lastName || ""}` : teacher.name;
   
-  const deptName = teacher.departments?.length > 0
-    ? teacher.departments.map(id => {
-        const d = departments?.find(dep => dep._id === id);
-        return d ? d.name : (typeof id === 'object' ? id.name : id);
-      }).join(", ")
-    : (typeof teacher.department === 'object' ? teacher.department?.name : teacher.department);
-
-  const batches = extractNames(teacher.batches || teacher.batch);
-  const groups = extractNames(teacher.groups || teacher.group);
+  const deptName = uniqueDepartments.length > 0 ? uniqueDepartments.join(", ") : "-";
+  const batches = uniqueBatches;
+  const groups = uniqueGroups;
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 text-sm">

@@ -29,5 +29,6 @@ app.use("/api/departments", departmentRoutes);
 app.use("/api/batches", batchRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/subjects", subjectRoutes);
+app.use("/api/attendance-summary", require("./routes/attendanceSummary.routes"));
 app.use(errorHandler);
 module.exports = app;

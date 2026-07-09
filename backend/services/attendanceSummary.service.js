@@ -18,51 +18,88 @@ class AttendanceSummaryService {
         return summary;
     }
 
+    /**
+     * Build a frontend-ready DTO for the student's attendance dashboard.
+     * Each item in the array represents one subject/assignment pair.
+     *
+     * The repository guarantees full population of:
+     *   assignment → teacher, assignment → subject → department
+     *
+     * No frontend calculations are required — percentage is pre-computed
+     * and always a numeric value in [0, 100].
+     *
+     * @param {string|ObjectId} studentId
+     * @returns {Promise<Array>}
+     */
     async getStudentDashboardData(studentId) {
         const summaries = await attendanceSummaryRepository.findByStudentId(studentId);
-        
+
         return summaries.map(summary => {
-            const percentage = summary.classesDelivered > 0 
-                ? ((summary.classesAttended / summary.classesDelivered) * 100).toFixed(2) 
+            const { assignment } = summary;
+            const subject    = assignment?.subject    ?? {};
+            const teacher    = assignment?.teacher    ?? {};
+            const department = subject?.department    ?? {};
+
+            const delivered = summary.classesDelivered ?? 0;
+            const attended  = summary.classesAttended  ?? 0;
+            const absent    = summary.classesAbsent    ?? 0;
+
+            const percentage = delivered > 0
+                ? parseFloat(((attended / delivered) * 100).toFixed(2))
                 : 0;
-            
+
             return {
-                subject: summary.assignment.subject.name,
-                subjectCode: summary.assignment.subject.code,
-                teacher: `${summary.assignment.teacher.firstName} ${summary.assignment.teacher.lastName}`.trim(),
-                delivered: summary.classesDelivered,
-                attended: summary.classesAttended,
-                absent: summary.classesAbsent,
-                percentage: parseFloat(percentage)
+                subject:      subject.name        ?? "",
+                subjectCode:  subject.code        ?? "",
+                teacher:      [teacher.firstName, teacher.lastName].filter(Boolean).join(" "),
+                department:   department.name     ?? "",
+                semester:     assignment?.semester ?? null,
+                batch:        assignment?.batch    ?? "",
+                section:      assignment?.section  ?? "",
+                academicYear: assignment?.academicYear ?? "",
+                delivered,
+                attended,
+                absent,
+                percentage,
             };
         });
     }
 
-    async getTeacherReportData(filters, options) {
-        const result = await attendanceSummaryRepository.getTeacherReport(filters, options);
+    async getTeacherReportData(teacherId, filters, options) {
+        const result = await attendanceSummaryRepository.getTeacherReport(teacherId, filters, options);
         
         const mappedData = result.data.map(summary => {
-            const percentage = summary.classesDelivered > 0 
-                ? ((summary.classesAttended / summary.classesDelivered) * 100).toFixed(2) 
+            const delivered = summary.classesDelivered ?? 0;
+            const attended = summary.classesAttended ?? 0;
+            const absent = summary.classesAbsent ?? 0;
+            
+            const percentage = delivered > 0 
+                ? parseFloat(((attended / delivered) * 100).toFixed(2)) 
                 : 0;
             
             return {
-                student: `${summary.studentDetails.firstName} ${summary.studentDetails.lastName || ''}`.trim(),
-                rollNumber: summary.studentDetails.rollNumber,
-                department: summary.departmentDetails ? summary.departmentDetails.name : "",
-                batch: summary.studentDetails.batch || "",
-                section: summary.studentDetails.section || "",
-                subject: summary.subjectDetails ? summary.subjectDetails.name : "",
-                delivered: summary.classesDelivered,
-                attended: summary.classesAttended,
-                absent: summary.classesAbsent,
-                percentage: parseFloat(percentage)
+                studentId: summary.studentDetails?._id ?? "",
+                student: `${summary.studentDetails?.firstName ?? ""} ${summary.studentDetails?.lastName ?? ""}`.trim(),
+                rollNumber: summary.studentDetails?.rollNumber ?? "",
+                department: summary.departmentDetails?.name ?? "",
+                semester: summary.assignmentDetails?.semester ?? null,
+                batch: summary.studentDetails?.batch ?? "",
+                section: summary.studentDetails?.section ?? "",
+                subject: summary.subjectDetails?.name ?? "",
+                teacher: `${summary.teacherDetails?.firstName ?? ""} ${summary.teacherDetails?.lastName ?? ""}`.trim(),
+                delivered,
+                attended,
+                absent,
+                percentage
             };
         });
 
         return {
-            ...result,
-            data: mappedData
+            data: mappedData,
+            page: result.page,
+            limit: result.limit,
+            total: result.total,
+            totalPages: result.totalPages
         };
     }
 

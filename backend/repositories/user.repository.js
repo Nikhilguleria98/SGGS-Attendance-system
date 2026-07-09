@@ -62,6 +62,17 @@ class UserRepository {
         return await User.findByIdAndDelete(id);
     }
 
+    async findStudentsByAssignment(departmentId, batch, section) {
+        return await User.find({
+            role: "student",
+            department: departmentId,
+            batch,
+            section,
+            isActive: true,
+        }).populate("department", "name code")
+          .sort({ firstName: 1 });
+    }
+
     async exists(filter) {
         return await User.exists(filter);
     }

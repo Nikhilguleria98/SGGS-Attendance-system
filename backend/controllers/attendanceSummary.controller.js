@@ -12,29 +12,62 @@ exports.getSummaries = asyncHandler(async (req, res) => {
     return success(res, 200, "Attendance summaries fetched successfully", summaries);
 });
 
+/**
+ * GET /api/attendance-summary/student-dashboard
+ *
+ * Returns the authenticated student's own attendance summary.
+ * Student ID is read exclusively from the JWT (req.user._id) — no route
+ * param is accepted here, preventing a student from querying another user.
+ */
 exports.getStudentDashboard = asyncHandler(async (req, res) => {
-    // Determine student ID: either from route param or logged in user
-    const studentId = req.params.studentId || req.user._id;
+    const studentId = req.user._id;
     const dashboardData = await attendanceSummaryService.getStudentDashboardData(studentId);
-    return success(res, 200, "Student dashboard data fetched successfully", dashboardData);
+    return success(res, 200, "Attendance summary fetched successfully", dashboardData);
 });
 
+/**
+ * GET /api/attendance-summary/student-dashboard/:studentId
+ *
+ * Allows a teacher or HOD to view any student's dashboard by ID.
+ * Protected separately in the router with authorize("hod", "teacher").
+ */
+exports.getStudentDashboardByParam = asyncHandler(async (req, res) => {
+    const dashboardData = await attendanceSummaryService.getStudentDashboardData(req.params.studentId);
+    return success(res, 200, "Attendance summary fetched successfully", dashboardData);
+});
+
+
 exports.getTeacherReport = asyncHandler(async (req, res) => {
-    const { department, batch, section, subject, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = req.query;
+    const { 
+        department, batch, section, subject, 
+        semester, academicYear, attendanceBelow, attendanceAbove, search, fromDate, toDate,
+        page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" 
+    } = req.query;
     
     const filters = {};
     if (department) filters.department = department;
     if (batch) filters.batch = batch;
     if (section) filters.section = section;
     if (subject) filters.subject = subject;
+    if (semester) filters.semester = semester;
+    if (academicYear) filters.academicYear = academicYear;
+    if (attendanceBelow) filters.attendanceBelow = attendanceBelow;
+    if (attendanceAbove) filters.attendanceAbove = attendanceAbove;
+    if (search) filters.search = search;
+    if (fromDate) filters.fromDate = fromDate;
+    if (toDate) filters.toDate = toDate;
 
     const sort = { [sortBy]: sortOrder === "asc" ? 1 : -1 };
     
-    const reportData = await attendanceSummaryService.getTeacherReportData(filters, {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        sort
-    });
+    const reportData = await attendanceSummaryService.getTeacherReportData(
+        req.user._id, 
+        filters, 
+        {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            sort
+        }
+    );
 
     return success(res, 200, "Teacher report fetched successfully", reportData);
 });

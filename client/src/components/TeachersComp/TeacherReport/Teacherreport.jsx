@@ -39,9 +39,10 @@ const TeacherReport = () => {
         if (filters.batch) params.append("batch", filters.batch);
         if (filters.section) params.append("section", filters.section);
         if (filters.subject) params.append("subject", filters.subject);
+        if (filters.search) params.append("search", filters.search);
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/attendance/report?${params.toString()}`,
+          `${import.meta.env.VITE_API_URL}/attendance-summary/teacher-report?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -52,20 +53,14 @@ const TeacherReport = () => {
         const data = await res.json();
 
         if (data.success) {
-          // Store raw fetched batch so FilterBar can extract lecture dropdown options properly
+          // Store raw fetched batch so FilterBar can extract dropdown options if needed
           let fetched = data.data.data || [];
           setAllFetchedStudents(fetched);
 
           let results = fetched;
           
-          // Apply local filtering since backend lacks these specific capabilities
-          if (filters.search) {
-             const searchLower = filters.search.toLowerCase();
-             results = results.filter(s => 
-               (s.student || "").toLowerCase().includes(searchLower) || 
-               (s.rollNumber || "").toLowerCase().includes(searchLower)
-             );
-          }
+          // Apply local filtering for lecture (since lecture filter isn't mapped specifically in backend atm,
+          // though we could add classesDelivered filtering if needed. For now we keep this local filter.)
           if (filters.lecture) {
              results = results.filter(s => s.delivered.toString() === filters.lecture.toString());
           }

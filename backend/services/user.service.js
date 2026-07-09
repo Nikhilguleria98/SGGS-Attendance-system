@@ -93,13 +93,46 @@ class UserService {
         return user;
     }
 
-    async getAllUsers(role) {
+    async _attachTeacherAssignmentSummaries(users) {
+        const teacherAssignmentService = require("./teacherAssignment.service");
+        
+        // Filter out non-teachers just in case
+        const teachers = users.filter(u => u.role === Roles.TEACHER);
+        if (teachers.length === 0) return users;
 
-        if (role) {
-            return await userRepository.findByRole(role);
+        const teacherIds = teachers.map(t => t._id);
+        const summaries = await teacherAssignmentService.getTeacherAssignmentSummary(teacherIds);
+
+        // Convert mongoose documents to plain objects so we can append custom properties
+        const plainUsers = users.map(u => (u.toObject ? u.toObject() : u));
+
+        for (const user of plainUsers) {
+            if (user.role === Roles.TEACHER && summaries[user._id.toString()]) {
+                const summary = summaries[user._id.toString()];
+                user.assignments = summary.assignments;
+                user.departments = summary.departments;
+                user.batches = summary.batches;
+                user.groups = summary.groups;
+                user.subjects = summary.subjects;
+            }
         }
-    
-        return await userRepository.findAll();
+        
+        return plainUsers;
+    }
+
+    async getAllUsers(role) {
+        let users;
+        if (role) {
+            users = await userRepository.findByRole(role);
+        } else {
+            users = await userRepository.findAll();
+        }
+
+        if (!role || role === Roles.TEACHER) {
+            users = await this._attachTeacherAssignmentSummaries(users);
+        }
+
+        return users;
     }
 
     async getUserById(id) {
@@ -162,7 +195,8 @@ class UserService {
     }
     
     async getTeachers() {
-        return await userRepository.findByRole(Roles.TEACHER);
+        const teachers = await userRepository.findByRole(Roles.TEACHER);
+        return await this._attachTeacherAssignmentSummaries(teachers);
     }
     
     async getHods() {
