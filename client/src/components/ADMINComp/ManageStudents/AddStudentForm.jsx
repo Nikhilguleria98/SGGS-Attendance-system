@@ -16,6 +16,18 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
     group: '',
     semester: ''
   });
+
+  const [semesters, setSemesters] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    fetch(`${import.meta.env.VITE_API_URL}/semesters`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setSemesters(d.data); })
+      .catch(console.error);
+  }, []);
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -32,7 +44,9 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
         department: typeof initialData.department === 'object' ? initialData.department?._id : initialData.department || '',
         batch: initialData.batch || initialData.batches?.[0] || '',
         group: initialData.group || initialData.section || initialData.groups?.[0] || '',
-        semester: initialData.semester || ''
+        semester: initialData.semester
+          ? (typeof initialData.semester === 'object' ? initialData.semester._id : initialData.semester)
+          : ''
       });
     } else if (departments.length > 0) {
       setFormData(prev => ({ ...prev, department: departments[0]._id }));
@@ -218,14 +232,9 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
               >
                 <option value="">Select semester / year</option>
-                <option value="1">Semester 1</option>
-                <option value="2">Semester 2</option>
-                <option value="3">Semester 3</option>
-                <option value="4">Semester 4</option>
-                <option value="5">Semester 5</option>
-                <option value="6">Semester 6</option>
-                <option value="7">Semester 7</option>
-                <option value="8">Semester 8</option>
+                {semesters.map((sem) => (
+                  <option key={sem._id} value={sem._id}>{sem.name}</option>
+                ))}
               </select>
             </div>
           </div>

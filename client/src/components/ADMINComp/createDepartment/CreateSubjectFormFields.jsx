@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -6,12 +6,25 @@ import { useNavigate } from "react-router-dom";
 const CreateSubjectFormFields = ({ onSubmitSuccess, initialData, departments }) => {
   const navigate = useNavigate();
 
+  const [semesters, setSemesters] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    fetch(`${import.meta.env.VITE_API_URL}/semesters`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setSemesters(d.data); })
+      .catch(console.error);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: initialData ? initialData.name : "",
     code: initialData ? initialData.code : "",
     department: initialData && initialData.department ? 
                 (typeof initialData.department === 'object' ? initialData.department._id : initialData.department) : "",
-    semester: initialData ? initialData.semester : 1,
+    semester: initialData && initialData.semester ? 
+              (typeof initialData.semester === 'object' ? initialData.semester._id : initialData.semester) : "",
     credits: initialData ? initialData.credits : 4,
     description: initialData && initialData.description ? initialData.description : "",
   });
@@ -23,7 +36,8 @@ const CreateSubjectFormFields = ({ onSubmitSuccess, initialData, departments }) 
         code: initialData.code || "",
         department: initialData.department ? 
                     (typeof initialData.department === 'object' ? initialData.department._id : initialData.department) : "",
-        semester: initialData.semester || 1,
+        semester: initialData.semester ? 
+                  (typeof initialData.semester === 'object' ? initialData.semester._id : initialData.semester) : "",
         credits: initialData.credits || 4,
         description: initialData.description || "",
       });
@@ -54,7 +68,7 @@ const CreateSubjectFormFields = ({ onSubmitSuccess, initialData, departments }) 
     if (!formData.name.trim()) newErrors.name = "Subject Name is required.";
     if (!formData.code.trim()) newErrors.code = "Subject Code is required.";
     if (!formData.department) newErrors.department = "Department is required.";
-    if (!formData.semester || formData.semester < 1 || formData.semester > 8) newErrors.semester = "Valid Semester (1-8) is required.";
+    if (!formData.semester) newErrors.semester = "Semester is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -76,7 +90,6 @@ const CreateSubjectFormFields = ({ onSubmitSuccess, initialData, departments }) 
         },
         body: JSON.stringify({
           ...formData,
-          semester: Number(formData.semester),
           credits: Number(formData.credits)
         })
       });
@@ -128,7 +141,7 @@ const CreateSubjectFormFields = ({ onSubmitSuccess, initialData, departments }) 
                 type="button"
                 onClick={() => {
                   setIsSuccess(false);
-                  setFormData({ name: "", code: "", department: "", semester: 1, credits: 4, description: "" });
+                  setFormData({ name: "", code: "", department: "", semester: "", credits: 4, description: "" });
                 }}
                 className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-xl text-sm transition-all cursor-pointer"
               >
@@ -247,21 +260,23 @@ const CreateSubjectFormFields = ({ onSubmitSuccess, initialData, departments }) 
                 Semester
               </label>
               <div className="relative">
-                <input
-                  type="number"
+                <select
                   id="semester"
                   name="semester"
-                  min="1"
-                  max="8"
                   disabled={isLoading}
                   value={formData.semester}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-4 transition-all duration-200 outline-none ${
+                  className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 focus:bg-white focus:ring-4 transition-all duration-200 outline-none ${
                     errors.semester
                       ? "border-red-300 focus:ring-red-500/10 focus:border-red-500"
                       : "border-gray-200 focus:ring-[#00529b]/10 focus:border-[#00529b]"
                   }`}
-                />
+                >
+                  <option value="">Select a Semester</option>
+                  {semesters.map((sem) => (
+                    <option key={sem._id} value={sem._id}>{sem.name}</option>
+                  ))}
+                </select>
               </div>
               {errors.semester && (
                 <span className="text-xs text-red-500 flex items-center gap-1 mt-0.5">

@@ -1,4 +1,5 @@
 const userRepository = require("../repositories/user.repository");
+const semesterRepository = require("../repositories/semester.repository");
 const ApiError = require("../utils/ApiError");
 const Roles = require("../constants/roles");
 class UserService {
@@ -54,6 +55,13 @@ class UserService {
 
         if (existingUser) {
             throw new ApiError(409, "Email already exists");
+        }
+
+        if (userData.semester) {
+            const semester = await semesterRepository.findById(userData.semester);
+            if (!semester || !semester.isActive) {
+                throw new ApiError(404, "Active Semester not found");
+            }
         }
 
         // Validate assignments before creating the user
@@ -150,6 +158,13 @@ class UserService {
         const user = await User.findById(id);
         if (!user) {
             throw new ApiError(404, "User not found");
+        }
+
+        if (updateData.semester) {
+            const semester = await semesterRepository.findById(updateData.semester);
+            if (!semester || !semester.isActive) {
+                throw new ApiError(404, "Active Semester not found");
+            }
         }
 
         // If assignments are being updated

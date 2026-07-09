@@ -14,6 +14,7 @@ const columns = [
   "Name",
   "rollNo",
   "Department",
+  "Semester",
   "Batch",
   "Group",
   "Actions",

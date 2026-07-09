@@ -22,7 +22,8 @@ const teacherAssignmentSchema = new mongoose.Schema(
         },
 
         semester: {
-            type: Number,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Semester",
             required: true,
         },
 

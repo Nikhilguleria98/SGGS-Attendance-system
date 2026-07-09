@@ -20,34 +20,47 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   });
 
   const [subjectsOptions, setSubjectsOptions] = useState([]);
+  const [semestersOptions, setSemestersOptions] = useState([]);
 
   // State for the dynamic subject assignment rows
   const [assignments, setAssignments] = useState([
-    { id: Date.now(), batches: [], groups: [], subjects: [] }
+    { id: Date.now(), semester: '', batches: [], groups: [], subjects: [] }
   ]);
 
   useEffect(() => {
     if (isOpen) {
-      // Fetch dynamic subjects
-      const fetchSubjects = async () => {
+      const fetchSubjectsAndSemesters = async () => {
         try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`${import.meta.env.VITE_API_URL}/subjects`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const data = await res.json();
-          if (data.success) {
-            setSubjectsOptions(data.data.map(sub => ({
+          
+          const [subRes, semRes] = await Promise.all([
+            fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } }),
+            fetch(`${import.meta.env.VITE_API_URL}/semesters`, { headers: { Authorization: `Bearer ${token}` } })
+          ]);
+          
+          const subData = await subRes.json();
+          const semData = await semRes.json();
+          
+          if (subData.success) {
+            setSubjectsOptions(subData.data.map(sub => ({
               label: sub.name,
-              value: sub.name
+              value: sub.name,
+              semester: typeof sub.semester === 'object' ? sub.semester._id : sub.semester,
+              department: typeof sub.department === 'object' ? sub.department._id : sub.department,
+            })));
+          }
+          if (semData.success) {
+            setSemestersOptions(semData.data.map(sem => ({
+              label: sem.name,
+              value: sem._id
             })));
           }
         } catch (error) {
-          console.error("Failed to fetch subjects", error);
+          console.error("Failed to fetch subjects or semesters", error);
         }
       };
       
-      fetchSubjects();
+      fetchSubjectsAndSemesters();
 
       if (initialData) {
         setFormData({
@@ -65,6 +78,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
         if (initialData.assignments && Array.isArray(initialData.assignments) && initialData.assignments.length > 0) {
           initialAssignments = initialData.assignments.map(a => ({
              id: a._id || Math.random(),
+             semester: a.semester ? (typeof a.semester === 'object' ? a.semester._id : a.semester) : '',
              batches: extractNames(a.batches || a.batch),
              groups: extractNames(a.groups || a.group),
              subjects: extractNames(a.subjects || a.subject)
@@ -73,6 +87,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
           // Fallback flattening mechanism for single/flat arrays
           initialAssignments = [{ 
             id: Date.now(), 
+            semester: initialData.semester ? (typeof initialData.semester === 'object' ? initialData.semester._id : initialData.semester) : '',
             batches: extractNames(initialData.batches), 
             groups: extractNames(initialData.groups), 
             subjects: extractNames(initialData.subjects) 
@@ -82,7 +97,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
       } else {
         setFormData({ firstName: '', lastName: '', email: '', password: '', departments: [] });
-        setAssignments([{ id: Date.now(), batches: [], groups: [], subjects: [] }]);
+        setAssignments([{ id: Date.now(), semester: '', batches: [], groups: [], subjects: [] }]);
       }
     }
   }, [isOpen, initialData, departments]);
@@ -90,7 +105,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   if (!isOpen) return null;
 
   const handleAddAssignment = () => {
-    setAssignments([...assignments, { id: Date.now(), batches: [], groups: [], subjects: [] }]);
+    setAssignments([...assignments, { id: Date.now(), semester: '', batches: [], groups: [], subjects: [] }]);
   };
 
   const handleRemoveAssignment = (id) => {
@@ -100,7 +115,16 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   };
 
   const updateAssignment = (id, field, value) => {
-    setAssignments(assignments.map(a => a.id === id ? { ...a, [field]: value } : a));
+    setAssignments(assignments.map(a => {
+      if (a.id === id) {
+        if (field === 'semester') {
+          // Clear selected subjects if semester changes
+          return { ...a, [field]: value, subjects: [] };
+        }
+        return { ...a, [field]: value };
+      }
+      return a;
+    }));
   };
 
   const handleNameChange = (field, value) => {
@@ -215,9 +239,10 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/50">
                     <th className="py-3 px-4 font-semibold text-gray-700 w-12 text-center">#</th>
+                    <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Semester <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Batch <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Group <span className="text-red-500">*</span></th>
-                    <th className="py-3 px-4 font-semibold text-gray-700 w-2/5">Subjects <span className="text-red-500">*</span></th>
+                    <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Subjects <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-16 text-center">Actions</th>
                   </tr>
                 </thead>
@@ -225,6 +250,18 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                   {assignments.map((assignment, index) => (
                     <tr key={assignment.id} className="border-b border-gray-50 last:border-none">
                       <td className="py-3 px-4 text-center font-medium text-gray-500">{index + 1}</td>
+                      <td className="py-3 px-2">
+                        <select
+                          value={assignment.semester}
+                          onChange={(e) => updateAssignment(assignment.id, 'semester', e.target.value)}
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#162b4a] bg-white"
+                        >
+                          <option value="">Select semester</option>
+                          {semestersOptions.map(sem => (
+                            <option key={sem.value} value={sem.value}>{sem.label}</option>
+                          ))}
+                        </select>
+                      </td>
                       <td className="py-3 px-2">
                         <MultiSelect 
                           options={batches.map(b => ({ label: b.name, value: b.name }))}
@@ -244,7 +281,10 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
                       <td className="py-3 px-2">
                         <MultiSelect 
-                          options={subjectsOptions.length ? subjectsOptions : [{label: 'Loading...', value: ''}]}
+                          options={subjectsOptions.filter(s => 
+                            (!formData.departments.length || formData.departments.includes(s.department)) &&
+                            (!assignment.semester || s.semester === assignment.semester)
+                          )}
                           selected={assignment.subjects}
                           onChange={(val) => updateAssignment(assignment.id, 'subjects', val)}
                           placeholder="Select subjects"

@@ -10,6 +10,7 @@ class TeacherAssignmentRepository {
             .populate("teacher", "firstName lastName email employeeId")
             .populate("subject", "name code semester")
             .populate("department", "name code")
+            .populate("semester", "name number")
             .sort({
                 createdAt: -1,
             });
@@ -19,7 +20,8 @@ class TeacherAssignmentRepository {
         return await TeacherAssignment.findById(id)
             .populate("teacher", "firstName lastName email employeeId")
             .populate("subject", "name code semester")
-            .populate("department", "name code");
+            .populate("department", "name code")
+            .populate("semester", "name number");
     }
 
     async findByTeacher(teacherId) {
@@ -28,7 +30,8 @@ class TeacherAssignmentRepository {
             isActive: true,
         })
             .populate("subject", "name code semester")
-            .populate("department", "name code");
+            .populate("department", "name code")
+            .populate("semester", "name number");
     }
 
     async findAssignmentsByTeachers(teacherIds) {
@@ -37,7 +40,8 @@ class TeacherAssignmentRepository {
             isActive: true,
         })
             .populate("subject", "name code semester")
-            .populate("department", "name code");
+            .populate("department", "name code")
+            .populate("semester", "name number");
     }
 
     async findByDepartment(departmentId) {
@@ -46,7 +50,8 @@ class TeacherAssignmentRepository {
             isActive: true,
         })
             .populate("teacher", "firstName lastName employeeId")
-            .populate("subject", "name code semester");
+            .populate("subject", "name code semester")
+            .populate("semester", "name number");
     }
 
     async updateById(id, data) {
@@ -60,7 +65,8 @@ class TeacherAssignmentRepository {
         )
             .populate("teacher", "firstName lastName employeeId")
             .populate("subject", "name code semester")
-            .populate("department", "name code");
+            .populate("department", "name code")
+            .populate("semester", "name number");
     }
 
     async deleteById(id) {

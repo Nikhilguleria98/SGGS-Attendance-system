@@ -17,6 +17,7 @@ const ReportTable = ({ students }) => {
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Student</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Roll No</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Department</th>
+              <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Semester</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Batch</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Section</th>
               <th className="px-6 py-4 text-left text-sm font-bold text-gray-900">Subject</th>

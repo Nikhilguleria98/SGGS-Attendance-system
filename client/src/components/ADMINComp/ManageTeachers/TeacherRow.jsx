@@ -16,6 +16,12 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
       .filter(Boolean)
   )];
 
+  const uniqueSemesters = [...new Set(
+    assignments
+      .map(a => a.semester?.name || `Sem ${a.semester?.number ?? a.semester}`)
+      .filter(s => s && s !== 'Sem undefined')
+  )];
+
   const uniqueBatches = [...new Set(
     assignments
       .map(a => a.batch)
@@ -43,6 +49,9 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
       <td className="py-4 px-4 font-bold text-[#162b4a]">{teacherName}</td>
       <td className="py-4 px-4 text-gray-600">{teacher.email}</td>
       <td className="py-4 px-4 text-gray-600">{deptName || "-"}</td>
+      <td className="py-4 px-4 text-gray-600">
+        {uniqueSemesters.length > 0 ? uniqueSemesters.join(", ") : "-"}
+      </td>
       <td className="py-4 px-4 text-gray-600">
         {batches.length > 0 ? batches.join(", ") : "-"}
       </td>

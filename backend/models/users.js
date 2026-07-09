@@ -76,9 +76,8 @@ const userSchema = new mongoose.Schema(
         },
 
         semester: {
-            type: Number,
-            min: 1,
-            max: 8,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Semester",
         },
 
         section: {

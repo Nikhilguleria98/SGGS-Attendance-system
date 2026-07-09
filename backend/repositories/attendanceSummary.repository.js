@@ -84,6 +84,7 @@ class AttendanceSummaryRepository {
                         select: "name code department semester",
                         populate: { path: "department", select: "name" },
                     },
+                    { path: "semester", select: "name number" },
                 ],
             });
     }
@@ -178,6 +179,19 @@ class AttendanceSummaryRepository {
             $unwind: { path: "$subjectDetails", preserveNullAndEmptyArrays: true },
         });
 
+        // Lookup Semester inside Assignment
+        pipeline.push({
+            $lookup: {
+                from: "semesters",
+                localField: "assignmentDetails.semester",
+                foreignField: "_id",
+                as: "semesterDetails",
+            },
+        });
+        pipeline.push({
+            $unwind: { path: "$semesterDetails", preserveNullAndEmptyArrays: true },
+        });
+
         // Lookup Student
         pipeline.push({
             $lookup: {
@@ -236,7 +250,7 @@ class AttendanceSummaryRepository {
             matchStage["studentDetails.section"] = filters.section;
         }
         if (filters.semester) {
-            matchStage["assignmentDetails.semester"] = parseInt(filters.semester, 10);
+            matchStage["assignmentDetails.semester"] = new Types.ObjectId(filters.semester);
         }
         if (filters.academicYear) {
             matchStage["assignmentDetails.academicYear"] = filters.academicYear;

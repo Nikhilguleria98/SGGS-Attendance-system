@@ -15,6 +15,7 @@ const TeacherReport = () => {
   const [filters, setFilters] = useState({
     search: "",
     department: "",
+    semester: "",
     batch: "",
     section: "",
     subject: "",
@@ -36,6 +37,7 @@ const TeacherReport = () => {
         });
         
         if (filters.department) params.append("department", filters.department);
+        if (filters.semester) params.append("semester", filters.semester);
         if (filters.batch) params.append("batch", filters.batch);
         if (filters.section) params.append("section", filters.section);
         if (filters.subject) params.append("subject", filters.subject);
@@ -77,7 +79,7 @@ const TeacherReport = () => {
     };
 
     fetchReport();
-  }, [currentPage, filters.department, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
+  }, [currentPage, filters.department, filters.semester, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
 
   const handleChange = (e) => {
     setFilters({
@@ -89,7 +91,7 @@ const TeacherReport = () => {
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters.department, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
+  }, [filters.department, filters.semester, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
 
   const avgAttendance =
     students.length > 0

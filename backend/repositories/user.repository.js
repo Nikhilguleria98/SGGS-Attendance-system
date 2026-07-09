@@ -10,6 +10,7 @@ class UserRepository {
             role,
             isActive: true,
         }).populate("department", "name code")
+          .populate("semester", "name number")
           .populate({
               path: "assignments",
               populate: [
@@ -23,6 +24,7 @@ class UserRepository {
     async findById(id) {
         return await User.findById(id)
             .populate("department", "name code")
+            .populate("semester", "name number")
             .populate({
                 path: "assignments",
                 populate: [
@@ -49,6 +51,7 @@ class UserRepository {
             new: true,
             runValidators: true,
         }).populate("department", "name code")
+          .populate("semester", "name number")
           .populate({
               path: "assignments",
               populate: [
@@ -70,6 +73,7 @@ class UserRepository {
             section,
             isActive: true,
         }).populate("department", "name code")
+          .populate("semester", "name number")
           .sort({ firstName: 1 });
     }
 

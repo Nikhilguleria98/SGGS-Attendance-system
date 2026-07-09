@@ -1,5 +1,6 @@
 const subjectRepository = require("../repositories/subject.repository");
 const departmentRepository = require("../repositories/department.repository");
+const semesterRepository = require("../repositories/semester.repository");
 
 const ApiError = require("../utils/ApiError");
 
@@ -39,6 +40,12 @@ class SubjectService {
                 404,
                 "Department not found"
             );
+        }
+
+        // Check semester
+        const semester = await semesterRepository.findById(data.semester);
+        if (!semester || !semester.isActive) {
+            throw new ApiError(404, "Active Semester not found");
         }
 
         return await subjectRepository.create(data);
@@ -120,6 +127,13 @@ class SubjectService {
                     404,
                     "Department not found"
                 );
+            }
+        }
+
+        if (data.semester) {
+            const semester = await semesterRepository.findById(data.semester);
+            if (!semester || !semester.isActive) {
+                throw new ApiError(404, "Active Semester not found");
             }
         }
 

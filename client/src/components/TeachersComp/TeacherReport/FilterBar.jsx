@@ -6,13 +6,14 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
   const [subjects, setSubjects] = useState([]);
   const [batches, setBatches] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [semesters, setSemesters] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const fetchFilterOptions = async () => {
+      const fetchFilterOptions = async () => {
       const token = localStorage.getItem("token");
       try {
-        const [deptsRes, subsRes, batchesRes, groupsRes] = await Promise.all([
+        const [deptsRes, subsRes, batchesRes, groupsRes, semestersRes] = await Promise.all([
           fetch(`${import.meta.env.VITE_API_URL}/departments`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
@@ -23,6 +24,9 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${import.meta.env.VITE_API_URL}/semesters`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -41,6 +45,10 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
           const groupsData = await groupsRes.json();
           if (groupsData.success) setGroups(groupsData.data);
         }
+        if (semestersRes && semestersRes.ok) {
+          const semestersData = await semestersRes.json();
+          if (semestersData.success) setSemesters(semestersData.data);
+        }
       } catch (err) {
         console.error("Failed to fetch filter options", err);
       }
@@ -49,7 +57,7 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
     fetchFilterOptions();
   }, []);
 
-  const activeFilterCount = ["department", "batch", "section", "subject", "lecture"].filter(
+  const activeFilterCount = ["department", "batch", "section", "subject", "semester", "lecture"].filter(
     (key) => filters[key]
   ).length;
 
@@ -110,7 +118,24 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               ))}
             </select>
           </div>
-
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">
+              Semester
+            </label>
+            <select
+              name="semester"
+              value={filters.semester || ""}
+              onChange={onChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+            >
+              <option value="">All Semesters</option>
+              {semesters.map((s) => (
+                <option key={s._id} value={s._id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               Batch

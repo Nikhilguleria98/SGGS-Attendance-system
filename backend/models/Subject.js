@@ -24,10 +24,9 @@ const subjectSchema = new mongoose.Schema(
         },
 
         semester: {
-            type: Number,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Semester",
             required: true,
-            min: 1,
-            max: 8,
         },
 
         credits: {

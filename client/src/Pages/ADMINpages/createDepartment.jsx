@@ -5,10 +5,12 @@ import DepartmentTable from "../../components/ADMINComp/createDepartment/Departm
 import BatchTable from "../../components/ADMINComp/createDepartment/BatchTable";
 import GroupTable from "../../components/ADMINComp/createDepartment/GroupTable";
 import SubjectTable from "../../components/ADMINComp/createDepartment/SubjectTable";
+import SemesterTable from "../../components/ADMINComp/createDepartment/SemesterTable";
 import CreateDepartmentFormFields from "../../components/ADMINComp/createDepartment/CreateDepartmentFormFields";
 import CreateBatchFormFields from "../../components/ADMINComp/createDepartment/CreateBatchFormFields";
 import CreateGroupFormFields from "../../components/ADMINComp/createDepartment/CreateGroupFormFields";
 import CreateSubjectFormFields from "../../components/ADMINComp/createDepartment/CreateSubjectFormFields";
+import CreateSemesterFormFields from "../../components/ADMINComp/createDepartment/CreateSemesterFormFields";
 import toast from "react-hot-toast";
 import DeleteConfirmationModal from "../../components/ADMINComp/Common/DeleteConfirmationModal";
 
@@ -19,6 +21,7 @@ const CreateDepartment = () => {
   const [batches, setBatches] = useState([]);
   const [groups, setGroups] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [semesters, setSemesters] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
   
@@ -26,6 +29,7 @@ const CreateDepartment = () => {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
+  const [isSemesterModalOpen, setIsSemesterModalOpen] = useState(false);
 
   const [editData, setEditData] = useState(null);
   
@@ -40,21 +44,23 @@ const CreateDepartment = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const [deptRes, batchRes, groupRes, subjectRes] = await Promise.all([
+      const [deptRes, batchRes, groupRes, subjectRes, semesterRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/batches`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/groups`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } })
+        fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/semesters`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
-      const [deptData, batchData, groupData, subjectData] = await Promise.all([
-        deptRes.json(), batchRes.json(), groupRes.json(), subjectRes.json()
+      const [deptData, batchData, groupData, subjectData, semesterData] = await Promise.all([
+        deptRes.json(), batchRes.json(), groupRes.json(), subjectRes.json(), semesterRes.json()
       ]);
 
       if (deptData.success) setDepartments(deptData.data);
       if (batchData.success) setBatches(batchData.data);
       if (groupData.success) setGroups(groupData.data);
       if (subjectData.success) setSubjects(subjectData.data);
+      if (semesterData.success) setSemesters(semesterData.data);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to load data.");
@@ -91,6 +97,13 @@ const CreateDepartment = () => {
     setTimeout(() => setIsSubjectModalOpen(false), 1500);
   };
 
+  const handleSemesterSuccess = (newSemester) => {
+    toast.success(editData ? "Semester updated successfully!" : "Semester created successfully!");
+    if (editData) { setSemesters(prev => prev.map(s => s._id === newSemester._id ? newSemester : s)); }
+    else { setSemesters((prev) => [...prev, newSemester].sort((a, b) => a.number - b.number)); }
+    setTimeout(() => setIsSemesterModalOpen(false), 1500);
+  };
+
   const handleDeleteItem = (type, item) => {
     setItemToDelete({ type, item });
   };
@@ -101,7 +114,7 @@ const CreateDepartment = () => {
     setIsDeleting(true);
     try {
       const token = localStorage.getItem("token");
-      const endpoint = type === "batch" ? "batches" : `${type}s`;
+      const endpoint = type === "batch" ? "batches" : type === "semester" ? "semesters" : `${type}s`;
       const url = `${import.meta.env.VITE_API_URL}/${endpoint}/${item._id}`;
       const res = await fetch(url, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
@@ -109,6 +122,7 @@ const CreateDepartment = () => {
         if (type === "batch") setBatches(prev => prev.filter(d => d._id !== item._id));
         if (type === "group") setGroups(prev => prev.filter(d => d._id !== item._id));
         if (type === "subject") setSubjects(prev => prev.filter(d => d._id !== item._id));
+        if (type === "semester") setSemesters(prev => prev.filter(d => d._id !== item._id));
         toast.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted!`);
       } else {
         toast.error(`Failed to delete ${type}`);
@@ -133,6 +147,13 @@ const CreateDepartment = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => { setEditData(null); setIsSemesterModalOpen(true); }}
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#00529b] hover:bg-[#003d73] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-[#00529b]/20"
+            >
+              <Plus size={18} />
+              <span>Create Semester</span>
+            </button>
             <button
               onClick={() => { setEditData(null); setIsSubjectModalOpen(true); }}
               className="flex items-center gap-2 px-5 py-2.5 bg-[#00529b] hover:bg-[#003d73] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-[#00529b]/20"
@@ -168,6 +189,7 @@ const CreateDepartment = () => {
         <div className="flex gap-4 border-b border-gray-200 pb-2">
           <button onClick={() => setActiveTab("departments")} className={`font-semibold ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments</button>
           <button onClick={() => setActiveTab("subjects")} className={`font-semibold ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects</button>
+          <button onClick={() => setActiveTab("semesters")} className={`font-semibold ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters</button>
           <button onClick={() => setActiveTab("batches")} className={`font-semibold ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches</button>
           <button onClick={() => setActiveTab("groups")} className={`font-semibold ${activeTab === "groups" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Groups</button>
         </div>
@@ -198,6 +220,13 @@ const CreateDepartment = () => {
                 subjects={subjects} 
                 onEdit={(subject) => { setEditData(subject); setIsSubjectModalOpen(true); }}
                 onDelete={(subject) => handleDeleteItem("subject", subject)}
+              />
+            )}
+            {activeTab === "semesters" && (
+              <SemesterTable
+                semesters={semesters}
+                onEdit={(semester) => { setEditData(semester); setIsSemesterModalOpen(true); }}
+                onDelete={(semester) => handleDeleteItem("semester", semester)}
               />
             )}
             {activeTab === "groups" && (
@@ -263,6 +292,24 @@ const CreateDepartment = () => {
               </div>
               <div className="p-2">
                 <CreateGroupFormFields onSubmitSuccess={handleGroupSuccess} initialData={editData} />
+              </div>
+            </motion.div>
+          </div>
+        )}
+        
+        {isSemesterModalOpen && (
+          <div className="fixed inset-0 z-50 flex justify-center items-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsSemesterModalOpen(false); setEditData(null); }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
+              <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{editData ? "Edit Semester" : "Create New Semester"}</h2>
+                  <p className="text-sm text-gray-500 mt-1">Select a semester number to {editData ? "update" : "add"}</p>
+                </div>
+                <button onClick={() => { setIsSemesterModalOpen(false); setEditData(null); }} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"><X size={20} /></button>
+              </div>
+              <div className="p-2">
+                <CreateSemesterFormFields onSubmitSuccess={handleSemesterSuccess} initialData={editData} />
               </div>
             </motion.div>
           </div>

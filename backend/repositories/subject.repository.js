@@ -10,6 +10,7 @@ class SubjectRepository {
             isActive: true,
         })
             .populate("department", "name code")
+            .populate("semester", "name number")
             .sort({
                 semester: 1,
                 name: 1,
@@ -18,7 +19,8 @@ class SubjectRepository {
 
     async findById(id) {
         return await Subject.findById(id)
-            .populate("department", "name code");
+            .populate("department", "name code")
+            .populate("semester", "name number");
     }
 
     async findByName(name) {
@@ -41,6 +43,7 @@ class SubjectRepository {
             isActive: true,
         })
             .populate("department", "name code")
+            .populate("semester", "name number")
             .sort({
                 semester: 1,
                 name: 1,
@@ -58,7 +61,7 @@ class SubjectRepository {
         ).populate(
             "department",
             "name code"
-        );
+        ).populate("semester", "name number");
     }
 
     async deleteById(id) {

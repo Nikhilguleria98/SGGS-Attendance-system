@@ -77,7 +77,7 @@ const AttendanceFilters = ({ filters, setFilters }) => {
             <option value="">Select Assignment</option>
             {assignments.map(a => (
               <option key={a._id} value={a._id}>
-                {a.department?.name} • {a.subject?.name || "Subject"} • Sem {a.semester} • Sec {a.section}
+                {a.department?.name} • {a.subject?.name || "Subject"} • {a.semester?.name || `Sem ${a.semester?.number ?? a.semester}`} • Sec {a.section}
               </option>
             ))}
           </select>
