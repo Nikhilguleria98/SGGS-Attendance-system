@@ -129,10 +129,13 @@ class TeacherAssignmentService {
 
         const departmentId = assignment.department?._id ?? assignment.department;
         
+        const semesterId = assignment.semester?._id ?? assignment.semester;
+
         return await userRepository.findStudentsByAssignment(
             departmentId,
             assignment.batch,
-            assignment.section
+            assignment.section,
+            semesterId
         );
     }
 

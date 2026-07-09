@@ -65,12 +65,13 @@ class UserRepository {
         return await User.findByIdAndDelete(id);
     }
 
-    async findStudentsByAssignment(departmentId, batch, section) {
+    async findStudentsByAssignment(departmentId, batch, section, semesterId) {
         return await User.find({
             role: "student",
             department: departmentId,
             batch,
             section,
+            semester: semesterId,
             isActive: true,
         }).populate("department", "name code")
           .populate("semester", "name number")

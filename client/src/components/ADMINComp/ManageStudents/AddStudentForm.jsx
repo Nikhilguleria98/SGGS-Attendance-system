@@ -34,6 +34,22 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
 
   useEffect(() => {
     if (initialData) {
+      let mappedSemester = '';
+      if (initialData.semester) {
+        if (typeof initialData.semester === 'object') {
+          mappedSemester = initialData.semester._id;
+        } else {
+          // If legacy number or string like "Semester 5", match to semesters array if loaded
+          const parsed = Number(String(initialData.semester).replace(/\D/g, ""));
+          if (!isNaN(parsed) && semesters.length > 0) {
+            const matched = semesters.find(s => s.number === parsed || s.name === String(initialData.semester));
+            mappedSemester = matched ? matched._id : initialData.semester;
+          } else {
+            mappedSemester = initialData.semester;
+          }
+        }
+      }
+
       setFormData({
         firstName: initialData.firstName || '',
         lastName: initialData.lastName || '',
@@ -44,14 +60,12 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
         department: typeof initialData.department === 'object' ? initialData.department?._id : initialData.department || '',
         batch: initialData.batch || initialData.batches?.[0] || '',
         group: initialData.group || initialData.section || initialData.groups?.[0] || '',
-        semester: initialData.semester
-          ? (typeof initialData.semester === 'object' ? initialData.semester._id : initialData.semester)
-          : ''
+        semester: mappedSemester
       });
     } else if (departments.length > 0) {
       setFormData(prev => ({ ...prev, department: departments[0]._id }));
     }
-  }, [initialData, departments]);
+  }, [initialData, departments, semesters]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -35,7 +35,8 @@ const createUserSchema = z.object({
         assignments: z.any().optional(),
 
         semester: z
-            .coerce.number()
+            .string()
+            .regex(objectId, "Invalid semester id")
             .optional(),
 
         section: z
@@ -70,7 +71,7 @@ const updateUserSchema = z.object({
         groups: z.any().optional(),
         subjects: z.any().optional(),
         assignments: z.any().optional(),
-        semester: z.coerce.number().optional(),
+        semester: z.string().regex(objectId, "Invalid semester id").optional(),
         section: z.string().optional(),
         batch: z.string().optional(),
         group: z.string().optional(),
