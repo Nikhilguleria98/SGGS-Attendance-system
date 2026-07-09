@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { Types } = mongoose;
 const AttendanceSummary = require("../models/AttendanceSummary");
+const ApiError = require("../utils/ApiError");
 
 class AttendanceSummaryRepository {
     // ─────────────────────────────────────────────────────────────────────────
@@ -249,9 +250,15 @@ class AttendanceSummaryRepository {
         const matchStage = {};
         
         if (filters.subject) {
+            if (!mongoose.isValidObjectId(filters.subject)) {
+                throw new ApiError(400, "Invalid subject ID format");
+            }
             matchStage["assignmentDetails.subject"] = new Types.ObjectId(filters.subject);
         }
         if (filters.department) {
+            if (!mongoose.isValidObjectId(filters.department)) {
+                throw new ApiError(400, "Invalid department ID format");
+            }
             matchStage["studentDetails.department"] = new Types.ObjectId(filters.department);
         }
         if (filters.batch) {
@@ -261,6 +268,9 @@ class AttendanceSummaryRepository {
             matchStage["studentDetails.section"] = filters.section;
         }
         if (filters.semester) {
+            if (!mongoose.isValidObjectId(filters.semester)) {
+                throw new ApiError(400, "Invalid semester ID format");
+            }
             matchStage["assignmentDetails.semester"] = new Types.ObjectId(filters.semester);
         }
         if (filters.academicYear) {
