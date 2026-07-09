@@ -7,14 +7,14 @@ import {
   UserSquare2,
   Users,
 } from "lucide-react";
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginDrawer from "../../GlobalComp/logincomp/LoginDrawer";
 
 // Replace with your actual asset path
 import campusImage from "../../../assets/sggscampus.png";
 const HeroSection = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -39,7 +39,6 @@ const HeroSection = () => {
       {/* Both top (pt-0) and bottom (pb-0) padding removed for a flush layout */}
       <section className="relative w-full pt-0 pb-0 flex-grow flex flex-col justify-center">
         <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-0">
-          
           {/* Left Content Area */}
           <div className="w-full px-6 sm:px-12 lg:px-16 xl:px-24 z-20 order-2 lg:order-1">
             <motion.div
@@ -82,9 +81,18 @@ const HeroSection = () => {
                 variants={itemVariants}
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
               >
-                <button onClick={() => setIsLoginOpen(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#c8102e] hover:bg-[#a00d24] text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-red-100 group">
-                  Get Started 
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <button
+                  onClick={() => {
+                    console.log("Get Started clicked");
+                    setIsLoginOpen(true);
+                  }}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#c8102e] hover:bg-[#a00d24] text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-red-100 group"
+                >
+                  Get Started
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
                 </button>
                 <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-transparent border-2 border-[#132345] text-[#132345] hover:bg-[#132345] hover:text-white px-8 py-3.5 rounded-lg font-bold transition-all focus:ring-4 focus:ring-blue-100">
                   Learn More
@@ -105,8 +113,10 @@ const HeroSection = () => {
               alt="SGGS Campus"
               className="absolute top-0 right-0 w-full lg:w-[115%] h-full object-cover object-center rounded-bl-[80px] lg:rounded-bl-[150px]"
               style={{
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 25%)",
-                maskImage: "linear-gradient(to right, transparent 0%, black 25%)",
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent 0%, black 25%)",
+                maskImage:
+                  "linear-gradient(to right, transparent 0%, black 25%)",
               }}
             />
           </motion.div>
@@ -115,7 +125,6 @@ const HeroSection = () => {
 
       {/* ── 2. WAVE + STATS SECTION ── */}
       <div className="relative w-full mt-auto z-20">
-        
         {/* SVG Wave */}
         <svg
           className="absolute bottom-full left-0 w-full h-[60px] sm:h-[100px] md:h-[140px] lg:h-[180px] drop-shadow-xl -mb-[1px]"
@@ -124,28 +133,33 @@ const HeroSection = () => {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z" fill="#c8102e" transform="translate(0,-15)" />
-          <path d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z" fill="#132345" />
+          <path
+            d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z"
+            fill="#c8102e"
+            transform="translate(0,-15)"
+          />
+          <path
+            d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z"
+            fill="#132345"
+          />
         </svg>
 
         {/* Stats Bar Container */}
         <div className="bg-[#132345] relative w-full pt-4 pb-10 px-6 sm:px-12 lg:px-24">
           <div className="max-w-7xl mx-auto grid grid-cols-2 lg:flex lg:flex-row lg:justify-end items-center gap-y-10 gap-x-6 lg:gap-12 xl:gap-16">
-            
             <StatBlock icon={Users} count="10,000+" label="Students" />
             <div className="hidden lg:block w-px h-12 bg-white/20" />
-            
+
             <StatBlock icon={UserSquare2} count="500+" label="Faculty" />
             <div className="hidden lg:block w-px h-12 bg-white/20" />
-            
+
             <StatBlock icon={Building2} count="50+" label="Departments" />
             <div className="hidden lg:block w-px h-12 bg-white/20" />
-            
+
             <StatBlock icon={CalendarCheck} count="98%" label="Accuracy" />
-            
           </div>
         </div>
-        
+
         {/* ── 3. LATEST CIRCULARS TICKER ── */}
         <div className="bg-[#0a1428] w-full flex items-center border-t border-white/5 overflow-hidden">
           {/* Static Label */}
@@ -191,7 +205,9 @@ const Badge = ({ icon: Icon, label }) => (
     <div className="bg-[#c8102e] p-1.5 rounded-md shrink-0">
       <Icon size={16} className="text-white" />
     </div>
-    <span className="text-sm font-bold text-gray-800 whitespace-nowrap">{label}</span>
+    <span className="text-sm font-bold text-gray-800 whitespace-nowrap">
+      {label}
+    </span>
   </div>
 );
 
