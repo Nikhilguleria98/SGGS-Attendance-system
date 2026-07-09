@@ -107,6 +107,7 @@ const TeacherReport = () => {
 
         <FilterBar 
           filters={filters} 
+          setFilters={setFilters}
           onChange={handleChange} 
           availableData={allFetchedStudents} 
         />

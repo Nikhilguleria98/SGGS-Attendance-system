@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
-const FilterBar = ({ filters, onChange, availableData = [] }) => {
+const FilterBar = ({ filters, setFilters, onChange, availableData = [] }) => {
   const [departments, setDepartments] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [batches, setBatches] = useState([]);
@@ -11,20 +11,30 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
 
   const [allAssignments, setAllAssignments] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchFilterOptions = async () => {
+      setIsLoading(true);
+      setError(null);
       const token = localStorage.getItem("token");
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/teacher-assignments/my-assignments`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/teacher-assignments/my`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         
         if (data.success) {
           setAllAssignments(data.data);
+        } else {
+          setError(data.message || "Failed to load options");
         }
       } catch (err) {
         console.error("Failed to fetch teacher assignments", err);
+        setError("Network error occurred");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -86,7 +96,29 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
     setSubjects(uniqueSubs);
     setBatches(uniqueBatches);
     setGroups(uniqueSections);
-  }, [allAssignments, filters.department, filters.semester]);
+
+    // Reset invalid child filters
+    setFilters((prev) => {
+      let updated = { ...prev };
+      let changed = false;
+
+      if (prev.subject && !uniqueSubs.some((sub) => sub._id === prev.subject)) {
+        updated.subject = "";
+        changed = true;
+      }
+      if (prev.batch && !uniqueBatches.some((b) => b._id === prev.batch)) {
+        updated.batch = "";
+        changed = true;
+      }
+      if (prev.section && !uniqueSections.some((sec) => sec._id === prev.section)) {
+        updated.section = "";
+        changed = true;
+      }
+
+      return changed ? updated : prev;
+    });
+
+  }, [allAssignments, filters.department, filters.semester, setFilters]);
 
   const activeFilterCount = ["department", "batch", "section", "subject", "semester"].filter(
     (key) => filters[key]
@@ -129,6 +161,11 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
 
       {isOpen && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mt-5 pt-5 border-t border-gray-100">
+          {error && (
+            <div className="col-span-1 sm:col-span-2 lg:col-span-5 text-sm text-red-500 mb-2">
+              Unable to load report filters. Please try again.
+            </div>
+          )}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               Department
@@ -137,9 +174,10 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               name="department"
               value={filters.department}
               onChange={onChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              disabled={isLoading || !!error}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">Select Department</option>
+              <option value="">{isLoading ? "Loading..." : "Select Department"}</option>
               {departments.map((dept) => (
                 <option key={dept._id} value={dept._id}>
                   {dept.name}
@@ -155,9 +193,10 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               name="semester"
               value={filters.semester || ""}
               onChange={onChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              disabled={isLoading || !!error}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">All Semesters</option>
+              <option value="">{isLoading ? "Loading..." : "All Semesters"}</option>
               {semesters.map((s) => (
                 <option key={s._id} value={s._id}>
                   {s.name}
@@ -173,9 +212,10 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               name="batch"
               value={filters.batch}
               onChange={onChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              disabled={isLoading || !!error}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">Select Batch</option>
+              <option value="">{isLoading ? "Loading..." : "Select Batch"}</option>
               {batches.map((b) => (
                 <option key={b._id} value={b.name}>
                   {b.name}
@@ -192,9 +232,10 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               name="section"
               value={filters.section}
               onChange={onChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              disabled={isLoading || !!error}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">Select Section</option>
+              <option value="">{isLoading ? "Loading..." : "Select Section"}</option>
               {groups.map((g) => (
                 <option key={g._id} value={g.name}>
                   {g.name}
@@ -211,9 +252,10 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               name="subject"
               value={filters.subject}
               onChange={onChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+              disabled={isLoading || !!error}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
             >
-              <option value="">Select Subject</option>
+              <option value="">{isLoading ? "Loading..." : "Select Subject"}</option>
               {subjects.map((sub) => (
                 <option key={sub._id} value={sub._id}>
                   {sub.name}
