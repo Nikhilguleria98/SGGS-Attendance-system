@@ -8,13 +8,17 @@ import Pagination from "./Pagination";
 
 const TeacherReport = () => {
   const [students, setStudents] = useState([]);
-
+  const [allFetchedStudents, setAllFetchedStudents] = useState([]); // Keeps unfiltered original data
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  
   const [filters, setFilters] = useState({
     search: "",
     department: "",
     batch: "",
     section: "",
     subject: "",
+    lecture: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,9 +28,21 @@ const TeacherReport = () => {
     const fetchReport = async () => {
       try {
         const token = localStorage.getItem("token");
+        
+        // Build query string
+        const params = new URLSearchParams({
+          page: currentPage,
+          limit: itemsPerPage
+        });
+        
+        if (filters.department) params.append("department", filters.department);
+        if (filters.batch) params.append("batch", filters.batch);
+        if (filters.section) params.append("section", filters.section);
+        if (filters.subject) params.append("subject", filters.subject);
+        if (filters.search) params.append("search", filters.search);
 
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/attendance/report`,
+          `${import.meta.env.VITE_API_URL}/attendance-summary/teacher-report?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -37,7 +53,21 @@ const TeacherReport = () => {
         const data = await res.json();
 
         if (data.success) {
-          setStudents(data.data || []);
+          // Store raw fetched batch so FilterBar can extract dropdown options if needed
+          let fetched = data.data.data || [];
+          setAllFetchedStudents(fetched);
+
+          let results = fetched;
+          
+          // Apply local filtering for lecture (since lecture filter isn't mapped specifically in backend atm,
+          // though we could add classesDelivered filtering if needed. For now we keep this local filter.)
+          if (filters.lecture) {
+             results = results.filter(s => s.delivered.toString() === filters.lecture.toString());
+          }
+
+          setStudents(results);
+          setTotalStudents(data.data.total || 0);
+          setTotalPages(data.data.totalPages || 1);
         } else {
           console.error("Failed to fetch attendance report:", data.message);
         }
@@ -47,7 +77,7 @@ const TeacherReport = () => {
     };
 
     fetchReport();
-  }, []);
+  }, [currentPage, filters.department, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
 
   const handleChange = (e) => {
     setFilters({
@@ -56,54 +86,35 @@ const TeacherReport = () => {
     });
   };
 
-  const filteredStudents = students.filter((student) => {
-    const searchMatch =
-      student.studentName.toLowerCase().includes(filters.search.toLowerCase()) ||
-      student.rollNo.toLowerCase().includes(filters.search.toLowerCase());
-
-    return (
-      searchMatch &&
-      (filters.department === "" || student.department === filters.department) &&
-      (filters.batch === "" || student.batch === filters.batch) &&
-      (filters.section === "" || student.section === filters.section) &&
-      (filters.subject === "" || student.subject === filters.subject)
-    );
-  });
-
-  // Reset to page 1 whenever filters change
+  // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters]);
-
-  const totalStudents = filteredStudents.length;
+  }, [filters.department, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
 
   const avgAttendance =
-    totalStudents > 0
+    students.length > 0
       ? Math.round(
-          filteredStudents.reduce(
-            (sum, student) => sum + (student.present / student.totalClasses) * 100,
+          students.reduce(
+            (sum, student) => sum + student.percentage,
             0
-          ) / totalStudents
+          ) / students.length
         )
       : 0;
 
-  const lowAttendance = filteredStudents.filter(
-    (student) => (student.present / student.totalClasses) * 100 < 75
+  const lowAttendance = students.filter(
+    (student) => student.percentage < 75
   ).length;
-
-  const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
-
-  const paginatedStudents = filteredStudents.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   return (
     <div className="p-4 md:p-8 min-h-screen bg-[#f8f9fa]">
       <div className="max-w-7xl mx-auto">
         <Header />
 
-        <FilterBar filters={filters} onChange={handleChange} />
+        <FilterBar 
+          filters={filters} 
+          onChange={handleChange} 
+          availableData={allFetchedStudents} 
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <StatCard
@@ -118,7 +129,7 @@ const TeacherReport = () => {
             icon={<CheckCircle size={24} />}
             iconBg="bg-green-100"
             iconColor="text-green-600"
-            label="Avg Attendance"
+            label="Avg Attendance (Current Page)"
             value={`${avgAttendance}%`}
           />
 
@@ -126,18 +137,18 @@ const TeacherReport = () => {
             icon={<AlertCircle size={24} />}
             iconBg="bg-red-100"
             iconColor="text-red-600"
-            label="Low Attendance"
+            label="Low Attendance (Current Page)"
             value={lowAttendance}
           />
         </div>
 
-        <ReportTable students={paginatedStudents} />
+        <ReportTable students={students} />
 
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
-          totalItems={filteredStudents.length}
+          totalItems={totalStudents}
           itemsPerPage={itemsPerPage}
         />
       </div>

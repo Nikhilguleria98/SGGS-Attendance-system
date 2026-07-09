@@ -7,10 +7,7 @@ import toast from 'react-hot-toast';
 
 const MarkAttendance = () => {
   const [filters, setFilters] = useState({
-    department: '',
-    batch: '',
-    group: '',
-    subject: '',
+    assignment: '',
     lecture: '',
     date: new Date().toISOString().split('T')[0]
   });
@@ -19,27 +16,19 @@ const MarkAttendance = () => {
   const [attendanceData, setAttendanceData] = useState({});
   const [stats, setStats] = useState({ total: 0, present: 0, absent: 0 });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [teacherId, setTeacherId] = useState(null);
 
   useEffect(() => {
-    // Decode teacher ID from JWT
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setTeacherId(payload.id); // Check if your JWT payload uses .id or ._id
-      } catch (err) {
-        console.error("Failed to decode token", err);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    // Fetch students when department changes (or load all and filter)
+    // Fetch students when assignment changes
     const fetchStudents = async () => {
+      if (!filters.assignment) {
+        setStudents([]);
+        setAttendanceData({});
+        return;
+      }
+
       try {
         const token = localStorage.getItem("token");
-        let url = `${import.meta.env.VITE_API_URL}/users?role=student`;
+        let url = `${import.meta.env.VITE_API_URL}/teacher-assignments/${filters.assignment}/students`;
         
         const response = await fetch(url, {
           headers: { Authorization: `Bearer ${token}` }
@@ -47,31 +36,12 @@ const MarkAttendance = () => {
         const data = await response.json();
         
         if (data.success) {
-          // Client side filtering for department/section if needed
-          let filtered = data.data;
-          if (filters.department) {
-            filtered = filtered.filter(s => {
-              const deptId = typeof s.department === "object" ? s.department?._id : s.department;
-              return deptId === filters.department;
-            });
-          }
-          if (filters.batch) {
-            filtered = filtered.filter(s => {
-              const batchNameOrId = s.batch || s.batches?.[0]; // or if batch is saved as ID, we can compare directly
-              return batchNameOrId === filters.batch;
-            });
-          }
-          if (filters.group) {
-            filtered = filtered.filter(s => {
-              const groupNameOrId = s.group || s.groups?.[0] || s.section;
-              return groupNameOrId === filters.group;
-            });
-          }
-          setStudents(filtered);
+          const fetchedStudents = data.data;
+          setStudents(fetchedStudents);
           
           // Initialize attendance
           const initialData = {};
-          filtered.forEach((student) => {
+          fetchedStudents.forEach((student) => {
             initialData[student._id] = 'present';
           });
           setAttendanceData(initialData);
@@ -82,7 +52,7 @@ const MarkAttendance = () => {
     };
     
     fetchStudents();
-  }, [filters.department, filters.batch, filters.group]);
+  }, [filters.assignment]);
 
   useEffect(() => {
     let p = 0;
@@ -110,16 +80,16 @@ const MarkAttendance = () => {
   };
 
   const submitAttendance = async () => {
-    if (!filters.subject) {
-      toast.error("Please select a subject");
+    if (!filters.assignment) {
+      toast.error("Please select an assignment");
       return;
     }
     if (!filters.lecture) {
       toast.error("Please select a lecture");
       return;
     }
-    if (!teacherId) {
-      toast.error("Teacher ID not found. Please re-login.");
+    if (!filters.date) {
+      toast.error("Please select a date");
       return;
     }
 
@@ -133,9 +103,8 @@ const MarkAttendance = () => {
         attendanceDateTime.setUTCHours(parseInt(filters.lecture), 0, 0, 0);
 
         const payload = {
+          assignment: filters.assignment,
           student: student._id,
-          teacher: teacherId,
-          subject: filters.subject,
           attendanceDate: attendanceDateTime.toISOString(),
           status: attendanceData[student._id] || 'absent'
         };
@@ -150,11 +119,27 @@ const MarkAttendance = () => {
         });
       });
 
-      await Promise.all(promises);
-      toast.success("Attendance saved successfully!");
+      const results = await Promise.allSettled(promises);
+      
+      let successCount = 0;
+      let failCount = 0;
+
+      results.forEach(result => {
+        if (result.status === 'fulfilled' && result.value.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      });
+
+      if (failCount > 0) {
+        toast.error(`${successCount} attendance records saved. ${failCount} failed.`);
+      } else {
+        toast.success(`${successCount} attendance records saved successfully!`);
+      }
     } catch (err) {
       console.error(err);
-      toast.error("Failed to save attendance");
+      toast.error("An error occurred while saving attendance");
     } finally {
       setIsSubmitting(false);
     }
@@ -165,7 +150,7 @@ const MarkAttendance = () => {
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#162b4a] mb-2">Mark Attendance</h1>
-          <p className="text-gray-500">Select course details and mark attendance</p>
+          <p className="text-gray-500">Select an assignment and mark attendance</p>
         </div>
 
         <AttendanceFilters filters={filters} setFilters={setFilters} />
@@ -220,7 +205,7 @@ const MarkAttendance = () => {
         </div>
         
         <p className="text-center text-gray-400 text-sm pb-10">
-          Attendance will be saved for the selected course, group, section and date.
+          Attendance will be recorded for the selected assignment, lecture and date.
         </p>
       </div>
     </div>

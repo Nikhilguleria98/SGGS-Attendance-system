@@ -31,6 +31,15 @@ class TeacherAssignmentRepository {
             .populate("department", "name code");
     }
 
+    async findAssignmentsByTeachers(teacherIds) {
+        return await TeacherAssignment.find({
+            teacher: { $in: teacherIds },
+            isActive: true,
+        })
+            .populate("subject", "name code semester")
+            .populate("department", "name code");
+    }
+
     async findByDepartment(departmentId) {
         return await TeacherAssignment.find({
             department: departmentId,

@@ -2,32 +2,52 @@ import React from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 export default function TeacherRow({ teacher, departments, index, onEdit, onDelete }) {
-  // Mock subjects if none exist to match Figma visually
-  const subjects = (teacher.subjects && teacher.subjects.length > 0) ? teacher.subjects : [];
-  
-  const displaySubjects = subjects.slice(0, 3);
-  const overflowCount = subjects.length - 3;
+  const assignments = teacher.assignments || [];
+
+  const uniqueDepartments = [...new Set(
+    assignments
+      .map(a => a.department?.name || a.department)
+      .filter(Boolean)
+  )];
+
+  const uniqueSubjects = [...new Set(
+    assignments
+      .map(a => a.subject?.name || a.subject)
+      .filter(Boolean)
+  )];
+
+  const uniqueBatches = [...new Set(
+    assignments
+      .map(a => a.batch)
+      .filter(Boolean)
+  )];
+
+  const uniqueGroups = [...new Set(
+    assignments
+      .map(a => a.section)
+      .filter(Boolean)
+  )];
+
+  const displaySubjects = uniqueSubjects.slice(0, 3);
+  const overflowCount = uniqueSubjects.length - 3;
 
   const teacherName = teacher.firstName ? `${teacher.firstName} ${teacher.lastName || ""}` : teacher.name;
   
-  const deptName = teacher.departments?.length > 0
-    ? teacher.departments.map(id => {
-        const d = departments?.find(dep => dep._id === id);
-        return d ? d.name : (typeof id === 'object' ? id.name : id);
-      }).join(", ")
-    : (typeof teacher.department === 'object' ? teacher.department?.name : teacher.department);
+  const deptName = uniqueDepartments.length > 0 ? uniqueDepartments.join(", ") : "-";
+  const batches = uniqueBatches;
+  const groups = uniqueGroups;
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 text-sm">
       <td className="py-4 px-4 font-semibold text-[#162b4a]">{index + 1}</td>
       <td className="py-4 px-4 font-bold text-[#162b4a]">{teacherName}</td>
       <td className="py-4 px-4 text-gray-600">{teacher.email}</td>
-      <td className="py-4 px-4 text-gray-600">{deptName}</td>
+      <td className="py-4 px-4 text-gray-600">{deptName || "-"}</td>
       <td className="py-4 px-4 text-gray-600">
-        {teacher.batches?.join(", ") || teacher.batch}
+        {batches.length > 0 ? batches.join(", ") : "-"}
       </td>
       <td className="py-4 px-4 text-gray-600">
-        {teacher.groups?.join(", ") || "-"}
+        {groups.length > 0 ? groups.join(", ") : "-"}
       </td>
 
       <td className="py-4 px-4">
@@ -42,6 +62,7 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
               +{overflowCount}
             </span>
           )}
+          {displaySubjects.length === 0 && <span className="text-gray-400">-</span>}
         </div>
       </td>
       <td className="py-4 px-4">

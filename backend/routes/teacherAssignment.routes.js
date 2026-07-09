@@ -38,6 +38,20 @@ router.get(
     teacherAssignmentController.getAssignments
 );
 
+// Get my assignments (MUST be before /:id)
+router.get(
+    "/my",
+    authorize("teacher"),
+    teacherAssignmentController.getMyAssignments
+);
+
+// Get students for an assignment
+router.get(
+    "/:assignmentId/students",
+    authorize("teacher"),
+    teacherAssignmentController.getAssignmentStudents
+);
+
 // Get assignments by teacher
 router.get(
     "/teacher/:teacherId",

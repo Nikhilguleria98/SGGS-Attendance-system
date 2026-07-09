@@ -113,7 +113,7 @@ export default function ManageTeachers() {
   const confirmDelete = async () => {
     const target = teacherToDelete;
     if (!target) return;
-    setTeacherToDelete(null); // close modal immediately
+    setTeacherToDelete(null); 
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${target._id}`, {
@@ -137,7 +137,6 @@ export default function ManageTeachers() {
   const handleSaveTeacher = async (teacherData) => {
     if (isSaving) return;
     setIsSaving(true);
-    // Add role explicitly
     teacherData.role = "teacher";
 
     try {
@@ -160,8 +159,21 @@ export default function ManageTeachers() {
 
       if (data.success) {
         toast.success(`Teacher ${isEdit ? "updated" : "added"} successfully`);
-        // Refresh data to get the populated department
-        fetchData();
+        
+        // Optimistically update the state using the server's processed response
+        if (data.data) {
+          setTeachers(prev => {
+            if (isEdit) {
+              return prev.map(t => t._id === data.data._id ? data.data : t);
+            } else {
+              return [data.data, ...prev];
+            }
+          });
+        } else {
+          // Fallback just in case
+          fetchData();
+        }
+        
         setIsModalOpen(false);
       } else {
         toast.error(data.message || "Failed to save teacher");

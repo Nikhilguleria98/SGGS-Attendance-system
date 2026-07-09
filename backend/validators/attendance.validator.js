@@ -5,8 +5,7 @@ const objectId = /^[0-9a-fA-F]{24}$/;
 const markAttendanceSchema = z.object({
     body: z.object({
         student: z.string().regex(objectId, "Invalid student id"),
-        teacher: z.string().regex(objectId, "Invalid teacher id"),
-        subject: z.string().regex(objectId, "Invalid subject id"),
+        assignment: z.string().regex(objectId, "Invalid assignment id"),
         attendanceDate: z.string(),
         status: z.enum([
             "present",

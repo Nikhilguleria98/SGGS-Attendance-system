@@ -9,11 +9,27 @@ class UserRepository {
         return await User.find({
             role,
             isActive: true,
-        }).populate("department", "name code");
+        }).populate("department", "name code")
+          .populate({
+              path: "assignments",
+              populate: [
+                  { path: "subject", select: "name code" },
+                  { path: "department", select: "name" }
+              ]
+          })
+          .sort({ firstName: 1 });
     }
 
     async findById(id) {
-        return await User.findById(id).populate("department", "name code");
+        return await User.findById(id)
+            .populate("department", "name code")
+            .populate({
+                path: "assignments",
+                populate: [
+                    { path: "subject", select: "name code" },
+                    { path: "department", select: "name" }
+                ]
+            });
     }
 
     async findByEmail(email) {
@@ -32,11 +48,29 @@ class UserRepository {
         return await User.findByIdAndUpdate(id, updateData, {
             new: true,
             runValidators: true,
-        }).populate("department", "name code");
+        }).populate("department", "name code")
+          .populate({
+              path: "assignments",
+              populate: [
+                  { path: "subject", select: "name code" },
+                  { path: "department", select: "name" }
+              ]
+          });
     }
 
     async deleteById(id) {
         return await User.findByIdAndDelete(id);
+    }
+
+    async findStudentsByAssignment(departmentId, batch, section) {
+        return await User.find({
+            role: "student",
+            department: departmentId,
+            batch,
+            section,
+            isActive: true,
+        }).populate("department", "name code")
+          .sort({ firstName: 1 });
     }
 
     async exists(filter) {
@@ -45,14 +79,6 @@ class UserRepository {
 
     async count(filter = {}) {
         return await User.countDocuments(filter);
-    }
-    async findByRole(role) {
-        return await User.find({
-            role,
-            isActive: true,
-        })
-            .populate("department", "name code")
-            .sort({ firstName: 1 });
     }
 }
 

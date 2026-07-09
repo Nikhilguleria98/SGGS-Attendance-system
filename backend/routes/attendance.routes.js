@@ -27,7 +27,13 @@ router.get(
     authorize("hod", "teacher", "student"),
     attendanceController.getAttendance
 );
-router.get("/report", authorize("hod", "teacher"), attendanceController.getStudentReport);
+
+const attendanceSummaryController = require("../controllers/attendanceSummary.controller");
+router.get("/report", authorize("hod", "teacher"), attendanceSummaryController.getTeacherReport);
+router.get("/hod-dashboard", authorize("hod"), attendanceSummaryController.getHodDashboard);
+
+router.get("/student-dashboard", authorize("hod", "teacher", "student"), attendanceSummaryController.getStudentDashboard);
+router.get("/student-dashboard/:studentId", authorize("hod", "teacher"), attendanceSummaryController.getStudentDashboard);
 
 router.get(
     "/:id",

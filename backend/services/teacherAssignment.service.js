@@ -62,6 +62,80 @@ class TeacherAssignmentService {
         );
     }
 
+    async getTeacherAssignmentSummary(teacherIds) {
+        const assignments = await teacherAssignmentRepository.findAssignmentsByTeachers(teacherIds);
+
+        const summaryMap = {};
+        for (const id of teacherIds) {
+            summaryMap[id.toString()] = {
+                teacherId: id,
+                assignments: [],
+                departments: new Set(),
+                batches: new Set(),
+                groups: new Set(),
+                subjects: new Set()
+            };
+        }
+
+        for (const assignment of assignments) {
+            const tId = assignment.teacher?._id?.toString() || assignment.teacher?.toString();
+            if (summaryMap[tId]) {
+                const summary = summaryMap[tId];
+                summary.assignments.push(assignment);
+                
+                if (assignment.department) {
+                    summary.departments.add(assignment.department.name || assignment.department);
+                }
+                if (assignment.batch) {
+                    summary.batches.add(assignment.batch);
+                }
+                if (assignment.section) {
+                    summary.groups.add(assignment.section);
+                }
+                if (assignment.subject) {
+                    summary.subjects.add(assignment.subject.name || assignment.subject);
+                }
+            }
+        }
+
+        // Convert Sets back to Arrays
+        const finalSummary = {};
+        for (const key in summaryMap) {
+            const s = summaryMap[key];
+            finalSummary[key] = {
+                teacherId: s.teacherId,
+                assignments: s.assignments,
+                departments: Array.from(s.departments),
+                batches: Array.from(s.batches),
+                groups: Array.from(s.groups),
+                subjects: Array.from(s.subjects)
+            };
+        }
+
+        return finalSummary;
+    }
+
+    async getAssignmentStudents(assignmentId, teacherId) {
+        const assignment = await teacherAssignmentRepository.findById(assignmentId);
+        
+        if (!assignment) {
+            throw new ApiError(404, "Assignment not found");
+        }
+
+        // Validate teacher ownership
+        if (assignment.teacher?._id?.toString() !== teacherId.toString() && assignment.teacher?.toString() !== teacherId.toString()) {
+            throw new ApiError(403, "You do not have permission to access students for this assignment");
+        }
+
+        const departmentId = assignment.department?._id ?? assignment.department;
+        
+        return await userRepository.findStudentsByAssignment(
+            departmentId,
+            assignment.batch,
+            assignment.section
+        );
+    }
+
     async updateAssignment(id, data) {
         const assignment =
             await teacherAssignmentRepository.updateById(

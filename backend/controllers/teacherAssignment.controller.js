@@ -57,6 +57,44 @@ exports.getAssignment = asyncHandler(async (req, res) => {
 });
 
 // ==========================
+// Get My Assignments
+// ==========================
+
+exports.getMyAssignments = asyncHandler(async (req, res) => {
+    const assignments =
+        await teacherAssignmentService.getAssignmentsByTeacher(
+            req.user._id
+        );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "My assignments fetched successfully",
+            assignments
+        )
+    );
+});
+
+// ==========================
+// Get Assignment Students
+// ==========================
+
+exports.getAssignmentStudents = asyncHandler(async (req, res) => {
+    const students = await teacherAssignmentService.getAssignmentStudents(
+        req.params.assignmentId,
+        req.user._id
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Students fetched successfully",
+            students
+        )
+    );
+});
+
+// ==========================
 // Get Assignments By Teacher
 // ==========================
 
