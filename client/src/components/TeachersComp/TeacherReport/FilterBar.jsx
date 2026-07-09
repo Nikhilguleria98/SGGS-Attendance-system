@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
-const FilterBar = ({ filters, onChange }) => {
+const FilterBar = ({ filters, onChange, availableData = [] }) => {
   const [departments, setDepartments] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [batches, setBatches] = useState([]);
@@ -49,9 +49,11 @@ const FilterBar = ({ filters, onChange }) => {
     fetchFilterOptions();
   }, []);
 
-  const activeFilterCount = ["department", "batch", "section", "subject"].filter(
+  const activeFilterCount = ["department", "batch", "section", "subject", "lecture"].filter(
     (key) => filters[key]
   ).length;
+
+  const uniqueLectures = [...new Set(availableData.map(s => s.delivered))].sort((a, b) => a - b);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
@@ -89,7 +91,7 @@ const FilterBar = ({ filters, onChange }) => {
       </div>
 
       {isOpen && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5 pt-5 border-t border-gray-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mt-5 pt-5 border-t border-gray-100">
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               Department
@@ -102,7 +104,7 @@ const FilterBar = ({ filters, onChange }) => {
             >
               <option value="">Select Department</option>
               {departments.map((dept) => (
-                <option key={dept._id} value={dept.name}>
+                <option key={dept._id} value={dept._id}>
                   {dept.name}
                 </option>
               ))}
@@ -159,8 +161,27 @@ const FilterBar = ({ filters, onChange }) => {
             >
               <option value="">Select Subject</option>
               {subjects.map((sub) => (
-                <option key={sub._id} value={sub.name}>
+                <option key={sub._id} value={sub._id}>
                   {sub.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-2">
+              Lecture
+            </label>
+            <select
+              name="lecture"
+              value={filters.lecture}
+              onChange={onChange}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
+            >
+              <option value="">All Lectures</option>
+              {uniqueLectures.map((lec) => (
+                <option key={lec} value={lec}>
+                  {lec} {lec === 1 ? 'Lecture' : 'Lectures'}
                 </option>
               ))}
             </select>

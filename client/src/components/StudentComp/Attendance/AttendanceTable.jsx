@@ -9,7 +9,7 @@ export default function AttendanceCards() {
     const fetchAttendance = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:3000/api/attendance/student-dashboard", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/attendance/student-dashboard`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -123,7 +123,6 @@ function Row({ label, value, valueClassName = "" }) {
   return (
     <div className="flex items-baseline gap-2 text-slate-600">
       <span className="font-semibold text-slate-700">{label} :</span>
-
       <span className={valueClassName}>{value}</span>
     </div>
   );
