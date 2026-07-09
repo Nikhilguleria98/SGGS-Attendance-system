@@ -216,7 +216,7 @@ class AttendanceSummaryRepository {
             $unwind: { path: "$departmentDetails", preserveNullAndEmptyArrays: true },
         });
 
-        // Calculate Percentage dynamically so we can filter by it
+        // Calculate Percentage dynamically and concat fullName so we can filter by it
         pipeline.push({
             $addFields: {
                 computedPercentage: {
@@ -230,6 +230,17 @@ class AttendanceSummaryRepository {
                         },
                         0
                     ]
+                },
+                studentFullName: {
+                    $trim: {
+                        input: {
+                            $concat: [
+                                { $ifNull: ["$studentDetails.firstName", ""] },
+                                " ",
+                                { $ifNull: ["$studentDetails.lastName", ""] }
+                            ]
+                        }
+                    }
                 }
             }
         });
@@ -286,6 +297,7 @@ class AttendanceSummaryRepository {
             matchStage.$or = [
                 { "studentDetails.firstName": searchRegex },
                 { "studentDetails.lastName": searchRegex },
+                { "studentFullName": searchRegex },
                 { "studentDetails.rollNumber": searchRegex },
             ];
         }

@@ -19,7 +19,6 @@ const TeacherReport = () => {
     batch: "",
     section: "",
     subject: "",
-    lecture: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,12 +60,6 @@ const TeacherReport = () => {
 
           let results = fetched;
           
-          // Apply local filtering for lecture (since lecture filter isn't mapped specifically in backend atm,
-          // though we could add classesDelivered filtering if needed. For now we keep this local filter.)
-          if (filters.lecture) {
-             results = results.filter(s => s.delivered.toString() === filters.lecture.toString());
-          }
-
           setStudents(results);
           setTotalStudents(data.data.total || 0);
           setTotalPages(data.data.totalPages || 1);
@@ -79,7 +72,7 @@ const TeacherReport = () => {
     };
 
     fetchReport();
-  }, [currentPage, filters.department, filters.semester, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
+  }, [currentPage, filters.department, filters.semester, filters.batch, filters.section, filters.subject, filters.search]);
 
   const handleChange = (e) => {
     setFilters({
@@ -91,7 +84,7 @@ const TeacherReport = () => {
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters.department, filters.semester, filters.batch, filters.section, filters.subject, filters.search, filters.lecture]);
+  }, [filters.department, filters.semester, filters.batch, filters.section, filters.subject, filters.search]);
 
   const avgAttendance =
     students.length > 0

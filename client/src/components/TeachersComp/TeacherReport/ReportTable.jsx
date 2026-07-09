@@ -26,9 +26,17 @@ const ReportTable = ({ students }) => {
           </thead>
 
           <tbody>
-            {students.map((student, index) => (
-              <ReportRow key={student.rollNumber || index} student={student} />
-            ))}
+            {students.length > 0 ? (
+              students.map((student, index) => (
+                <ReportRow key={student.rollNumber || index} student={student} />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
+                  No attendance records found for the selected filters.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

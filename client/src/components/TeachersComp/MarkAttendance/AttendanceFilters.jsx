@@ -80,9 +80,7 @@ const AttendanceFilters = ({ filters, setFilters }) => {
                 ? a.semester.name 
                 : a.semester?.number 
                   ? `Semester ${a.semester.number}`
-                  : a.semester 
-                    ? `Semester ${a.semester}` 
-                    : "Unknown Semester";
+                  : `Semester ${a.semester}`;
 
               return (
                 <option key={a._id} value={a._id}>

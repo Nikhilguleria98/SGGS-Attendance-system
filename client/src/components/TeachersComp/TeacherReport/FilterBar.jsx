@@ -9,59 +9,88 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
   const [semesters, setSemesters] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  const [allAssignments, setAllAssignments] = useState([]);
+
   useEffect(() => {
-      const fetchFilterOptions = async () => {
+    const fetchFilterOptions = async () => {
       const token = localStorage.getItem("token");
       try {
-        const [deptsRes, subsRes, batchesRes, groupsRes, semestersRes] = await Promise.all([
-          fetch(`${import.meta.env.VITE_API_URL}/departments`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${import.meta.env.VITE_API_URL}/subjects`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${import.meta.env.VITE_API_URL}/batches`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${import.meta.env.VITE_API_URL}/groups`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          fetch(`${import.meta.env.VITE_API_URL}/semesters`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
-
-        const deptsData = await deptsRes.json();
-        const subsData = await subsRes.json();
-
-        if (deptsData.success) setDepartments(deptsData.data);
-        if (subsData.success) setSubjects(subsData.data);
-
-        if (batchesRes.ok) {
-          const batchesData = await batchesRes.json();
-          if (batchesData.success) setBatches(batchesData.data);
-        }
-        if (groupsRes.ok) {
-          const groupsData = await groupsRes.json();
-          if (groupsData.success) setGroups(groupsData.data);
-        }
-        if (semestersRes && semestersRes.ok) {
-          const semestersData = await semestersRes.json();
-          if (semestersData.success) setSemesters(semestersData.data);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/teacher-assignments/my-assignments`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          setAllAssignments(data.data);
         }
       } catch (err) {
-        console.error("Failed to fetch filter options", err);
+        console.error("Failed to fetch teacher assignments", err);
       }
     };
 
     fetchFilterOptions();
   }, []);
 
-  const activeFilterCount = ["department", "batch", "section", "subject", "semester", "lecture"].filter(
+  useEffect(() => {
+    let validAssignments = allAssignments;
+
+    if (filters.department) {
+      validAssignments = validAssignments.filter(a => a.department && a.department._id === filters.department);
+    }
+    if (filters.semester) {
+      validAssignments = validAssignments.filter(a => a.semester && a.semester._id === filters.semester);
+    }
+
+    const uniqueDepts = [];
+    const uniqueSubs = [];
+    const uniqueSems = [];
+    const uniqueBatches = [];
+    const uniqueSections = [];
+
+    const deptSet = new Set();
+    const subSet = new Set();
+    const semSet = new Set();
+    const batchSet = new Set();
+    const secSet = new Set();
+
+    // Departments and Semesters should always show all options to allow easy switching
+    allAssignments.forEach(a => {
+      if (a.department && !deptSet.has(a.department._id)) {
+        deptSet.add(a.department._id);
+        uniqueDepts.push(a.department);
+      }
+      if (a.semester && !semSet.has(a.semester._id)) {
+        semSet.add(a.semester._id);
+        uniqueSems.push(a.semester);
+      }
+    });
+
+    // Subjects, Batches, and Sections cascade based on selected Department/Semester
+    validAssignments.forEach(a => {
+      if (a.subject && !subSet.has(a.subject._id)) {
+        subSet.add(a.subject._id);
+        uniqueSubs.push(a.subject);
+      }
+      if (a.batch && !batchSet.has(a.batch)) {
+        batchSet.add(a.batch);
+        uniqueBatches.push({ _id: a.batch, name: a.batch });
+      }
+      if (a.section && !secSet.has(a.section)) {
+        secSet.add(a.section);
+        uniqueSections.push({ _id: a.section, name: a.section });
+      }
+    });
+
+    setDepartments(uniqueDepts);
+    setSemesters(uniqueSems);
+    setSubjects(uniqueSubs);
+    setBatches(uniqueBatches);
+    setGroups(uniqueSections);
+  }, [allAssignments, filters.department, filters.semester]);
+
+  const activeFilterCount = ["department", "batch", "section", "subject", "semester"].filter(
     (key) => filters[key]
   ).length;
-
-  const uniqueLectures = [...new Set(availableData.map(s => s.delivered))].sort((a, b) => a - b);
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
@@ -188,25 +217,6 @@ const FilterBar = ({ filters, onChange, availableData = [] }) => {
               {subjects.map((sub) => (
                 <option key={sub._id} value={sub._id}>
                   {sub.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-2">
-              Lecture
-            </label>
-            <select
-              name="lecture"
-              value={filters.lecture}
-              onChange={onChange}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500"
-            >
-              <option value="">All Lectures</option>
-              {uniqueLectures.map((lec) => (
-                <option key={lec} value={lec}>
-                  {lec} {lec === 1 ? 'Lecture' : 'Lectures'}
                 </option>
               ))}
             </select>
