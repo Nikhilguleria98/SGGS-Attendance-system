@@ -9,7 +9,7 @@ export default function AttendanceCards() {
     const fetchAttendance = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:8080/api/attendance/student-dashboard", {
+        const response = await fetch("http://localhost:3000/api/attendance/student-dashboard", {
           headers: {
             "Authorization": `Bearer ${token}`
           }
