@@ -1,0 +1,33 @@
+import { 
+  Home, 
+  Building2, 
+  Users, 
+  GraduationCap, 
+  FileText, 
+  ClipboardCheck, 
+  Settings, 
+  UserCircle,
+  User
+} from 'lucide-react';
+
+export const sidebarMenus = {
+  hod: [
+    { label: 'Dashboard', icon: Home, path: '/hod/dashboard' },
+    { label: 'Department', icon: Building2, path: '/hod/departments' },
+    { label: 'Faculty', icon: Users, path: '/hod/teachers' },
+    { label: 'Students', icon: GraduationCap, path: '/hod/manage-students' },
+    { label: 'Profile', icon: UserCircle, path: '/hod/profile' },
+  ],
+  teacher: [
+    { label: "Dashboard", icon: Home, path: "/teacher/dashboard" },
+    { label: "Manage Students", icon: Users, path: "/teacher/managestudent" },
+    { label: "Mark Attendance", icon: ClipboardCheck, path: "/teacher/mark-attendance" },
+    { label: "Reports", icon: FileText, path: "/teacher/reports" },
+    { label: "Profile", icon: User, path: "/teacher/profile" },
+  ],
+  student: [
+    { label: 'Dashboard', icon: Home, path: '/student/dashboard' },
+    { label: 'Attendance', icon: ClipboardCheck, path: '/student/attendance' },
+    { label: 'Profile', icon: UserCircle, path: '/student/profile' },
+  ]
+};

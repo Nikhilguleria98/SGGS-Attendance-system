@@ -1,0 +1,95 @@
+const userService = require("../services/user.service");
+
+const asyncHandler = require("../utils/asyncHandler");
+
+const { success } = require("../utils/response");
+
+// Create Users
+exports.createUser = asyncHandler(async (req, res) => {
+    let data = { ...req.validatedData.body };
+    if (data.rollNo) data.rollNumber = data.rollNo;
+    if (data.group) data.section = data.group;
+    const user = await userService.createUser(data);
+
+    return success(
+        res,
+        201,
+        "User created successfully",
+        user
+    );
+});
+
+// Fetch Users
+exports.getUsers = asyncHandler(async (req, res) => {
+    const users = await userService.getAllUsers();
+
+    return success(
+        res,
+        200,
+        "Users fetched successfully",
+        users
+    );
+});
+
+exports.getUser = asyncHandler(async (req, res) => {
+    const user = await userService.getUserById(
+        req.params.id
+    );
+
+    return success(
+        res,
+        200,
+        "User fetched successfully",
+        user
+    );
+});
+
+exports.updateUser = asyncHandler(async (req, res) => {
+    // Access control: HOD and Teacher can update anyone, others (Student) can only update themselves
+    const allowedRoles = ['hod', 'teacher'];
+    if (!allowedRoles.includes(req.user.role.toLowerCase()) && req.user.id !== req.params.id) {
+        return res.status(403).json({
+            success: false,
+            message: "Not authorized to update this user"
+        });
+    }
+
+    let data = { ...req.validatedData.body };
+    if (data.rollNo) data.rollNumber = data.rollNo;
+    if (data.group) data.section = data.group;
+    const user = await userService.updateUser(
+        req.params.id,
+        data
+    );
+    return success(
+        res,
+        200,
+        "User updated successfully",
+        user
+    );
+});
+
+exports.deleteUser = asyncHandler(async (req, res) => {
+    await userService.deleteUser(req.params.id);
+
+    return success(
+        res,
+        200,
+        "User deleted successfully"
+    );
+});
+
+exports.getUsers = asyncHandler(async (req, res) => {
+
+    const { role } = req.query;
+
+    const users = await userService.getAllUsers(role);
+
+    return success(
+        res,
+        200,
+        "Users fetched successfully",
+        users
+    );
+});
+   
