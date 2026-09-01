@@ -88,13 +88,18 @@ const LoginDrawer = ({ isOpen, onClose }) => {
             {/* Close */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full"
+              className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full z-10"
             >
               <X size={24} />
             </button>
 
             {/* Left Side */}
-            <div className="hidden md:flex w-5/12 items-center justify-center bg-gray-100">
+            <div className="hidden md:flex w-5/12 flex-col items-center justify-center bg-gray-100 p-6">
+              <img
+                src="/sggslogo.png"
+                alt="SGGS World University Logo"
+                className="w-36 h-36 object-contain mb-4"
+              />
               <div className="text-center">
                 <h2 className="text-2xl font-bold">
                   SGGS World University
@@ -209,9 +214,9 @@ const LoginDrawer = ({ isOpen, onClose }) => {
                     )}
                   </button>
                 </div>
-                      <div>
-                        <span className="text-[#00529b] hover:text-[#00529b]/80 "><a href="">Forgot Password</a></span>
-                      </div>
+                <div>
+                  <span className="text-[#00529b] hover:text-[#00529b]/80 "><a href="">Forgot Password</a></span>
+                </div>
                 <button
                   type="submit"
                   className="w-full bg-[#00529b] text-white py-3 rounded-lg font-bold cursor-pointer"
