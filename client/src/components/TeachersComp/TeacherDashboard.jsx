@@ -4,37 +4,83 @@ export default function TeacherDashboard() {
   const navigate = useNavigate();
   const [teacherName, setTeacherName] = useState("Teacher");
   const [teacherAvatar, setTeacherAvatar] = useState("");
+  
+  const [classesData, setClassesData] = useState([]);
+  const [stats, setStats] = useState({
+    totalClasses: 0,
+    totalStudents: 0,
+    todaysAttendance: 'N/A'
+  });
 
   useEffect(() => {
-    const fetchTeacherProfile = async () => {
+    const fetchDashboardData = async () => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
-          const response = await fetch(`${import.meta.env.VITE_API_URL}/users/${payload.id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const data = await response.json();
-          if (data.success) {
-            setTeacherName(`${data.data.firstName} ${data.data.lastName || ''}`);
-            setTeacherAvatar(data.data.avatar || "https://ui-avatars.com/api/?name=" + data.data.firstName);
+          const headers = { Authorization: `Bearer ${token}` };
+
+          // Fetch profile, assignments, and reports concurrently
+          const [profileRes, assignmentsRes, reportRes] = await Promise.all([
+            fetch(`${import.meta.env.VITE_API_URL}/users/${payload.id}`, { headers }),
+            fetch(`${import.meta.env.VITE_API_URL}/teacher-assignments/my`, { headers }),
+            fetch(`${import.meta.env.VITE_API_URL}/attendance-summary/teacher-report`, { headers })
+          ]);
+
+          const profileData = await profileRes.json();
+          const assignmentsData = await assignmentsRes.json();
+          const reportData = await reportRes.json();
+
+          // Profile
+          if (profileData.success) {
+            setTeacherName(`${profileData.data.firstName} ${profileData.data.lastName || ''}`);
+            setTeacherAvatar(profileData.data.avatar || "https://ui-avatars.com/api/?name=" + profileData.data.firstName);
           }
+
+          // Classes
+          let formattedClasses = [];
+          if (assignmentsData.success) {
+            formattedClasses = assignmentsData.data.map(a => ({
+               name: `${a.subject?.name || 'Subject'} - ${a.batch || ''} Sec ${a.section || ''}`,
+               students: 'N/A' // Number of students not directly in assignment, could be mapped if needed
+            }));
+            setClassesData(formattedClasses);
+          }
+
+          // Report (for total students & overall attendance)
+          let totalStudents = 0;
+          let overallPercentage = 'N/A';
+          if (reportData.success && reportData.data) {
+            // Unique students across all assignments
+            const uniqueStudents = new Set();
+            let totalDelivered = 0;
+            let totalAttended = 0;
+
+            reportData.data.data.forEach(item => {
+              if (item.studentId) uniqueStudents.add(item.studentId);
+              totalDelivered += (item.delivered || 0);
+              totalAttended += (item.attended || 0);
+            });
+
+            totalStudents = uniqueStudents.size;
+            if (totalDelivered > 0) {
+              overallPercentage = ((totalAttended / totalDelivered) * 100).toFixed(1) + '%';
+            }
+          }
+
+          setStats({
+            totalClasses: formattedClasses.length,
+            totalStudents: totalStudents,
+            todaysAttendance: overallPercentage
+          });
+
         } catch (error) {
-          console.error("Failed to fetch profile", error);
+          console.error("Failed to fetch dashboard data", error);
         }
       }
     };
-    fetchTeacherProfile();
+    fetchDashboardData();
   }, []);
-
-  // Mock data representing the class list
-  const classesData = [
-    { name: 'CSE 3rd Year - Section A', students: 28 },
-    { name: 'CSE 2nd Year - Section B', students: 25 },
-    { name: 'CSE 1st Year - Section A', students: 22 },
-    { name: 'CSE 4th Year - Section A', students: 23 },
-    { name: 'CSE 2nd Year - Section A', students: 20 },
-  ];
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 font-sans antialiased text-slate-800">
@@ -74,7 +120,7 @@ export default function TeacherDashboard() {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-500">My Classes</p>
-              <p className="text-2xl font-bold text-slate-950 mt-0.5">5</p>
+              <p className="text-2xl font-bold text-slate-950 mt-0.5">{stats.totalClasses}</p>
             </div>
           </div>
 
@@ -87,11 +133,11 @@ export default function TeacherDashboard() {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-500">Total Students</p>
-              <p className="text-2xl font-bold text-slate-950 mt-0.5">98</p>
+              <p className="text-2xl font-bold text-slate-950 mt-0.5">{stats.totalStudents}</p>
             </div>
           </div>
 
-          {/* Card 3: Today's Attendance */}
+          {/* Card 3: Today's Attendance (Overall) */}
           <div className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -99,8 +145,8 @@ export default function TeacherDashboard() {
               </svg>
             </div>
             <div>
-              <p className="text-xs font-semibold text-slate-500">Today's Attendance</p>
-              <p className="text-2xl font-bold text-slate-950 mt-0.5">82%</p>
+              <p className="text-xs font-semibold text-slate-500">Overall Attendance</p>
+              <p className="text-2xl font-bold text-slate-950 mt-0.5">{stats.todaysAttendance}</p>
             </div>
           </div>
 
@@ -110,24 +156,27 @@ export default function TeacherDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Column: My Classes List */}
-          {/* <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
+          <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">
             <h2 className="text-lg font-bold text-slate-950 mb-4">My Classes</h2>
             
             <div className="divide-y divide-slate-100">
-              {classesData.map((cls, index) => (
+              {classesData.length > 0 ? classesData.map((cls, index) => (
                 <div key={index} className="flex justify-between items-center py-3.5 first:pt-0 last:pb-0">
                   <span className="text-sm font-semibold text-slate-700">{cls.name}</span>
-                  <span className="text-sm font-medium text-slate-400">{cls.students} Students</span>
                 </div>
-              ))}
+              )) : (
+                <div className="py-3.5 text-sm text-slate-500">No classes assigned yet.</div>
+              )}
             </div>
 
             <div className="mt-5 text-center">
-              <button className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-all">
+              <button 
+                onClick={() => navigate('/teacher/managestudent')}
+                className="text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline transition-all">
                 View All Classes
               </button>
             </div>
-          </div> */}
+          </div>
 
           {/* Right Column: Quick Actions */}
           <div className="lg:col-span-5 bg-white rounded-2xl border border-slate-100 p-5 shadow-sm">

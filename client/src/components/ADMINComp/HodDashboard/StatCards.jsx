@@ -20,7 +20,7 @@ const StatCards = () => {
     teachers: '...',
     departments: '...',
     students: '...',
-    attendance: '80%' // Mocked for now until attendance is hooked up
+    attendance: '...' 
   });
 
   useEffect(() => {
@@ -29,23 +29,31 @@ const StatCards = () => {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        const [teachersRes, studentsRes, deptsRes] = await Promise.all([
+        const [teachersRes, studentsRes, deptsRes, attendanceRes] = await Promise.all([
           fetch(`${import.meta.env.VITE_API_URL}/users?role=teacher`, { headers }),
           fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, { headers }),
-          fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers })
+          fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers }),
+          fetch(`${import.meta.env.VITE_API_URL}/attendance-summary/hod-dashboard`, { headers })
         ]);
 
-        const [teachersData, studentsData, deptsData] = await Promise.all([
+        const [teachersData, studentsData, deptsData, attendanceData] = await Promise.all([
           teachersRes.json(),
           studentsRes.json(),
-          deptsRes.json()
+          deptsRes.json(),
+          attendanceRes.json()
         ]);
+
+        let attPercentage = "N/A";
+        if (attendanceData.success && attendanceData.data && attendanceData.data.overall) {
+            attPercentage = attendanceData.data.overall.percentage + "%";
+        }
 
         setCounts(prev => ({
           ...prev,
           teachers: teachersData.success ? teachersData.data.length : '0',
           students: studentsData.success ? studentsData.data.length : '0',
-          departments: deptsData.success ? deptsData.data.length : '0'
+          departments: deptsData.success ? deptsData.data.length : '0',
+          attendance: attPercentage
         }));
       } catch (err) {
         console.error("Failed to fetch dashboard stats", err);
