@@ -183,13 +183,13 @@ const StudentList = () => {
   }
 
   return (
-    <div className="w-full rounded-2xl bg-white border border-[#E2E8F0] shadow-[0_2px_12px_rgba(15,23,42,0.06)] p-10">
+    <div className="w-full rounded-2xl bg-white border border-[#E2E8F0] shadow-[0_2px_12px_rgba(15,23,42,0.06)] p-4 sm:p-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-[34px] font-bold text-[#0F172A] leading-none">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h1 className="text-[28px] sm:text-[34px] font-bold text-[#0F172A] leading-none">
           Students
         </h1>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button 
             onClick={() => { setStudentToEdit(null); setIsAddingStudent(true); }}
             className="flex items-center gap-2 h-12 px-7 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-semibold shadow-sm transition-all duration-200"
@@ -205,8 +205,8 @@ const StudentList = () => {
       </div>
 
       {/* Search & Dropdown */}
-      <div className="flex items-center gap-6 mb-8">
-        <div className="relative w-[400px]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 mb-8">
+        <div className="relative w-full sm:w-[400px]">
           <Search
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             size={18}
@@ -219,7 +219,7 @@ const StudentList = () => {
             className="w-full h-12 rounded-xl border border-[#CBD5E1] bg-white pl-12 pr-4 text-[15px] text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
           />
         </div>
-        <div className="relative w-[270px]">
+        <div className="relative w-full sm:w-[270px]">
           <select 
             value={selectedSection}
             onChange={(e) => setSelectedSection(e.target.value)}
@@ -238,7 +238,7 @@ const StudentList = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200">
         <table className="w-full">
           <thead className="bg-[#F8FAFC]">
             <tr>

@@ -186,12 +186,12 @@ const CreateDepartment = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 border-b border-gray-200 pb-2">
-          <button onClick={() => setActiveTab("departments")} className={`font-semibold ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments ({departments.length})</button>
-          <button onClick={() => setActiveTab("subjects")} className={`font-semibold ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects ({subjects.length})</button>
-          <button onClick={() => setActiveTab("semesters")} className={`font-semibold ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters ({semesters.length})</button>
-          <button onClick={() => setActiveTab("batches")} className={`font-semibold ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches ({batches.length})</button>
-          <button onClick={() => setActiveTab("sections")} className={`font-semibold ${activeTab === "sections" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Sections ({sections.length})</button>
+        <div className="flex gap-4 border-b border-gray-200 pb-2 overflow-x-auto">
+          <button onClick={() => setActiveTab("departments")} className={`font-semibold whitespace-nowrap ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments ({departments.length})</button>
+          <button onClick={() => setActiveTab("subjects")} className={`font-semibold whitespace-nowrap ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects ({subjects.length})</button>
+          <button onClick={() => setActiveTab("semesters")} className={`font-semibold whitespace-nowrap ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters ({semesters.length})</button>
+          <button onClick={() => setActiveTab("batches")} className={`font-semibold whitespace-nowrap ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches ({batches.length})</button>
+          <button onClick={() => setActiveTab("sections")} className={`font-semibold whitespace-nowrap ${activeTab === "sections" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Sections ({sections.length})</button>
         </div>
 
         {/* Table Section */}

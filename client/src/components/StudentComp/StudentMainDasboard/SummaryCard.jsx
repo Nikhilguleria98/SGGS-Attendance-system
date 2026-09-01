@@ -82,7 +82,7 @@ export default function SummaryCard({
         {title}
       </h4>
 
-      <h2 className={`mt-2 text-[42px] font-bold ${theme.value}`}>
+      <h2 className={`mt-2 text-[28px] sm:text-[42px] font-bold ${theme.value}`}>
         {value}
       </h2>
 

@@ -13,7 +13,7 @@ export default function AttendanceDashboard() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
           {/* Left */}
           <div>
-            <h1 className="text-4xl font-bold text-[#17356D]">
+            <h1 className="text-2xl sm:text-4xl font-bold text-[#17356D]">
               Subject-Wise-Attendance
             </h1>
 

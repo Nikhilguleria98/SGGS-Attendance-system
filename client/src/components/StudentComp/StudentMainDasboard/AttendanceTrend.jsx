@@ -37,7 +37,7 @@ export default function AttendanceTrend({ summaries = [] }) {
   return (
     <div className="bg-white rounded-3xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)] p-6 h-full select-none">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-3">
         <div>
           <h2 className="text-2xl font-bold text-[#17356D]">Attendance Trend</h2>
           <p className="text-gray-500 mt-1">Subject-wise Performance</p>

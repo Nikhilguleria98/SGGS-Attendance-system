@@ -8,7 +8,7 @@ export default function SearchFilterBar({
 }) {
 
   return (
-    <div className="flex items-center gap-4 mb-4 ml-6">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4 ml-0 sm:ml-6">
       <div className="flex items-center border border-gray-200 rounded-lg px-3 py-2 bg-white focus-within:border-brand-blue transition">
         <Search size={16} className="text-gray-400 mr-2" />
         <input

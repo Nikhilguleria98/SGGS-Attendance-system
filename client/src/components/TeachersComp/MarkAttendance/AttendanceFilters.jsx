@@ -3,9 +3,13 @@ import { Calendar } from 'lucide-react';
 
 const AttendanceFilters = ({ filters, setFilters }) => {
   const [assignments, setAssignments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAssignments = async () => {
+      setIsLoading(true);
+      setError(null);
       const token = localStorage.getItem("token");
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/teacher-assignments/my`, {
@@ -15,9 +19,17 @@ const AttendanceFilters = ({ filters, setFilters }) => {
 
         if (data.success) {
           setAssignments(data.data);
+          if (!data.data || data.data.length === 0) {
+            setError("No assignments found. Please contact HOD to create assignments.");
+          }
+        } else {
+          setError(data.message || "Failed to load assignments");
         }
       } catch (err) {
         console.error("Failed to fetch teacher assignments", err);
+        setError("Failed to connect to server");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchAssignments();
@@ -193,7 +205,7 @@ const AttendanceFilters = ({ filters, setFilters }) => {
       
       {!filters.assignment && (
         <p className="text-sm text-amber-600 font-medium">
-          Please select all fields (Department, Semester, Batch, Section, Subject) to identify the class.
+          {isLoading ? "Loading assignments..." : error || "Please select all fields (Department, Semester, Batch, Section, Subject) to identify the class."}
         </p>
       )}
     </div>

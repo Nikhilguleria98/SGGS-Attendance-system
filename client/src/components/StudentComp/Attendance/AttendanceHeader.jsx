@@ -2,7 +2,7 @@ import { Calendar, ChevronDown } from "lucide-react";
 
 export default function AttendanceHeader() {
   return (
-    <div className="flex items-start justify-between px-8 py-7 bg-[#F5F7FB]">
+    <div className="flex items-start justify-between px-4 md:px-6 py-7 bg-[#F5F7FB]">
 
       {/* Left */}
 
