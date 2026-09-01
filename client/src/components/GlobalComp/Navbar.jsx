@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import LoginDrawer from "./logincomp/LoginDrawer";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false); // Mobile menu state
-  const [isLoginOpen, setIsLoginOpen] = useState(false); // Drawer state
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -104,7 +102,7 @@ const Navbar = () => {
             <motion.button 
               whileHover={{ scale: 1.05 }} 
               whileTap={{ scale: 0.95 }}
-              onClick={() => setIsLoginOpen(true)}
+              onClick={() => navigate('/login')}
               className="bg-[#00529b] text-white font-semibold px-6 py-2.5 rounded shadow-sm hover:bg-[#003d73] hover:shadow-md transition-all duration-300 whitespace-nowrap"
             >
               Login
@@ -153,7 +151,7 @@ const Navbar = () => {
                   <button
                     onClick={() => {
                       setOpen(false);
-                      setIsLoginOpen(true);
+                      navigate('/login');
                     }}
                     className="block w-full text-center bg-[#00529b] text-white font-bold py-3 rounded shadow-sm hover:bg-[#003d73] transition-colors"
                   >
@@ -165,9 +163,6 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </header>
-
-      {/* Render the Drawer Component */}
-      <LoginDrawer isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
 };

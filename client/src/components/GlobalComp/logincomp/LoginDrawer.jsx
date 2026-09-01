@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const LoginDrawer = ({ isOpen, onClose }) => {
+const LoginDrawer = ({ isOpen = true, onClose }) => {
   const [selectedRole, setSelectedRole] = useState("Student");
   const [showPassword, setShowPassword] = useState(false);
   const [identifier, setIdentifier] = useState("");
@@ -60,12 +60,20 @@ const LoginDrawer = ({ isOpen, onClose }) => {
         navigate("/student/dashboard");
       }
       
-      onClose();
+      if (onClose) onClose();
     } catch (err) {
       console.error(err);
       toast.error("Server Error. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate("/");
     }
   };
 
@@ -78,7 +86,7 @@ const LoginDrawer = ({ isOpen, onClose }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleClose}
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           />
 
@@ -92,7 +100,7 @@ const LoginDrawer = ({ isOpen, onClose }) => {
           >
             {/* Close */}
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 rounded-full z-10"
             >
               <X size={24} />

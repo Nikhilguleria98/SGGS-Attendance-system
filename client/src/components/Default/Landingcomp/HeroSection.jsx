@@ -9,13 +9,11 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LoginDrawer from "../../GlobalComp/logincomp/LoginDrawer";
 
 // Replace with your actual asset path
 import campusImage from "../../../assets/sggscampus.png";
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -82,10 +80,7 @@ const HeroSection = () => {
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
               >
                 <button
-                  onClick={() => {
-                    console.log("Get Started clicked");
-                    setIsLoginOpen(true);
-                  }}
+                  onClick={() => navigate('/login')}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#c8102e] hover:bg-[#a00d24] text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-red-100 group"
                 >
                   Get Started
@@ -193,7 +188,6 @@ const HeroSection = () => {
           </button>
         </div>
       </div>
-      <LoginDrawer isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 };
