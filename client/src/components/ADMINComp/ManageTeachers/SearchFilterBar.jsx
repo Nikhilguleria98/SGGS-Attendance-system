@@ -4,7 +4,7 @@ export default function SearchFilterBar({
   search, setSearch, 
   department, setDepartment, departments = [],
   batch, setBatch, batches = [],
-  group, setGroup, groups = []
+  section, setSection, sections = []
 }) {
 
   return (
@@ -32,15 +32,17 @@ export default function SearchFilterBar({
         ))}
       </select>
 
-      {/* Group Filter */}
+      {/* Section Filter */}
       <select
-        value={group}
-        onChange={(e) => setGroup(e.target.value)}
+        value={section}
+        onChange={(e) => setSection(e.target.value)}
         className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 bg-white outline-none focus:border-[#162b4a] w-full sm:w-auto min-w-[150px]"
       >
-        <option value="">All Groups</option>
-        {groups.map((g) => (
-          <option key={g._id} value={g.name}>{g.name}</option>
+        <option value="">All Sections</option>
+        {sections.map((s) => (
+          <option key={s._id} value={s.name}>
+            Section {s.name}
+          </option>
         ))}
       </select>
 

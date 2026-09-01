@@ -13,12 +13,12 @@ export default function ManageTeachers() {
   const [teachers, setTeachers] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [batches, setBatches] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [sections, setSections] = useState([]);
 
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
   const [batch, setBatch] = useState("");
-  const [group, setGroup] = useState("");
+  const [section, setSection] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [teacherToDelete, setTeacherToDelete] = useState(null);
 
@@ -36,14 +36,14 @@ export default function ManageTeachers() {
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, department, batch, group]);
+  }, [search, department, batch, section]);
 
   const fetchData = async () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
 
-      const [teachersRes, deptsRes, batchesRes, groupsRes] = await Promise.all([
+      const [teachersRes, deptsRes, batchesRes, sectionsRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/users?role=teacher`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
@@ -53,7 +53,7 @@ export default function ManageTeachers() {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -61,12 +61,12 @@ export default function ManageTeachers() {
       const teachersData = await teachersRes.json();
       const deptsData = await deptsRes.json();
       const batchesData = await batchesRes.json();
-      const groupsData = await groupsRes.json();
+      const sectionsData = await sectionsRes.json();
 
       if (teachersData.success) setTeachers(teachersData.data);
       if (deptsData.success) setDepartments(deptsData.data);
       if (batchesData.success) setBatches(batchesData.data);
-      if (groupsData.success) setGroups(groupsData.data);
+      if (sectionsData.success) setSections(sectionsData.data);
     } catch (err) {
       console.error(err);
       toast.error("Failed to load data");
@@ -86,11 +86,11 @@ export default function ManageTeachers() {
         tDeptId === department;
 
       const teachesBatch = !batch || (teacher.batches && teacher.batches.includes(batch));
-      const teachesGroup = !group || (teacher.groups && teacher.groups.includes(group));
+      const teachesSection = !section || (teacher.sections && teacher.sections.includes(section));
 
-      return matchesSearch && matchesDepartment && teachesBatch && teachesGroup;
+      return matchesSearch && matchesDepartment && teachesBatch && teachesSection;
     });
-  }, [teachers, search, department, batch, group]);
+  }, [teachers, search, department, batch, section]);
 
   const totalPages = Math.max(1, Math.ceil(filteredTeachers.length / PAGE_SIZE));
   const paginatedTeachers = filteredTeachers.slice(
@@ -200,9 +200,9 @@ export default function ManageTeachers() {
             batch={batch}
             setBatch={setBatch}
             batches={batches}
-            group={group}
-            setGroup={setGroup}
-            groups={groups}
+            section={section}
+            setSection={setSection}
+            sections={sections}
           />
 
           {isLoading ? (
@@ -244,7 +244,7 @@ export default function ManageTeachers() {
         onSave={handleSaveTeacher}
         departments={departments}
         batches={batches}
-        groups={groups}
+        groups={sections}
         isSaving={isSaving}
       />
     </div>

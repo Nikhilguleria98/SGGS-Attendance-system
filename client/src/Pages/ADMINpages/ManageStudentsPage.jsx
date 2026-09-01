@@ -16,7 +16,7 @@ const columns = [
   "Department",
   "Semester",
   "Batch",
-  "Group",
+  "Section",
   "Actions",
 ];
 
@@ -24,12 +24,12 @@ export default function ManageStudentsPage() {
   const [students, setStudents] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [batches, setBatches] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [sections, setSections] = useState([]);
 
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("");
   const [batch, setBatch] = useState("");
-  const [group, setGroup] = useState("");
+  const [section, setSection] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [studentToDelete, setStudentToDelete] = useState(null);
   
@@ -48,7 +48,7 @@ export default function ManageStudentsPage() {
     try {
       const token = localStorage.getItem("token");
       
-      const [studentsRes, deptsRes, batchesRes, groupsRes] = await Promise.all([
+      const [studentsRes, deptsRes, batchesRes, sectionsRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
@@ -58,7 +58,7 @@ export default function ManageStudentsPage() {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -73,12 +73,12 @@ export default function ManageStudentsPage() {
       const studentsData = await studentsRes.json();
       const deptsData = await deptsRes.json();
       const batchesData = await batchesRes.json();
-      const groupsData = await groupsRes.json();
+      const sectionsData = await sectionsRes.json();
 
       if (studentsData.success) setStudents(studentsData.data);
       if (deptsData.success) setDepartments(deptsData.data);
       if (batchesData.success) setBatches(batchesData.data);
-      if (groupsData.success) setGroups(groupsData.data);
+      if (sectionsData.success) setSections(sectionsData.data);
 
     } catch (err) {
       console.error(err);
@@ -99,12 +99,12 @@ export default function ManageStudentsPage() {
       const sBatch = student.batch || student.batches?.[0];
       const matchesBatch = !batch || sBatch === batch;
 
-      const sGroup = student.group || student.groups?.[0] || student.section;
-      const matchesGroup = !group || sGroup === group;
+      const sSection = student.section || student.sections?.[0];
+      const matchesSection = !section || sSection === section;
 
-      return matchesSearch && matchesDepartment && matchesBatch && matchesGroup;
+      return matchesSearch && matchesDepartment && matchesBatch && matchesSection;
     });
-  }, [students, search, department, batch, group]);
+  }, [students, search, department, batch, section]);
 
   const totalPages = Math.max(
     1,
@@ -204,7 +204,7 @@ export default function ManageStudentsPage() {
             initialData={studentToEdit}
             departments={departments}
             batches={batches}
-            groups={groups}
+            groups={sections}
             isSaving={isSaving}
           />
         ) : (
@@ -220,9 +220,9 @@ export default function ManageStudentsPage() {
               batch={batch}
               setBatch={setBatch}
               batches={batches}
-              group={group}
-              setGroup={setGroup}
-              groups={groups}
+              section={section}
+              setSection={setSection}
+              sections={sections}
             />
             
             {isLoading ? (

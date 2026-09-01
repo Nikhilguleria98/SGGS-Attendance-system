@@ -10,7 +10,7 @@ const extractNames = (val) => {
   return val.map(v => (typeof v === 'object' && v !== null) ? (v.name || String(v)) : String(v));
 };
 
-export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], groups = [], isSaving }) {
+export default function TeacherModal({ isOpen, onClose, initialData, onSave, departments = [], batches = [], sections = [], isSaving }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -24,7 +24,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
   // State for the dynamic subject assignment rows
   const [assignments, setAssignments] = useState([
-    { id: Date.now(), semester: '', batches: [], groups: [], subjects: [] }
+    { id: Date.now(), semester: '', batches: [], sections: [], subjects: [] }
   ]);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
              id: a._id || Math.random(),
              semester: a.semester ? (typeof a.semester === 'object' ? a.semester._id : a.semester) : '',
              batches: extractNames(a.batches || a.batch),
-             groups: extractNames(a.groups || a.group),
+             sections: extractNames(a.sections || a.section),
              subjects: extractNames(a.subjects || a.subject)
           }));
         } else {
@@ -89,7 +89,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
             id: Date.now(), 
             semester: initialData.semester ? (typeof initialData.semester === 'object' ? initialData.semester._id : initialData.semester) : '',
             batches: extractNames(initialData.batches), 
-            groups: extractNames(initialData.groups), 
+            sections: extractNames(initialData.sections || initialData.section), 
             subjects: extractNames(initialData.subjects) 
           }];
         }
@@ -97,7 +97,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
       } else {
         setFormData({ firstName: '', lastName: '', email: '', password: '', departments: [] });
-        setAssignments([{ id: Date.now(), semester: '', batches: [], groups: [], subjects: [] }]);
+        setAssignments([{ id: Date.now(), semester: '', batches: [], sections: [], subjects: [] }]);
       }
     }
   }, [isOpen, initialData, departments]);
@@ -105,7 +105,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   if (!isOpen) return null;
 
   const handleAddAssignment = () => {
-    setAssignments([...assignments, { id: Date.now(), semester: '', batches: [], groups: [], subjects: [] }]);
+    setAssignments([...assignments, { id: Date.now(), semester: '', batches: [], sections: [], subjects: [] }]);
   };
 
   const handleRemoveAssignment = (id) => {
@@ -138,9 +138,9 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   const handleSubmit = () => {
     const allSubjects = [...new Set(assignments.flatMap(a => a.subjects))];
     const allBatches = [...new Set(assignments.flatMap(a => a.batches).filter(Boolean))];
-    const allGroups = [...new Set(assignments.flatMap(a => a.groups).filter(Boolean))];
+    const allSections = [...new Set(assignments.flatMap(a => a.sections).filter(Boolean))];
 
-    const finalData = { ...formData, subjects: allSubjects, batches: allBatches, groups: allGroups, assignments };
+    const finalData = { ...formData, subjects: allSubjects, batches: allBatches, sections: allSections, assignments };
     
     // Remove password if blank (for edits)
     if (!finalData.password) {
@@ -232,7 +232,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
           {/* Dynamic Assignments Row */}
           <div>
-            <h3 className="text-sm font-bold text-gray-800 mb-4">Assign Subjects (Batch - Group wise)</h3>
+            <h3 className="text-sm font-bold text-gray-800 mb-4">Assign Subjects (Batch - Section wise)</h3>
             
             <div className="bg-white rounded-lg border border-gray-100 overflow-visible mb-4">
               <table className="w-full text-left text-sm">
@@ -241,7 +241,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                     <th className="py-3 px-4 font-semibold text-gray-700 w-12 text-center">#</th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Semester <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Batch <span className="text-red-500">*</span></th>
-                    <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Group <span className="text-red-500">*</span></th>
+                    <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Section <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Subjects <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-16 text-center">Actions</th>
                   </tr>
@@ -272,10 +272,10 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                       </td>
                       <td className="py-3 px-2">
                         <MultiSelect 
-                          options={groups.map(g => ({ label: g.name, value: g.name }))}
-                          selected={assignment.groups}
-                          onChange={(val) => updateAssignment(assignment.id, 'groups', val)}
-                          placeholder="Select groups"
+                          options={sections.map(s => ({ label: s.name, value: s.name }))}
+                          selected={assignment.sections}
+                          onChange={(val) => updateAssignment(assignment.id, 'sections', val)}
+                          placeholder="Select sections"
                         />
                       </td>
 

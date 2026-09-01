@@ -18,7 +18,7 @@ const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [batches, setBatches] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [sections, setSections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Edit / Add state
@@ -36,7 +36,7 @@ const StudentList = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const [studentsRes, deptsRes, batchesRes, groupsRes] = await Promise.all([
+      const [studentsRes, deptsRes, batchesRes, sectionsRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/users?role=student`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
@@ -46,7 +46,7 @@ const StudentList = () => {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -71,9 +71,9 @@ const StudentList = () => {
         const batchesData = await batchesRes.json();
         if (batchesData.success) setBatches(batchesData.data);
       }
-      if (groupsRes.ok) {
-        const groupsData = await groupsRes.json();
-        if (groupsData.success) setGroups(groupsData.data);
+      if (sectionsRes.ok) {
+        const sectionsData = await sectionsRes.json();
+        if (sectionsData.success) setSections(sectionsData.data);
       }
 
     } catch (err) {
@@ -171,7 +171,7 @@ const StudentList = () => {
         initialData={studentToEdit}
         departments={departments}
         batches={batches}
-        groups={groups}
+        groups={sections}
         isSaving={isSaving}
       />
     );

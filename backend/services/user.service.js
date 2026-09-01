@@ -120,7 +120,7 @@ class UserService {
                 user.assignments = summary.assignments;
                 user.departments = summary.departments;
                 user.batches = summary.batches;
-                user.groups = summary.groups;
+                user.sections = summary.sections;
                 user.subjects = summary.subjects;
             }
         }

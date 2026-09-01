@@ -72,7 +72,7 @@ class TeacherAssignmentService {
                 assignments: [],
                 departments: new Set(),
                 batches: new Set(),
-                groups: new Set(),
+                sections: new Set(),
                 subjects: new Set()
             };
         }
@@ -84,13 +84,13 @@ class TeacherAssignmentService {
                 summary.assignments.push(assignment);
                 
                 if (assignment.department) {
-                    summary.departments.add(assignment.department.name || assignment.department);
+                    summary.departments.add(assignment.department._id?.toString() || assignment.department?.toString());
                 }
                 if (assignment.batch) {
                     summary.batches.add(assignment.batch);
                 }
                 if (assignment.section) {
-                    summary.groups.add(assignment.section);
+                    summary.sections.add(assignment.section);
                 }
                 if (assignment.subject) {
                     summary.subjects.add(assignment.subject.name || assignment.subject);
@@ -107,7 +107,7 @@ class TeacherAssignmentService {
                 assignments: s.assignments,
                 departments: Array.from(s.departments),
                 batches: Array.from(s.batches),
-                groups: Array.from(s.groups),
+                sections: Array.from(s.sections),
                 subjects: Array.from(s.subjects)
             };
         }

@@ -5,7 +5,7 @@ const FilterBar = ({ filters, setFilters, onChange, availableData = [] }) => {
   const [departments, setDepartments] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [batches, setBatches] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [sections, setSections] = useState([]);
   const [subjects, setSubjects] = useState([]);
   
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +36,7 @@ const FilterBar = ({ filters, setFilters, onChange, availableData = [] }) => {
           fetchAPI("/departments"),
           fetchAPI("/semesters"),
           fetchAPI("/batches"),
-          fetchAPI("/groups"),
+          fetchAPI("/sections"),
           fetchAPI("/subjects"),
         ]);
         
@@ -54,7 +54,7 @@ const FilterBar = ({ filters, setFilters, onChange, availableData = [] }) => {
         setDepartments(extractData(results[0], "department"));
         setSemesters(extractData(results[1], "semester"));
         setBatches(extractData(results[2], "batch"));
-        setGroups(extractData(results[3], "section"));
+        setSections(extractData(results[3], "section"));
         setSubjects(extractData(results[4], "subject"));
 
         setFieldErrors(newFieldErrors);
@@ -225,9 +225,9 @@ const FilterBar = ({ filters, setFilters, onChange, availableData = [] }) => {
               <option value="">
                 {isLoading ? "Loading..." : fieldErrors.section ? "Failed to load" : "Select Section"}
               </option>
-              {groups.map((g) => (
-                <option key={g._id} value={g.name} className="text-gray-800">
-                  {g.name}
+              {sections.map((s) => (
+                <option key={s._id || s.name || s} value={s.name || s} className="text-gray-800">
+                  Section {s.name || s}
                 </option>
               ))}
             </select>

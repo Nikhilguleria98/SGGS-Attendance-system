@@ -1,12 +1,12 @@
 import React from "react";
 import { Edit2, Trash2 } from "lucide-react";
 
-export default function GroupTable({ groups, onDelete, onEdit }) {
-  if (!groups || groups.length === 0) {
+export default function SectionTable({ sections, onDelete, onEdit }) {
+  if (!sections || sections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100">
-        <p className="text-gray-500 font-medium text-lg">No groups found.</p>
-        <p className="text-gray-400 text-sm mt-1">Click 'Create Group' to add one.</p>
+        <p className="text-gray-500 font-medium text-lg">No sections found.</p>
+        <p className="text-gray-400 text-sm mt-1">Click 'Create Section' to add one.</p>
       </div>
     );
   }
@@ -18,7 +18,7 @@ export default function GroupTable({ groups, onDelete, onEdit }) {
           <thead className="bg-gray-50 border-b border-gray-100">
             <tr>
               <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Group Name
+                Section Name
               </th>
               <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Description
@@ -29,37 +29,37 @@ export default function GroupTable({ groups, onDelete, onEdit }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {groups.map((group) => (
+            {sections.map((section) => (
               <tr 
-                key={group._id}
+                key={section._id}
                 className="hover:bg-blue-50/30 transition-colors"
               >
                 <td className="px-6 py-4">
                   <div className="text-sm font-semibold text-gray-900">
-                    {group.name}
+                    {section.name}
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="text-sm text-gray-500 max-w-md truncate">
-                    {group.description || "N/A"}
+                    {section.description || "N/A"}
                   </div>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex justify-end gap-3">
                     {onEdit && (
                       <button
-                        onClick={() => onEdit(group)}
+                        onClick={() => onEdit(section)}
                         className="text-gray-400 hover:text-[#00529b] transition-colors"
-                        title="Edit Group"
+                        title="Edit Section"
                       >
                         <Edit2 size={18} />
                       </button>
                     )}
                     {onDelete && (
                       <button
-                         onClick={() => onDelete(group)}
+                         onClick={() => onDelete(section)}
                          className="text-gray-400 hover:text-red-600 transition-colors"
-                         title="Delete Group"
+                         title="Delete Section"
                       >
                          <Trash2 size={18} />
                       </button>

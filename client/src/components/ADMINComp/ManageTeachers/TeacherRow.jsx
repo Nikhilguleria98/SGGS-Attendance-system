@@ -4,10 +4,11 @@ import { Pencil, Trash2 } from "lucide-react";
 export default function TeacherRow({ teacher, departments, index, onEdit, onDelete }) {
   const assignments = teacher.assignments || [];
 
+  const primaryDeptName = typeof teacher.department === 'object' ? teacher.department?.name : null;
+  const assignmentDepts = assignments.map(a => a.department?.name || a.department);
+  
   const uniqueDepartments = [...new Set(
-    assignments
-      .map(a => a.department?.name || a.department)
-      .filter(Boolean)
+    (primaryDeptName ? [primaryDeptName, ...assignmentDepts] : assignmentDepts).filter(Boolean)
   )];
 
   const uniqueSubjects = [...new Set(
@@ -28,10 +29,8 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
       .filter(Boolean)
   )];
 
-  const uniqueGroups = [...new Set(
-    assignments
-      .map(a => a.section)
-      .filter(Boolean)
+  const uniqueSections = [...new Set(
+    teacher.assignments?.flatMap(a => a.sections || a.section).filter(Boolean) || []
   )];
 
   const displaySubjects = uniqueSubjects.slice(0, 3);
@@ -41,7 +40,7 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
   
   const deptName = uniqueDepartments.length > 0 ? uniqueDepartments.join(", ") : "-";
   const batches = uniqueBatches;
-  const groups = uniqueGroups;
+  const sections = uniqueSections;
 
   return (
     <tr className="border-b border-gray-100 hover:bg-gray-50 text-sm">
@@ -55,8 +54,8 @@ export default function TeacherRow({ teacher, departments, index, onEdit, onDele
       <td className="py-4 px-4 text-gray-600">
         {batches.length > 0 ? batches.join(", ") : "-"}
       </td>
-      <td className="py-4 px-4 text-gray-600">
-        {groups.length > 0 ? groups.join(", ") : "-"}
+      <td className="py-4 px-6 text-sm text-gray-600">
+        {sections.length > 0 ? sections.join(", ") : "-"}
       </td>
 
       <td className="py-4 px-4">

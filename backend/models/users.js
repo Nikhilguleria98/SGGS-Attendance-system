@@ -114,7 +114,7 @@ const userSchema = new mongoose.Schema(
         // ==========================
         
         batches: { type: Array, default: [] },
-        groups: { type: Array, default: [] },
+        sections: { type: Array, default: [] },
         subjects: { type: Array, default: [] },
         assignments: { type: Array, default: [] },
         departments: { type: Array, default: [] },
