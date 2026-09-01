@@ -1,11 +1,9 @@
-import React, { Suspense, lazy } from "react";
+import React, { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import DashboardLayout from "./components/GlobalComp/DashboardLayout";
 import PublicLayout from "./components/GlobalComp/PublicLayout";
 import ProtectedRoute from "./components/GlobalComp/ProtectedRoute/ProtectedRoute";
-
-const LoginDrawer = lazy(() => import("./components/GlobalComp/logincomp/LoginDrawer"));
 
 // HOD Pages
 const HodDashboardPage = lazy(() => import("./Pages/ADMINpages/HodDashboardPage"));
@@ -30,58 +28,51 @@ const Contactuspage = lazy(() => import("./Pages/Defaultpages/Contactuspage"));
 const AttendanceDashboard = lazy(() => import("./Pages/Studentpages/AttendanceDashboard"));
 const StudentDashboard = lazy(() => import("./Pages/Studentpages/StudentDashboard"));
 const TeacherReport = lazy(() => import("./components/TeachersComp/TeacherReport/Teacherreport"));
-
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen bg-gray-50">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00529b]"></div>
-  </div>
-);
+const LoginDrawer = lazy(() => import("./components/GlobalComp/logincomp/LoginDrawer"));
 
 const App = () => {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <Routes>
-        {/* HOD Protected */}
-        <Route element={<ProtectedRoute allowedRole="hod" />}>
-          <Route path="/hod" element={<DashboardLayout role="hod" />}>
-            <Route path="dashboard" element={<HodDashboardPage />} />
-            <Route path="teachers" element={<ManageTeachers />} />
-            <Route path="departments" element={<CreateDepartment />} />
-            <Route path="manage-students" element={<ManageStudentsPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-          </Route>
+    <Routes>
+      {/* HOD Protected */}
+      <Route element={<ProtectedRoute allowedRole="hod" />}>
+        <Route path="/hod" element={<DashboardLayout role="hod" />}>
+          <Route path="dashboard" element={<HodDashboardPage />} />
+          <Route path="teachers" element={<ManageTeachers />} />
+          <Route path="departments" element={<CreateDepartment />} />
+          <Route path="manage-students" element={<ManageStudentsPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
+      </Route>
 
-        {/* Teacher Protected */}
-        <Route element={<ProtectedRoute allowedRole="teacher" />}>
-          <Route path="/teacher" element={<DashboardLayout role="teacher" />}>
-            <Route path="dashboard" element={<TeacherDashboard />} />
-            <Route path="managestudent" element={<TeacherHome />} />
-            <Route path="teacherdashboard" element={<TeacherDashboard />} />
-            <Route path="mark-attendance" element={<MarkAttendance />} />
-            <Route path="reports" element={<TeacherReport />} />
-            <Route path="profile" element={<TeacherProfile />} />
-          </Route>
+      {/* Teacher Protected */}
+      <Route element={<ProtectedRoute allowedRole="teacher" />}>
+        <Route path="/teacher" element={<DashboardLayout role="teacher" />}>
+          <Route path="dashboard" element={<TeacherDashboard />} />
+          <Route path="managestudent" element={<TeacherHome />} />
+          <Route path="teacherdashboard" element={<TeacherDashboard />} />
+          <Route path="mark-attendance" element={<MarkAttendance />} />
+          <Route path="reports" element={<TeacherReport />} />
+          <Route path="profile" element={<TeacherProfile />} />
         </Route>
+      </Route>
 
-        {/* Student Protected */}
-        <Route element={<ProtectedRoute allowedRole="student" />}>
-          <Route path="/student" element={<DashboardLayout role="student" />}>
-            <Route path="dashboard" element={<StudentDashboard/>} />
-            <Route path="attendance" element={<AttendanceDashboard/>} />
-            <Route path="profile" element={<StudentProfile />} />
-          </Route>
+      {/* Student Protected */}
+      <Route element={<ProtectedRoute allowedRole="student" />}>
+        <Route path="/student" element={<DashboardLayout role="student" />}>
+          <Route path="dashboard" element={<StudentDashboard/>} />
+          <Route path="attendance" element={<AttendanceDashboard/>} />
+          <Route path="profile" element={<StudentProfile />} />
         </Route>
+      </Route>
 
-        {/* Public */}
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<Landingpage />} />
-          <Route path="/about-us" element={<Aboutuspage />} />
-          <Route path="/contact-us" element={<Contactuspage />} />
-          <Route path="/login" element={<LoginDrawer />} />
-        </Route>
-      </Routes>
-    </Suspense>
+      {/* Public */}
+      <Route element={<PublicLayout />}>
+        <Route path="/" element={<Landingpage />} />
+        <Route path="/about-us" element={<Aboutuspage />} />
+        <Route path="/contact-us" element={<Contactuspage />} />
+        <Route path="/login" element={<LoginDrawer />} />
+      </Route>
+    </Routes>
   );
 };
 

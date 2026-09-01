@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Menu } from 'lucide-react';
+import ErrorBoundary from './ErrorBoundary';
+
+const ContentFallback = () => (
+  <div className="flex items-center justify-center h-full">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00529b]"></div>
+  </div>
+);
 
 const DashboardLayout = ({ role }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -33,7 +40,11 @@ const DashboardLayout = ({ role }) => {
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto bg-[#f8f9fa]">
-          <Outlet />
+          <ErrorBoundary>
+            <Suspense fallback={<ContentFallback />}>
+              <Outlet />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </main>
     </div>
