@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import LoginDrawer from "./logincomp/LoginDrawer";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false); // Mobile menu state
+  const [isLoginOpen, setIsLoginOpen] = useState(false); // Drawer state
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,7 +26,6 @@ const Navbar = () => {
       const windowHeight = window.innerHeight;
       const totalHeight = document.documentElement.scrollHeight;
 
-      // Check if user has scrolled near the bottom (within 10px)
       if (scrollTop + windowHeight >= totalHeight - 10) {
         if (location.pathname === "/") {
           navigate("/about-us");
@@ -36,7 +37,9 @@ const Navbar = () => {
       }
     };
 
-    // Debounced scroll event listener
+    const handleOpenLogin = () => setIsLoginOpen(true);
+    window.addEventListener("openLogin", handleOpenLogin);
+
     const throttledScroll = () => {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(handleScroll, 100);
@@ -45,6 +48,7 @@ const Navbar = () => {
     window.addEventListener("scroll", throttledScroll);
     return () => {
       window.removeEventListener("scroll", throttledScroll);
+      window.removeEventListener("openLogin", handleOpenLogin);
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [location.pathname, navigate]);
@@ -102,7 +106,7 @@ const Navbar = () => {
             <motion.button 
               whileHover={{ scale: 1.05 }} 
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate('/login')}
+              onClick={() => setIsLoginOpen(true)}
               className="bg-[#00529b] text-white font-semibold px-6 py-2.5 rounded shadow-sm hover:bg-[#003d73] hover:shadow-md transition-all duration-300 whitespace-nowrap"
             >
               Login
@@ -151,7 +155,7 @@ const Navbar = () => {
                   <button
                     onClick={() => {
                       setOpen(false);
-                      navigate('/login');
+                      setIsLoginOpen(true);
                     }}
                     className="block w-full text-center bg-[#00529b] text-white font-bold py-3 rounded shadow-sm hover:bg-[#003d73] transition-colors"
                   >
@@ -163,6 +167,9 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </header>
+
+      {/* Render the Drawer Component */}
+      <LoginDrawer isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );
 };

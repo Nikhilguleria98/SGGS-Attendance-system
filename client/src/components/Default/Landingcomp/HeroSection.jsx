@@ -38,7 +38,7 @@ const HeroSection = () => {
       <section className="relative w-full pt-0 pb-0 flex-grow flex flex-col justify-center">
         <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-0">
           {/* Left Content Area */}
-          <div className="w-full px-6 sm:px-12 lg:px-16 xl:px-24 z-20 order-2 lg:order-1">
+          <div className="w-full px-6 sm:px-12 lg:px-16 xl:px-24 z-30 relative order-2 lg:order-1">
             <motion.div
               variants={containerVariants}
               initial="hidden"
@@ -80,7 +80,7 @@ const HeroSection = () => {
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
               >
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => window.dispatchEvent(new Event("openLogin"))}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#c8102e] hover:bg-[#a00d24] text-white px-8 py-3.5 rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 focus:ring-4 focus:ring-red-100 group"
                 >
                   Get Started
