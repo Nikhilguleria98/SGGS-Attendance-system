@@ -26,7 +26,6 @@ const Navbar = () => {
       const windowHeight = window.innerHeight;
       const totalHeight = document.documentElement.scrollHeight;
 
-      // Check if user has scrolled near the bottom (within 10px)
       if (scrollTop + windowHeight >= totalHeight - 10) {
         if (location.pathname === "/") {
           navigate("/about-us");
@@ -41,7 +40,9 @@ const Navbar = () => {
       }
     };
 
-    // Debounced scroll event listener
+    const handleOpenLogin = () => setIsLoginOpen(true);
+    window.addEventListener("openLogin", handleOpenLogin);
+
     const throttledScroll = () => {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(handleScroll, 100);
@@ -50,6 +51,7 @@ const Navbar = () => {
     window.addEventListener("scroll", throttledScroll);
     return () => {
       window.removeEventListener("scroll", throttledScroll);
+      window.removeEventListener("openLogin", handleOpenLogin);
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [location.pathname, navigate]);

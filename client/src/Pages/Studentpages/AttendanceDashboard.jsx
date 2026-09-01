@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AttendanceTable from "../../components/StudentComp/Attendance/AttendanceTable";
-import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { ChevronDown } from "lucide-react";
 
 export default function AttendanceDashboard() {
   const [semesters, setSemesters] = useState([]);
@@ -13,7 +13,7 @@ export default function AttendanceDashboard() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
           {/* Left */}
           <div>
-            <h1 className="text-4xl font-bold text-[#17356D]">
+            <h1 className="text-2xl sm:text-4xl font-bold text-[#17356D]">
               Subject-Wise-Attendance
             </h1>
 
@@ -55,7 +55,7 @@ export default function AttendanceDashboard() {
                 })}
               </select>
 
-              <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+              <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
             </div>
           </div>
         </div>

@@ -204,7 +204,7 @@ export default function ManageStudentsPage() {
             initialData={studentToEdit}
             departments={departments}
             batches={batches}
-            groups={sections}
+            sections={sections}
             isSaving={isSaving}
           />
         ) : (

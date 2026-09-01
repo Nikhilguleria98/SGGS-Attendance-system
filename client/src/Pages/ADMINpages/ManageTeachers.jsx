@@ -230,7 +230,7 @@ export default function ManageTeachers() {
         onSave={handleSaveTeacher}
         departments={departments}
         batches={batches}
-        groups={sections}
+        sections={sections}
         isSaving={isSaving}
       />
     </div>

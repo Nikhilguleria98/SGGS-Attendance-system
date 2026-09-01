@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Edit2, Trash2, Search, X } from "lucide-react";
 
-export default function SectionTable({ groups: sections = [], onDelete, onEdit }) {
+export default function SectionTable({ sections = [], onDelete, onEdit }) {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -12,9 +12,9 @@ export default function SectionTable({ groups: sections = [], onDelete, onEdit }
         (g.name && g.name.toLowerCase().includes(q)) ||
         (g.description && g.description.toLowerCase().includes(q))
     );
-  }, [groups, search]);
+  }, [sections, search]);
 
-  if (!groups || groups.length === 0) {
+  if (!sections || sections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100">
         <p className="text-gray-500 font-medium text-lg">No sections found.</p>
@@ -48,7 +48,7 @@ export default function SectionTable({ groups: sections = [], onDelete, onEdit }
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8 text-center">
-          <p className="text-gray-500 font-medium">No groups match your search.</p>
+          <p className="text-gray-500 font-medium">No sections match your search.</p>
           <p className="text-gray-400 text-sm mt-1">Try a different keyword.</p>
         </div>
       ) : (
@@ -62,23 +62,23 @@ export default function SectionTable({ groups: sections = [], onDelete, onEdit }
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((group) => (
-                <tr key={group._id} className="hover:bg-blue-50/30 transition-colors">
+              {filtered.map((section) => (
+                <tr key={section._id} className="hover:bg-blue-50/30 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="text-sm font-semibold text-gray-900">{group.name}</div>
+                    <div className="text-sm font-semibold text-gray-900">{section.name}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500 max-w-md truncate">{group.description || "N/A"}</div>
+                    <div className="text-sm text-gray-500 max-w-md truncate">{section.description || "N/A"}</div>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-3">
                       {onEdit && (
-                        <button onClick={() => onEdit(group)} className="text-gray-400 hover:text-[#00529b] transition-colors" title="Edit Group">
+                        <button onClick={() => onEdit(section)} className="text-gray-400 hover:text-[#00529b] transition-colors" title="Edit Section">
                           <Edit2 size={18} />
                         </button>
                       )}
                       {onDelete && (
-                        <button onClick={() => onDelete(group)} className="text-gray-400 hover:text-red-600 transition-colors" title="Delete Group">
+                        <button onClick={() => onDelete(section)} className="text-gray-400 hover:text-red-600 transition-colors" title="Delete Section">
                           <Trash2 size={18} />
                         </button>
                       )}

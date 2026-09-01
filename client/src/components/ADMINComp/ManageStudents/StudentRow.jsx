@@ -14,7 +14,7 @@ const StudentRow = ({ student, index, onEdit, onDelete }) => {
       <td className="py-4 px-4 text-gray-600">{deptName}</td>
       <td className="py-4 px-4 text-gray-600">{semesterName}</td>
       <td className="py-4 px-4 text-gray-600">{student.batch || student.batches?.[0] || "-"}</td>
-      <td className="py-4 px-4 text-gray-600">{student.group || student.section || student.groups?.[0] || "-"}</td>
+      <td className="py-4 px-4 text-gray-600">{student.section || student.group || student.sections?.[0] || student.groups?.[0] || "-"}</td>
 
       <td className="py-4 px-4">
         <div className="flex items-center gap-3">

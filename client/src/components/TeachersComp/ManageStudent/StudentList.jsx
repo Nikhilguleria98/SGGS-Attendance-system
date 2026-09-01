@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
-  FiSearch,
-  FiPlus,
-  FiUpload,
-  FiEdit2,
-  FiTrash2,
-  FiChevronDown,
-} from "react-icons/fi";
+  Search,
+  Plus,
+  Upload,
+  Pencil,
+  Trash2,
+  ChevronDown,
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 // Reusing Admin components for Teacher dashboard
@@ -15,6 +15,7 @@ import DeleteConfirmationModal from "../../ADMINComp/Common/DeleteConfirmationMo
 
 const StudentList = () => {
   const [search, setSearch] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
   const [students, setStudents] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [batches, setBatches] = useState([]);
@@ -84,11 +85,15 @@ const StudentList = () => {
     }
   };
 
-  const filteredStudents = students.filter(student => {
+  const filteredStudents = useMemo(() => students.filter(student => {
     const name = student.firstName + " " + (student.lastName || "");
-    return name.toLowerCase().includes(search.toLowerCase()) || 
-           (student.rollNo && student.rollNo.toLowerCase().includes(search.toLowerCase()));
-  });
+    const matchesSearch = name.toLowerCase().includes(search.toLowerCase()) || 
+                          (student.rollNo && student.rollNo.toLowerCase().includes(search.toLowerCase()));
+    
+    const matchesSection = !selectedSection || student.section === selectedSection;
+    
+    return matchesSearch && matchesSection;
+  }), [students, search, selectedSection]);
 
   const handleEdit = (student) => {
     setStudentToEdit(student);
@@ -171,38 +176,38 @@ const StudentList = () => {
         initialData={studentToEdit}
         departments={departments}
         batches={batches}
-        groups={sections}
+        sections={sections}
         isSaving={isSaving}
       />
     );
   }
 
   return (
-    <div className="w-full rounded-2xl bg-white border border-[#E2E8F0] shadow-[0_2px_12px_rgba(15,23,42,0.06)] p-10">
+    <div className="w-full rounded-2xl bg-white border border-[#E2E8F0] shadow-[0_2px_12px_rgba(15,23,42,0.06)] p-4 sm:p-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-[34px] font-bold text-[#0F172A] leading-none">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h1 className="text-[28px] sm:text-[34px] font-bold text-[#0F172A] leading-none">
           Students
         </h1>
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button 
             onClick={() => { setStudentToEdit(null); setIsAddingStudent(true); }}
             className="flex items-center gap-2 h-12 px-7 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-semibold shadow-sm transition-all duration-200"
           >
-            <FiPlus size={18} />
+            <Plus size={18} />
             Add Student
           </button>
           <button className="flex items-center gap-2 h-12 px-7 rounded-xl border border-[#CBD5E1] bg-white text-[#2563EB] font-semibold hover:bg-[#F8FAFC] transition-all">
-            <FiUpload size={18} />
+            <Upload size={18} />
             Import Students
           </button>
         </div>
       </div>
 
       {/* Search & Dropdown */}
-      <div className="flex items-center gap-6 mb-8">
-        <div className="relative w-[400px]">
-          <FiSearch
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 mb-8">
+        <div className="relative w-full sm:w-[400px]">
+          <Search
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
             size={18}
           />
@@ -214,11 +219,18 @@ const StudentList = () => {
             className="w-full h-12 rounded-xl border border-[#CBD5E1] bg-white pl-12 pr-4 text-[15px] text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
           />
         </div>
-        <div className="relative w-[270px]">
-          <select className="appearance-none w-full h-12 rounded-xl border border-[#CBD5E1] bg-white px-5 text-[15px] text-slate-700 outline-none cursor-pointer focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-            <option>All Sections</option>
+        <div className="relative w-full sm:w-[270px]">
+          <select 
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            className="appearance-none w-full h-12 rounded-xl border border-[#CBD5E1] bg-white px-5 text-[15px] text-slate-700 outline-none cursor-pointer focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+          >
+            <option value="">All Sections</option>
+            {sections.map((s) => (
+              <option key={s._id} value={s.name}>Section {s.name}</option>
+            ))}
           </select>
-          <FiChevronDown
+          <ChevronDown
             size={18}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
           />
@@ -226,7 +238,7 @@ const StudentList = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200">
+      <div className="overflow-x-auto rounded-2xl border border-slate-200">
         <table className="w-full">
           <thead className="bg-[#F8FAFC]">
             <tr>
@@ -286,13 +298,13 @@ const StudentList = () => {
                         onClick={() => handleEdit(student)}
                         className="text-indigo-600 hover:text-indigo-800 hover:scale-110 transition-all"
                       >
-                        <FiEdit2 className="text-[#4F46E5]" size={19} />
+                        <Pencil className="text-[#4F46E5]" size={19} />
                       </button>
                       <button
                         onClick={() => handleDelete(student)}
                         className="text-red-500 hover:text-red-700 hover:scale-110 active:scale-95 transition-all duration-200"
                       >
-                        <FiTrash2 className="text-[#EF4444]" size={19} />
+                        <Trash2 className="text-[#EF4444]" size={19} />
                       </button>
                     </div>
                   </td>

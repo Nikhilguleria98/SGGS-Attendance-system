@@ -44,16 +44,16 @@ const CreateDepartment = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const [deptRes, batchRes, groupRes, subjectRes, semesterRes] = await Promise.all([
+      const [deptRes, batchRes, sectionRes, subjectRes, semesterRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/batches`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/semesters`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       const [deptData, batchData, sectionData, subjectData, semesterData] = await Promise.all([
-        deptRes.json(), batchRes.json(), groupRes.json(), subjectRes.json(), semesterRes.json()
+        deptRes.json(), batchRes.json(), sectionRes.json(), subjectRes.json(), semesterRes.json()
       ]);
 
       if (deptData.success) setDepartments(deptData.data);
@@ -114,7 +114,7 @@ const CreateDepartment = () => {
     setIsDeleting(true);
     try {
       const token = localStorage.getItem("token");
-      const endpoint = type === "batch" ? "batches" : type === "semester" ? "semesters" : type === "section" ? "groups" : `${type}s`;
+      const endpoint = type === "batch" ? "batches" : type === "semester" ? "semesters" : type === "section" ? "sections" : `${type}s`;
       const url = `${import.meta.env.VITE_API_URL}/${endpoint}/${item._id}`;
       const res = await fetch(url, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
@@ -186,12 +186,12 @@ const CreateDepartment = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 border-b border-gray-200 pb-2">
-          <button onClick={() => setActiveTab("departments")} className={`font-semibold ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments ({departments.length})</button>
-          <button onClick={() => setActiveTab("subjects")} className={`font-semibold ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects ({subjects.length})</button>
-          <button onClick={() => setActiveTab("semesters")} className={`font-semibold ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters ({semesters.length})</button>
-          <button onClick={() => setActiveTab("batches")} className={`font-semibold ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches ({batches.length})</button>
-          <button onClick={() => setActiveTab("sections")} className={`font-semibold ${activeTab === "sections" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Sections ({sections.length})</button>
+        <div className="flex gap-4 border-b border-gray-200 pb-2 overflow-x-auto">
+          <button onClick={() => setActiveTab("departments")} className={`font-semibold whitespace-nowrap ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments ({departments.length})</button>
+          <button onClick={() => setActiveTab("subjects")} className={`font-semibold whitespace-nowrap ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects ({subjects.length})</button>
+          <button onClick={() => setActiveTab("semesters")} className={`font-semibold whitespace-nowrap ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters ({semesters.length})</button>
+          <button onClick={() => setActiveTab("batches")} className={`font-semibold whitespace-nowrap ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches ({batches.length})</button>
+          <button onClick={() => setActiveTab("sections")} className={`font-semibold whitespace-nowrap ${activeTab === "sections" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Sections ({sections.length})</button>
         </div>
 
         {/* Table Section */}
@@ -233,7 +233,7 @@ const CreateDepartment = () => {
             )}
             {activeTab === "sections" && (
               <SectionTable 
-                groups={sections} 
+                sections={sections} 
                 onEdit={(section) => { setEditData(section); setIsSectionModalOpen(true); }}
                 onDelete={(section) => handleDeleteItem("section", section)}
               />

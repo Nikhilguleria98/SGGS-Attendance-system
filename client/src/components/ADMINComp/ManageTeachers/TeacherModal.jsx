@@ -136,11 +136,25 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   };
 
   const handleSubmit = () => {
+    // Validation: ensure at least one section selected per assignment
+    for (const [index, assignment] of assignments.entries()) {
+      if (!assignment.sections || assignment.sections.length === 0) {
+        toast.error(`Please select at least one section for assignment ${index + 1}`);
+        return;
+      }
+    }
+
     const allSubjects = [...new Set(assignments.flatMap(a => a.subjects))];
     const allBatches = [...new Set(assignments.flatMap(a => a.batches).filter(Boolean))];
     const allSections = [...new Set(assignments.flatMap(a => a.sections).filter(Boolean))];
 
-    const finalData = { ...formData, subjects: allSubjects, batches: allBatches, sections: allSections, assignments };
+    // Backend expects "groups" key in assignment objects, not "sections"
+    const mappedAssignments = assignments.map(a => ({
+      ...a,
+      groups: a.sections,
+    }));
+
+    const finalData = { ...formData, subjects: allSubjects, batches: allBatches, groups: allSections, assignments: mappedAssignments };
     
     // Remove password if blank (for edits)
     if (!finalData.password) {
@@ -152,7 +166,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-full sm:max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-xl font-bold text-[#162b4a]">
@@ -164,7 +178,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
         </div>
 
         {/* Body */}
-        <div className="p-6 pb-48 overflow-y-auto flex-1">
+        <div className="p-6 pb-8 overflow-y-auto flex-1">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -233,16 +247,14 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
           {/* Dynamic Assignments Row */}
           <div>
             <h3 className="text-sm font-bold text-gray-800 mb-4">Assign Subjects (Batch - Section wise)</h3>
-            <h3 className="text-sm font-bold text-gray-800 mb-4">Assign Subjects (Batch - Section wise)</h3>
             
-            <div className="bg-white rounded-lg border border-gray-100 overflow-visible mb-4">
+            <div className="bg-white rounded-lg border border-gray-100 overflow-x-auto mb-4">
               <table className="w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50/50">
                     <th className="py-3 px-4 font-semibold text-gray-700 w-12 text-center">#</th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Semester <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Batch <span className="text-red-500">*</span></th>
-                    <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Section <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Section <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Subjects <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-16 text-center">Actions</th>
@@ -274,9 +286,9 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                       </td>
                       <td className="py-3 px-2">
                         <MultiSelect 
-                          options={groups.map(g => ({ label: g.name, value: g.name }))}
-                          selected={assignment.groups}
-                          onChange={(val) => updateAssignment(assignment.id, 'groups', val)}
+                          options={sections.map(s => ({ label: s.name, value: s.name }))}
+                          selected={assignment.sections}
+                          onChange={(val) => updateAssignment(assignment.id, 'sections', val)}
                           placeholder="Select sections"
                         />
                       </td>

@@ -200,7 +200,7 @@ const MarkAttendance = () => {
           handleStatusChange={handleStatusChange}
         />
 
-        <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-8">
           <button 
             onClick={() => markAll('present')}
             className="flex items-center gap-2 px-6 py-2 rounded-lg font-medium border border-green-600 bg-green-600 text-white hover:bg-green-700 transition-colors"

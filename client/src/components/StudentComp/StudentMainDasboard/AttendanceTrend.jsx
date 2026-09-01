@@ -9,7 +9,7 @@ import {
   YAxis,
   Cell,
 } from "recharts";
-import { FiTrendingUp } from "react-icons/fi";
+import { TrendingUp } from "lucide-react";
 
 const COLORS = ['#2563EB', '#c00021', '#16b84e', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
 
@@ -37,14 +37,14 @@ export default function AttendanceTrend({ summaries = [] }) {
   return (
     <div className="bg-white rounded-3xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)] p-6 h-full select-none">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-3">
         <div>
           <h2 className="text-2xl font-bold text-[#17356D]">Attendance Trend</h2>
           <p className="text-gray-500 mt-1">Subject-wise Performance</p>
         </div>
         {trend !== 0 && (
           <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${trend > 0 ? 'bg-blue-50 text-blue-700' : 'bg-red-50 text-red-700'}`}>
-            <FiTrendingUp size={18} className={trend < 0 ? 'rotate-180' : ''} />
+            <TrendingUp size={18} className={trend < 0 ? 'rotate-180' : ''} />
             <span className="font-medium">{trend > 0 ? '+' : ''}{trend}%</span>
           </div>
         )}

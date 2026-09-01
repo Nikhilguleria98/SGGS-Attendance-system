@@ -10,7 +10,7 @@ const AttendanceTable = ({ students, attendanceData, handleStatusChange }) => {
               <th className="px-6 py-4 w-20">S.No</th>
               <th className="px-6 py-4">Name</th>
               <th className="px-6 py-4">Roll No</th>
-              <th className="px-6 py-4 w-64 text-center">Attendance</th>
+              <th className="px-4 sm:px-6 py-4 whitespace-nowrap text-center">Attendance</th>
             </tr>
           </thead>
           <tbody>
@@ -28,11 +28,11 @@ const AttendanceTable = ({ students, attendanceData, handleStatusChange }) => {
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4 font-medium">{student.firstName} {student.lastName || ''}</td>
                     <td className="px-6 py-4 text-gray-500">{student.rollNo || student.rollNumber || '-'}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-4">
+                    <td className="px-4 sm:px-6 py-4">
+                      <div className="flex items-center justify-center gap-2 sm:gap-4">
                         <button 
                           onClick={() => handleStatusChange(student._id, 'present')}
-                          className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                          className={`px-4 sm:px-6 py-2 rounded-lg font-medium text-sm transition-all ${
                             status === 'present' 
                               ? 'bg-green-600 text-white border border-green-600' 
                               : 'border border-gray-300 text-green-600 hover:bg-green-50'
@@ -42,7 +42,7 @@ const AttendanceTable = ({ students, attendanceData, handleStatusChange }) => {
                         </button>
                         <button 
                           onClick={() => handleStatusChange(student._id, 'absent')}
-                          className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                          className={`px-4 sm:px-6 py-2 rounded-lg font-medium text-sm transition-all ${
                             status === 'absent' 
                               ? 'bg-[#c00021] text-white border border-[#c00021]' 
                               : 'border border-gray-300 text-[#c00021] hover:bg-red-50'

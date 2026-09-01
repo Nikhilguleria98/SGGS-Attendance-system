@@ -22,16 +22,18 @@ export default function AttendanceOverview({ summaries = [] }) {
       <h2 className="text-[24px] font-bold text-[#17356D] mb-6">Attendance Overview</h2>
 
       <div className="flex flex-col items-center">
-        <div className="relative flex items-center justify-center w-[320px] h-[320px] shrink-0">
-          <PieChart width={320} height={320}>
-            <Pie data={chartData} dataKey="value" cx="50%" cy="50%" innerRadius={75} outerRadius={100} paddingAngle={4} stroke="none">
-              {chartData.map((entry, index) => (
-                <Cell key={index} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
+        <div className="relative flex items-center justify-center w-full max-w-[320px] aspect-square shrink-0 mx-auto">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={chartData} dataKey="value" cx="50%" cy="50%" innerRadius={75} outerRadius={100} paddingAngle={4} stroke="none">
+                {chartData.map((entry, index) => (
+                  <Cell key={index} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <h2 className="text-5xl font-bold text-[#17356D]">{overall}%</h2>
+            <h2 className="text-3xl sm:text-5xl font-bold text-[#17356D]">{overall}%</h2>
             <p className="text-gray-500 mt-1">Overall</p>
           </div>
         </div>
