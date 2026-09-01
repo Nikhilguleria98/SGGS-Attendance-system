@@ -8,6 +8,11 @@ import toast from 'react-hot-toast';
 const MarkAttendance = () => {
   const [filters, setFilters] = useState({
     assignment: '',
+    department: '',
+    semester: '',
+    batch: '',
+    section: '',
+    subject: '',
     lecture: '',
     date: new Date().toISOString().split('T')[0]
   });
