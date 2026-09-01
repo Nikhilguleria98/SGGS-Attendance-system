@@ -46,7 +46,7 @@ const StudentList = () => {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
+        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);

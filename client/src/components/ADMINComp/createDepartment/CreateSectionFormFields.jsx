@@ -53,7 +53,7 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
 
     try {
       const token = localStorage.getItem("token");
-      const url = initialData ? `${import.meta.env.VITE_API_URL}/sections/${initialData._id}` : `${import.meta.env.VITE_API_URL}/sections`;
+      const url = initialData ? `${import.meta.env.VITE_API_URL}/groups/${initialData._id}` : `${import.meta.env.VITE_API_URL}/groups`;
       const method = initialData ? "PATCH" : "POST";
       const response = await fetch(url, {
         method,
