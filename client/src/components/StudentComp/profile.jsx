@@ -102,8 +102,13 @@ const StudentProfile = () => {
   }
 
   const name = userData.firstName + " " + (userData.lastName || "");
-  const departmentName =
-    userData.department?.name || userData.department || "N/A";
+  const departmentName = typeof userData.department === 'object' 
+    ? userData.department?.name || "N/A" 
+    : userData.department || "N/A";
+
+  const semesterLabel = typeof userData.semester === 'object'
+    ? userData.semester?.name || userData.semester?.number || "N/A"
+    : userData.semester || "N/A";
 
   // ---------- Render ----------
   return (
@@ -247,7 +252,7 @@ const StudentProfile = () => {
                 Roll No: {userData.rollNumber || "N/A"}
               </p>
               <p className="text-gray-500 text-sm">
-                Semester {userData.semester || "N/A"}
+                Semester {semesterLabel}
               </p>
             </div>
           </div>
@@ -292,7 +297,7 @@ const StudentProfile = () => {
               <InfoGrid
                 data={[
                   ["Department", departmentName],
-                  ["Semester", userData.semester || "N/A"],
+                  ["Semester", semesterLabel],
                   ["Section", userData.section || "N/A"],
                   ["Batch", userData.batch || "N/A"],
                 ]}

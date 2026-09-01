@@ -1,7 +1,11 @@
+import { useState } from "react";
 import AttendanceTable from "../../components/StudentComp/Attendance/AttendanceTable";
 import { FiCalendar, FiChevronDown } from "react-icons/fi";
 
 export default function AttendanceDashboard() {
+  const [semesters, setSemesters] = useState([]);
+  const [selectedSemester, setSelectedSemester] = useState("All");
+
   return (
     <div className="min-h-screen bg-[#F5F7FB]">
       <div className="p-4 md:p-6 lg:p-8">
@@ -23,6 +27,8 @@ export default function AttendanceDashboard() {
             {/* Semester */}
             <div className="relative">
               <select
+                value={selectedSemester}
+                onChange={(e) => setSelectedSemester(e.target.value)}
                 className="
                   appearance-none
                   w-full sm:w-44
@@ -42,9 +48,11 @@ export default function AttendanceDashboard() {
                   focus:ring-blue-100
                 "
               >
-                <option>Semester 7</option>
-                <option>Semester 6</option>
-                <option>Semester 5</option>
+                <option value="All">All Semesters</option>
+                {semesters.map(sem => {
+                  const label = String(sem).toLowerCase().includes('semester') ? sem : `Semester ${sem}`;
+                  return <option key={sem} value={sem}>{label}</option>
+                })}
               </select>
 
               <FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
@@ -54,7 +62,10 @@ export default function AttendanceDashboard() {
 
         {/* Attendance Table */}
         <div className="grid grid-cols-1">
-          <AttendanceTable />
+          <AttendanceTable 
+            selectedSemester={selectedSemester} 
+            onSemestersLoaded={setSemesters} 
+          />
         </div>
       </div>
     </div>

@@ -34,7 +34,7 @@ class AttendanceSummaryService {
     async getStudentDashboardData(studentId) {
         const summaries = await attendanceSummaryRepository.findByStudentId(studentId);
 
-        return summaries.map(summary => {
+        const mappedSummaries = summaries.map(summary => {
             const { assignment } = summary;
             const subject    = assignment?.subject    ?? {};
             const teacher    = assignment?.teacher    ?? {};
@@ -63,6 +63,51 @@ class AttendanceSummaryService {
                 percentage,
             };
         });
+
+        // Compute 8-week trend
+        const Attendance = require("../models/Attendance");
+        const eightWeeksAgo = new Date();
+        eightWeeksAgo.setHours(0,0,0,0);
+        eightWeeksAgo.setDate(eightWeeksAgo.getDate() - (8 * 7));
+
+        const attendances = await Attendance.find({
+            student: studentId,
+            attendanceDate: { $gte: eightWeeksAgo }
+        }).sort({ attendanceDate: 1 });
+
+        const weeks = {};
+        for(let i=1; i<=8; i++) {
+           weeks[`Week ${i}`] = { delivered: 0, attended: 0 };
+        }
+
+        attendances.forEach(record => {
+            const diffTime = record.attendanceDate.getTime() - eightWeeksAgo.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            let weekNum = Math.floor(diffDays / 7) + 1;
+            if (weekNum > 8) weekNum = 8;
+            if (weekNum < 1) weekNum = 1;
+
+            const weekKey = `Week ${weekNum}`;
+            if (!weeks[weekKey]) weeks[weekKey] = { delivered: 0, attended: 0 };
+
+            weeks[weekKey].delivered++;
+            if (record.status === 'present') {
+                weeks[weekKey].attended++;
+            }
+        });
+
+        const trend = Object.keys(weeks).map(week => {
+             const data = weeks[week];
+             return {
+                 week,
+                 attendance: data.delivered > 0 ? Math.round((data.attended / data.delivered) * 100) : 0
+             };
+        });
+
+        return {
+            subjects: mappedSummaries,
+            trend
+        };
     }
 
     async getTeacherReportData(teacherId, filters, options) {

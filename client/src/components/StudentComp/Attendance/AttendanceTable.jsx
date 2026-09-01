@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-export default function AttendanceCards() {
-  const [subjects, setSubjects] = useState([]);
+export default function AttendanceCards({ selectedSemester = "All", onSemestersLoaded = () => {} }) {
+  const [allSubjects, setAllSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -19,7 +19,6 @@ export default function AttendanceCards() {
           }
         );
 
-        // Specific error handling for auth failures
         if (response.status === 401) {
           throw new Error("Session expired. Please log in again.");
         }
@@ -31,7 +30,12 @@ export default function AttendanceCards() {
         }
 
         const resData = await response.json();
-        setSubjects(resData.data || []);
+        const payload = resData.data || {};
+        const subjectsArr = payload.subjects || (Array.isArray(payload) ? payload : []);
+        setAllSubjects(subjectsArr);
+        
+        const sems = [...new Set(subjectsArr.map(s => s.semester).filter(Boolean))].sort((a,b) => b - a);
+        onSemestersLoaded(sems);
       } catch (err) {
         setError(err.message || "Something went wrong.");
       } finally {
@@ -40,7 +44,7 @@ export default function AttendanceCards() {
     };
 
     fetchAttendance();
-  }, []);
+  }, [onSemestersLoaded]);
 
   if (loading) {
     return (
@@ -57,11 +61,16 @@ export default function AttendanceCards() {
       </div>
     );
   }
+  
+  let displayedSubjects = allSubjects;
+  if (selectedSemester !== "All") {
+    displayedSubjects = displayedSubjects.filter(s => String(s.semester) === String(selectedSemester));
+  }
 
-  if (subjects.length === 0) {
+  if (displayedSubjects.length === 0) {
     return (
       <div className="flex justify-center items-center h-60 text-gray-400 font-medium">
-        No attendance records found.
+        No attendance records found for this selection.
       </div>
     );
   }
@@ -75,7 +84,7 @@ export default function AttendanceCards() {
           className="grid gap-6"
           style={{ gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}
         >
-          {subjects.map((item, index) => (
+          {displayedSubjects.map((item, index) => (
             <div
               key={index}
               className="bg-white rounded-2xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)] overflow-hidden flex flex-col w-full"

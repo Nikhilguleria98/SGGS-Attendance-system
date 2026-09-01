@@ -8,20 +8,34 @@ import {
   YAxis,
 } from "recharts";
 
-import { FiTrendingUp } from "react-icons/fi";
+import { FiTrendingUp as TrendingUp, FiTrendingDown as TrendingDown, FiMinus as Minus } from "react-icons/fi";
 
-const attendanceData = [
-  { week: "Week 1", attendance: 76 },
-  { week: "Week 2", attendance: 82 },
-  { week: "Week 3", attendance: 79 },
-  { week: "Week 4", attendance: 86 },
-  { week: "Week 5", attendance: 88 },
-  { week: "Week 6", attendance: 84 },
-  { week: "Week 7", attendance: 91 },
-  { week: "Week 8", attendance: 89 },
-];
+export default function AttendanceTrend({ data = [] }) {
+  // Compute trend (last week vs previous week)
+  let trendPercent = 0;
+  let TrendIcon = Minus;
+  let trendColor = "text-gray-500 bg-gray-50";
+  let trendSign = "";
 
-export default function AttendanceTrend() {
+  if (data.length >= 2) {
+    const lastWeek = data[data.length - 1].attendance;
+    const prevWeek = data[data.length - 2].attendance;
+    if (prevWeek > 0) {
+      trendPercent = ((lastWeek - prevWeek) / prevWeek) * 100;
+    } else if (lastWeek > 0) {
+      trendPercent = 100;
+    }
+    
+    if (trendPercent > 0) {
+      TrendIcon = TrendingUp;
+      trendColor = "text-green-700 bg-green-50";
+      trendSign = "+";
+    } else if (trendPercent < 0) {
+      TrendIcon = TrendingDown;
+      trendColor = "text-red-700 bg-red-50";
+    }
+  }
+
   return (
     <div className="bg-white rounded-3xl border border-[#E7EDF5] shadow-[0_4px_20px_rgba(15,23,42,0.06)] p-6 h-full">
 
@@ -36,17 +50,17 @@ export default function AttendanceTrend() {
           </h2>
 
           <p className="text-gray-500 mt-1">
-            Last 8 Weeks Performance
+            Last {data.length || 8} Weeks Performance
           </p>
 
         </div>
 
-        <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl">
+        <div className={`flex items-center gap-2 px-4 py-2 rounded-xl ${trendColor}`}>
 
-          <FiTrendingUp size={18} />
+          <TrendIcon size={18} />
 
           <span className="font-medium">
-            +4.8%
+            {trendSign}{trendPercent.toFixed(1)}%
           </span>
 
         </div>
@@ -56,76 +70,80 @@ export default function AttendanceTrend() {
       {/* Chart */}
 
       <div className="h-[330px]">
+        {data.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
 
-        <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data}>
 
-          <AreaChart data={attendanceData}>
+              <defs>
 
-            <defs>
+                <linearGradient
+                  id="attendanceFill"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
 
-              <linearGradient
-                id="attendanceFill"
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
+                  <stop
+                    offset="5%"
+                    stopColor="#2563EB"
+                    stopOpacity={0.35}
+                  />
 
-                <stop
-                  offset="5%"
-                  stopColor="#2563EB"
-                  stopOpacity={0.35}
-                />
+                  <stop
+                    offset="95%"
+                    stopColor="#2563EB"
+                    stopOpacity={0}
+                  />
 
-                <stop
-                  offset="95%"
-                  stopColor="#2563EB"
-                  stopOpacity={0}
-                />
+                </linearGradient>
 
-              </linearGradient>
+              </defs>
 
-            </defs>
+              <CartesianGrid
+                stroke="#E2E8F0"
+                strokeDasharray="4 4"
+              />
 
-            <CartesianGrid
-              stroke="#E2E8F0"
-              strokeDasharray="4 4"
-            />
+              <XAxis
+                dataKey="week"
+                tick={{
+                  fill: "#64748B",
+                  fontSize: 13,
+                }}
+                axisLine={false}
+                tickLine={false}
+              />
 
-            <XAxis
-              dataKey="week"
-              tick={{
-                fill: "#64748B",
-                fontSize: 13,
-              }}
-              axisLine={false}
-              tickLine={false}
-            />
+              <YAxis
+                domain={[0, 100]}
+                tick={{
+                  fill: "#64748B",
+                  fontSize: 13,
+                }}
+                axisLine={false}
+                tickLine={false}
+              />
 
-            <YAxis
-              domain={[60, 100]}
-              tick={{
-                fill: "#64748B",
-                fontSize: 13,
-              }}
-              axisLine={false}
-              tickLine={false}
-            />
+              <Tooltip />
 
-            <Tooltip />
+              <Area
+                type="monotone"
+                dataKey="attendance"
+                stroke="#2563EB"
+                strokeWidth={4}
+                fill="url(#attendanceFill)"
+              />
 
-            <Area
-              type="monotone"
-              dataKey="attendance"
-              stroke="#2563EB"
-              strokeWidth={4}
-              fill="url(#attendanceFill)"
-            />
+            </AreaChart>
 
-          </AreaChart>
-
-        </ResponsiveContainer>
-
+          </ResponsiveContainer>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-400">
+            No historical data available.
+          </div>
+        )}
       </div>
 
     </div>

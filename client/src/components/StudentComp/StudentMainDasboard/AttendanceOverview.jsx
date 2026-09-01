@@ -5,24 +5,22 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  {
-    name: "Present",
-    value: 89,
-    color: "#22C55E",
-  },
-  {
-    name: "Absent",
-    value: 17,
-    color: "#EF4444",
-  },
-];
+export default function AttendanceOverview({ present = 0, absent = 0, overall = 0 }) {
+  const data = [
+    {
+      name: "Present",
+      value: present,
+      color: "#22C55E",
+    },
+    {
+      name: "Absent",
+      value: absent,
+      color: "#EF4444",
+    },
+  ];
 
-const total = data.reduce((sum, item) => sum + item.value, 0);
+  const total = present + absent;
 
-const overall = Math.round((89 / total) * 100);
-
-export default function AttendanceOverview() {
   return (
     <div
       className="
@@ -83,9 +81,7 @@ export default function AttendanceOverview() {
 <div className="w-full max-w-[320px] mt-6 space-y-4">
 
   {data.map((item) => {
-    const percentage = Math.round(
-      (item.value / total) * 100
-    );
+    const percentage = total > 0 ? Math.round((item.value / total) * 100) : 0;
 
     return (
       <div
