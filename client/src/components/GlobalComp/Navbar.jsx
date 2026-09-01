@@ -1,35 +1,71 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import LoginDrawer from "./logincomp/LoginDrawer"; // Import your new component here
+import LoginDrawer from "./logincomp/LoginDrawer";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false); // Mobile menu state
   const [isLoginOpen, setIsLoginOpen] = useState(false); // Drawer state
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About Us", path: "/about-us" },
     { name: "Contact Us", path: "/contact-us" },
-    
   ];
+
+  // Auto-navigation scroll handler
+  useEffect(() => {
+    let timeoutId = null;
+
+    const handleScroll = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const windowHeight = window.innerHeight;
+      const totalHeight = document.documentElement.scrollHeight;
+
+      // Check if user has scrolled near the bottom (within 10px)
+      if (scrollTop + windowHeight >= totalHeight - 10) {
+        if (location.pathname === "/") {
+          navigate("/about-us");
+          window.scrollTo(0, 0);
+        } else if (location.pathname === "/about-us") {
+          navigate("/contact-us");
+          window.scrollTo(0, 0);
+        }
+      }
+    };
+
+    // Debounced scroll event listener
+    const throttledScroll = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(handleScroll, 100);
+    };
+
+    window.addEventListener("scroll", throttledScroll);
+    return () => {
+      window.removeEventListener("scroll", throttledScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [location.pathname, navigate]);
 
   return (
     <>
       <header className="sticky top-0 w-full z-40 bg-white shadow-md border-t-4 border-[#c8102e]">
-        <nav className="w-full mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
+        <nav className="w-full mx-auto px-4 lg:px-8 py-2 flex items-center justify-between">
           
           {/* Logo */}
-          <div className="w-[10%] min-w-30 shrink-0">
+          <div className="shrink-0 flex items-center">
             <NavLink to="/" className="flex items-center outline-none">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="text-xl md:text-2xl font-bold tracking-tight text-[#c8102e]"
-              >
-                College<span className="text-gray-800">Logo</span>
-              </motion.div>
+              <motion.img
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                src="/sggslogo.png"
+                alt="SGGS World University Logo"
+                className="h-12 w-auto object-contain"
+              />
             </NavLink>
           </div>
 
