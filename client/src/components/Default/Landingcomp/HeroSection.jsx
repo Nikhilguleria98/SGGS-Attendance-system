@@ -13,9 +13,11 @@ import LoginDrawer from "../../GlobalComp/logincomp/LoginDrawer";
 
 // Replace with your actual asset path
 import campusImage from "../../../assets/sggscampus.png";
+
 const HeroSection = () => {
   const navigate = useNavigate();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -36,9 +38,9 @@ const HeroSection = () => {
   return (
     <div className="w-full bg-[#FAFAFA] font-sans flex flex-col min-h-screen overflow-x-hidden">
       {/* ── 1. HERO MAIN AREA ── */}
-      {/* Both top (pt-0) and bottom (pb-0) padding removed for a flush layout */}
-      <section className="relative w-full pt-0 pb-0 flex-grow flex flex-col justify-center">
-        <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-0">
+      <section className="relative w-full pt-8 lg:pt-12 pb-12 lg:pb-20 flex-grow flex flex-col justify-center">
+        <div className="max-w-[1600px] mx-auto w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-10 lg:gap-0">
+          
           {/* Left Content Area */}
           <div className="w-full px-6 sm:px-12 lg:px-16 xl:px-24 z-20 order-2 lg:order-1">
             <motion.div
@@ -50,7 +52,7 @@ const HeroSection = () => {
               {/* Headline */}
               <motion.h1
                 variants={itemVariants}
-                className="text-4xl sm:text-5xl lg:text-[56px] xl:text-[64px] leading-[1.1] font-extrabold text-[#111827] tracking-tight mb-6 mt-8 lg:mt-0"
+                className="text-3xl sm:text-5xl lg:text-[56px] xl:text-[64px] leading-[1.15] lg:leading-[1.1] font-extrabold text-[#111827] tracking-tight mb-6"
               >
                 <span className="text-[#c8102e]">Smart Attendance</span>
                 <br />
@@ -106,12 +108,12 @@ const HeroSection = () => {
             initial={{ opacity: 0, filter: "blur(10px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="w-full relative h-[350px] sm:h-[450px] lg:h-[650px] order-1 lg:order-2 pointer-events-none"
+            className="w-full relative h-[300px] sm:h-[400px] lg:h-[550px] xl:h-[650px] order-1 lg:order-2 pointer-events-none"
           >
             <img
               src={campusImage}
               alt="SGGS Campus"
-              className="absolute top-0 right-0 w-full lg:w-[115%] h-full object-cover object-center rounded-bl-[80px] lg:rounded-bl-[150px]"
+              className="absolute top-0 right-0 w-full lg:w-[115%] h-full object-cover object-center rounded-bl-[40px] sm:rounded-bl-[80px] lg:rounded-bl-[150px]"
               style={{
                 WebkitMaskImage:
                   "linear-gradient(to right, transparent 0%, black 25%)",
@@ -124,29 +126,31 @@ const HeroSection = () => {
       </section>
 
       {/* ── 2. WAVE + STATS SECTION ── */}
-      <div className="relative w-full mt-auto z-20">
-        {/* SVG Wave */}
-        <svg
-          className="absolute bottom-full left-0 w-full h-[60px] sm:h-[100px] md:h-[140px] lg:h-[180px] drop-shadow-xl -mb-[1px]"
-          preserveAspectRatio="none"
-          viewBox="0 0 1440 200"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z"
-            fill="#c8102e"
-            transform="translate(0,-15)"
-          />
-          <path
-            d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z"
-            fill="#132345"
-          />
-        </svg>
+      <div className="relative w-full mt-auto z-20 flex flex-col">
+        {/* SVG Wave rendered inline to preserve layout height */}
+        <div className="w-full overflow-hidden leading-none">
+          <svg
+            className="w-full h-[40px] sm:h-[80px] md:h-[120px] lg:h-[150px] block drop-shadow-xl"
+            preserveAspectRatio="none"
+            viewBox="0 0 1440 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z"
+              fill="#c8102e"
+              transform="translate(0,-15)"
+            />
+            <path
+              d="M0,150 C400,250 800,0 1440,80 V200 H0 V150 Z"
+              fill="#132345"
+            />
+          </svg>
+        </div>
 
         {/* Stats Bar Container */}
-        <div className="bg-[#132345] relative w-full pt-4 pb-10 px-6 sm:px-12 lg:px-24">
-          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:flex lg:flex-row lg:justify-end items-center gap-y-10 gap-x-6 lg:gap-12 xl:gap-16">
+        <div className="bg-[#132345] w-full pt-2 pb-10 px-6 sm:px-12 lg:px-24">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:flex lg:flex-row lg:justify-end items-center gap-y-8 gap-x-6 lg:gap-12 xl:gap-16">
             <StatBlock icon={Users} count="10,000+" label="Students" />
             <div className="hidden lg:block w-px h-12 bg-white/20" />
 

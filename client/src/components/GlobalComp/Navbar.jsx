@@ -17,7 +17,7 @@ const Navbar = () => {
     { name: "Contact Us", path: "/contact-us" },
   ];
 
-  // Auto-navigation scroll handler
+  // Auto-navigation scroll handler (Cycles Home -> About Us -> Contact Us -> Home)
   useEffect(() => {
     let timeoutId = null;
 
@@ -33,6 +33,9 @@ const Navbar = () => {
           window.scrollTo(0, 0);
         } else if (location.pathname === "/about-us") {
           navigate("/contact-us");
+          window.scrollTo(0, 0);
+        } else if (location.pathname === "/contact-us") {
+          navigate("/");
           window.scrollTo(0, 0);
         }
       }
