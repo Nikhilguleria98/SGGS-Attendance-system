@@ -4,6 +4,7 @@ const Department = require("../models/Department");
 const User = require("../models/users");
 const Subject = require("../models/Subject");
 const connectDB = require("../config/database");
+const Semester = require("../models/Semester");
 const departmentSeeder = require("./department.seeder");
 const hodSeeder = require("./hod.seeder");
 const teacherSeeder = require("./teacher.seeder");
@@ -17,19 +18,28 @@ const seedDatabase = async () => {
     await User.deleteMany({});
     await Department.deleteMany({});
     await Subject.deleteMany({});
+    await Semester.deleteMany({});
+
+    const semestersData = Array.from({length: 8}, (_, i) => ({ name: `Semester ${i+1}`, number: i+1 }));
+    const semesters = await Semester.insertMany(semestersData);
+    
+    const semesterMap = semesters.reduce((acc, sem) => {
+        acc[sem.number] = sem._id;
+        return acc;
+    }, {});
 
     const cseDepartment = await departmentSeeder();
 
     const hod = await hodSeeder(cseDepartment._id);
     const teachers = await teacherSeeder(cseDepartment._id);
-    const students = await studentSeeder(cseDepartment._id);
+    const students = await studentSeeder(cseDepartment._id, semesterMap);
 
     try {
       const createdHod = await User.create(hod);
       await User.create(teachers);
       await User.create(students);
 
-      const subjects = await subjectSeeder(cseDepartment._id, createdHod._id);
+      const subjects = await subjectSeeder(cseDepartment._id, createdHod._id, semesterMap);
       await Subject.create(subjects);
     } catch (e) {
       if (e.code === 11000) {

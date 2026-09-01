@@ -1,12 +1,12 @@
 const Subject = require("../models/Subject");
 
-const subjectSeeder = async (departmentId, hodId) => {
+const subjectSeeder = async (departmentId, hodId, semesterMap) => {
     return [
         {
             name: "Data Structures",
             code: "CS201",
             department: departmentId,
-            semester: 3,
+            semester: semesterMap[3],
             credits: 4,
             hod: hodId
         },
@@ -14,7 +14,7 @@ const subjectSeeder = async (departmentId, hodId) => {
             name: "Database Management Systems",
             code: "CS301",
             department: departmentId,
-            semester: 5,
+            semester: semesterMap[5],
             credits: 4,
             hod: hodId
         },
@@ -22,7 +22,7 @@ const subjectSeeder = async (departmentId, hodId) => {
             name: "Operating Systems",
             code: "CS401",
             department: departmentId,
-            semester: 4,
+            semester: semesterMap[4],
             credits: 4,
             hod: hodId
         }
