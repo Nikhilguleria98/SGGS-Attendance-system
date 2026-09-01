@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { Edit2, Trash2, Search, X } from "lucide-react";
 
-export default function GroupTable({ groups, onDelete, onEdit }) {
+export default function SectionTable({ groups: sections = [], onDelete, onEdit }) {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    if (!groups) return [];
+    if (!sections) return [];
     const q = search.toLowerCase();
-    return groups.filter(
+    return sections.filter(
       (g) =>
         (g.name && g.name.toLowerCase().includes(q)) ||
         (g.description && g.description.toLowerCase().includes(q))
