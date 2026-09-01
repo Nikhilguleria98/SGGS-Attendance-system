@@ -51,7 +51,7 @@ const ProfilePage = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <PersonalInformation user={userData} />
             <ProfessionalInformation user={userData} />
-            <AccountSecurity />
+            <AccountSecurity user={userData} />
           </div>
           <div className="lg:col-span-1 flex flex-col gap-6">
             <ProfilePhoto user={userData} />

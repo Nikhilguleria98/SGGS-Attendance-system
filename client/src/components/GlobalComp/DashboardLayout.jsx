@@ -11,6 +11,8 @@ const DashboardLayout = ({ role }) => {
     <div className="flex h-screen bg-[#f3f4f6] overflow-hidden">
       <Sidebar 
         role={role} 
+        logo="/sggslogo.png"
+        title="SGGS"
         isCollapsed={isCollapsed} 
         setIsCollapsed={setIsCollapsed}
         isMobileOpen={isMobileOpen}

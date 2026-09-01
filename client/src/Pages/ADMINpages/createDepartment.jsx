@@ -83,11 +83,11 @@ const CreateDepartment = () => {
     setTimeout(() => setIsBatchModalOpen(false), 1500);
   };
 
-  const handleSectionSuccess = (newSection) => {
+  const handleGroupSuccess = (newGroup) => {
     toast.success(editData ? "Section updated successfully!" : "Section created successfully!");
-    if (editData) { setSections(prev => prev.map(s => s._id === newSection._id ? newSection : s)); }
-    else { setSections((prev) => [...prev, newSection]); }
-    setTimeout(() => setIsSectionModalOpen(false), 1500);
+    if (editData) { setGroups(prev => prev.map(g => g._id === newGroup._id ? newGroup : g)); }
+    else { setGroups((prev) => [...prev, newGroup]); }
+    setTimeout(() => setIsGroupModalOpen(false), 1500);
   };
 
   const handleSubjectSuccess = (newSubject) => {
@@ -144,6 +144,7 @@ const CreateDepartment = () => {
             <h1 className="text-2xl font-bold text-gray-900">Manage Entities</h1>
             <p className="text-gray-500 mt-1 text-sm">
               View and create university departments, batches, and sections
+              View and create university departments, batches, and sections
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -167,6 +168,7 @@ const CreateDepartment = () => {
             >
               <Plus size={18} />
               <span>Create Section</span>
+              <span>Create Section</span>
             </button>
             <button
               onClick={() => { setEditData(null); setIsBatchModalOpen(true); }}
@@ -187,11 +189,11 @@ const CreateDepartment = () => {
 
         {/* Tabs */}
         <div className="flex gap-4 border-b border-gray-200 pb-2">
-          <button onClick={() => setActiveTab("departments")} className={`font-semibold ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments</button>
-          <button onClick={() => setActiveTab("subjects")} className={`font-semibold ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects</button>
-          <button onClick={() => setActiveTab("semesters")} className={`font-semibold ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters</button>
-          <button onClick={() => setActiveTab("batches")} className={`font-semibold ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches</button>
-          <button onClick={() => setActiveTab("sections")} className={`font-semibold ${activeTab === "sections" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Sections</button>
+          <button onClick={() => setActiveTab("departments")} className={`font-semibold ${activeTab === "departments" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Departments ({departments.length})</button>
+          <button onClick={() => setActiveTab("subjects")} className={`font-semibold ${activeTab === "subjects" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Subjects ({subjects.length})</button>
+          <button onClick={() => setActiveTab("semesters")} className={`font-semibold ${activeTab === "semesters" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Semesters ({semesters.length})</button>
+          <button onClick={() => setActiveTab("batches")} className={`font-semibold ${activeTab === "batches" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Batches ({batches.length})</button>
+          <button onClick={() => setActiveTab("groups")} className={`font-semibold ${activeTab === "groups" ? "text-[#00529b] border-b-2 border-[#00529b]" : "text-gray-500"}`}>Sections ({groups.length})</button>
         </div>
 
         {/* Table Section */}
@@ -218,6 +220,8 @@ const CreateDepartment = () => {
             {activeTab === "subjects" && (
               <SubjectTable 
                 subjects={subjects} 
+                departments={departments}
+                semesters={semesters}
                 onEdit={(subject) => { setEditData(subject); setIsSubjectModalOpen(true); }}
                 onDelete={(subject) => handleDeleteItem("subject", subject)}
               />
@@ -285,6 +289,8 @@ const CreateDepartment = () => {
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="relative w-full max-w-xl bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
               <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
                 <div>
+                  <h2 className="text-xl font-bold text-gray-900">{editData ? "Edit Section" : "Create New Section"}</h2>
+                  <p className="text-sm text-gray-500 mt-1">Fill in the details to {editData ? "update" : "add"} a section</p>
                   <h2 className="text-xl font-bold text-gray-900">{editData ? "Edit Section" : "Create New Section"}</h2>
                   <p className="text-sm text-gray-500 mt-1">Fill in the details to {editData ? "update" : "add"} a section</p>
                 </div>

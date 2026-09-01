@@ -233,6 +233,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
           {/* Dynamic Assignments Row */}
           <div>
             <h3 className="text-sm font-bold text-gray-800 mb-4">Assign Subjects (Batch - Section wise)</h3>
+            <h3 className="text-sm font-bold text-gray-800 mb-4">Assign Subjects (Batch - Section wise)</h3>
             
             <div className="bg-white rounded-lg border border-gray-100 overflow-visible mb-4">
               <table className="w-full text-left text-sm">
@@ -241,6 +242,7 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                     <th className="py-3 px-4 font-semibold text-gray-700 w-12 text-center">#</th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Semester <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Batch <span className="text-red-500">*</span></th>
+                    <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Section <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Section <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-1/5">Subjects <span className="text-red-500">*</span></th>
                     <th className="py-3 px-4 font-semibold text-gray-700 w-16 text-center">Actions</th>
@@ -272,9 +274,9 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                       </td>
                       <td className="py-3 px-2">
                         <MultiSelect 
-                          options={sections.map(s => ({ label: s.name, value: s.name }))}
-                          selected={assignment.sections}
-                          onChange={(val) => updateAssignment(assignment.id, 'sections', val)}
+                          options={groups.map(g => ({ label: g.name, value: g.name }))}
+                          selected={assignment.groups}
+                          onChange={(val) => updateAssignment(assignment.id, 'groups', val)}
                           placeholder="Select sections"
                         />
                       </td>

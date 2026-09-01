@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Mail, Edit2, Save, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 // ============================================================
 // Main Component: StudentProfile
@@ -186,7 +187,7 @@ const StudentProfile = () => {
                   if (!file) return;
 
                   if (file.size > 5 * 1024 * 1024) {
-                    return alert("File size must be less than 5MB");
+                    return toast.error("File size must be less than 5MB");
                   }
 
                   const reader = new FileReader();
@@ -216,12 +217,13 @@ const StudentProfile = () => {
                           ...prev,
                           avatar: reader.result,
                         }));
+                        toast.success("Profile picture updated!");
                       } else {
-                        alert("Failed to update profile photo");
+                        toast.error("Failed to update profile photo");
                       }
                     } catch (err) {
                       console.error(err);
-                      alert("Server error");
+                      toast.error("Server error");
                     }
                   };
 

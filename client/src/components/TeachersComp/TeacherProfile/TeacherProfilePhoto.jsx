@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Trash2, Upload } from 'lucide-react';
+import { Trash2, Upload } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const TeacherProfilePhoto = ({ user }) => {
   const fileInputRef = useRef(null);
@@ -14,7 +15,7 @@ const TeacherProfilePhoto = ({ user }) => {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("File size must be less than 5MB");
+      toast.error("File size must be less than 5MB");
       return;
     }
 
@@ -47,13 +48,14 @@ const TeacherProfilePhoto = ({ user }) => {
       if (data.success) {
         const existingUser = JSON.parse(localStorage.getItem("user") || "{}");
         localStorage.setItem("user", JSON.stringify({ ...existingUser, avatar: base64String }));
+        toast.success("Profile picture updated!");
         window.location.reload();
       } else {
-        alert(data.message || "Failed to update profile picture");
+        toast.error(data.message || "Failed to update profile picture");
       }
     } catch (err) {
       console.error(err);
-      alert("Server error");
+      toast.error("Server error");
     } finally {
       setIsUploading(false);
     }

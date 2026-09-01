@@ -1,11 +1,22 @@
-import React,{useState} from "react";
-import { Edit2, Trash2 } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { Edit2, Trash2, Search, X } from "lucide-react";
 import DeleteConfirmationModal from "../Common/DeleteConfirmationModal";
+
 export default function DepartmentTable({ departments, onEdit, onDelete }) {
-  const [deleteModal, setDeleteModal] = useState({
-    open: false,
-    department: null,
-  });
+  const [search, setSearch] = useState("");
+  const [deleteModal, setDeleteModal] = useState({ open: false, department: null });
+
+  const filtered = useMemo(() => {
+    if (!departments) return [];
+    const q = search.toLowerCase();
+    return departments.filter(
+      (d) =>
+        (d.name && d.name.toLowerCase().includes(q)) ||
+        (d.code && d.code.toLowerCase().includes(q)) ||
+        (d.description && d.description.toLowerCase().includes(q))
+    );
+  }, [departments, search]);
+
   if (!departments || departments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-sm border border-gray-100">
@@ -17,97 +28,86 @@ export default function DepartmentTable({ departments, onEdit, onDelete }) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-gray-50 border-b border-gray-100">
-            <tr>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Code
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Department Name
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Description
-              </th>
-              <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {departments.map((dept) => (
-              <tr
-                key={dept._id}
-                className="hover:bg-blue-50/30 transition-colors"
-              >
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {dept.code}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm font-semibold text-gray-900">
-                    {dept.name}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-500 max-w-md truncate">
-                    {dept.description || "N/A"}
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <div className="flex justify-end gap-3">
-                    {onEdit && (
-                      <button
-                        onClick={() => onEdit(dept)}
-                        className="text-gray-400 hover:text-[#00529b] transition-colors"
-                        title="Edit Department"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                    )}
-                    {onDelete && (
-                      <button
-                        onClick={() =>
-                          setDeleteModal({
-                            open: true,
-                            department: dept,
-                          })
-                        }
-                        className="text-gray-400 hover:text-red-600 transition-colors"
-                        title="Delete Department"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Search Bar */}
+      <div className="p-4 border-b border-gray-100">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, code, or description..."
+            className="w-full pl-10 pr-8 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#00529b]/20 focus:border-[#00529b]"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <X size={16} />
+            </button>
+          )}
+        </div>
       </div>
-      <DeleteConfirmationModal
-  isOpen={deleteModal.open}
-  title="Delete Department"
-  message={`Are you sure you want to delete "${deleteModal.department?.name}"? This action cannot be undone.`}
-  onClose={() =>
-    setDeleteModal({
-      open: false,
-      department: null,
-    })
-  }
-  onConfirm={() => {
-    onDelete(deleteModal.department);
 
-    setDeleteModal({
-      open: false,
-      department: null,
-    });
-  }}
-/>
+      {filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <p className="text-gray-500 font-medium">No departments match your search.</p>
+          <p className="text-gray-400 text-sm mt-1">Try a different keyword.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Code</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Department Name</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filtered.map((dept) => (
+                <tr key={dept._id} className="hover:bg-blue-50/30 transition-colors">
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {dept.code}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-semibold text-gray-900">{dept.name}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-500 max-w-md truncate">{dept.description || "N/A"}</div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-3">
+                      {onEdit && (
+                        <button onClick={() => onEdit(dept)} className="text-gray-400 hover:text-[#00529b] transition-colors" title="Edit Department">
+                          <Edit2 size={18} />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button onClick={() => setDeleteModal({ open: true, department: dept })} className="text-gray-400 hover:text-red-600 transition-colors" title="Delete Department">
+                          <Trash2 size={18} />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <DeleteConfirmationModal
+        isOpen={deleteModal.open}
+        title="Delete Department"
+        message={`Are you sure you want to delete "${deleteModal.department?.name}"? This action cannot be undone.`}
+        onClose={() => setDeleteModal({ open: false, department: null })}
+        onConfirm={() => {
+          onDelete(deleteModal.department);
+          setDeleteModal({ open: false, department: null });
+        }}
+      />
     </div>
-    
   );
 }

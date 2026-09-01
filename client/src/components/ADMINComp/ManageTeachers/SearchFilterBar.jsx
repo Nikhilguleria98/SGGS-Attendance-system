@@ -33,16 +33,15 @@ export default function SearchFilterBar({
       </select>
 
       {/* Section Filter */}
+      {/* Section Filter */}
       <select
         value={section}
         onChange={(e) => setSection(e.target.value)}
         className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 bg-white outline-none focus:border-[#162b4a] w-full sm:w-auto min-w-[150px]"
       >
         <option value="">All Sections</option>
-        {sections.map((s) => (
-          <option key={s._id} value={s.name}>
-            Section {s.name}
-          </option>
+        {groups.map((g) => (
+          <option key={g._id} value={g.name}>{g.name}</option>
         ))}
       </select>
 

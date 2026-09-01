@@ -81,15 +81,22 @@ const Sidebar = ({
         {/* Logo Section */}
         <div className="relative flex h-24 items-center justify-center border-b border-gray-700/50 p-4">
           {logo ? (
-            <img
-              src={logo}
-              alt="University Logo"
-              className={`object-contain ${
-                isCollapsed && !isMobileOpen
-                  ? "h-10 w-10"
-                  : "h-14 w-14"
-              }`}
-            />
+            <div className="flex flex-col items-center">
+              <img
+                src={logo}
+                alt="University Logo"
+                className={`object-contain ${
+                  isCollapsed && !isMobileOpen
+                    ? "h-10 w-10"
+                    : "h-14 w-14"
+                }`}
+              />
+              {(!isCollapsed || isMobileOpen) && (
+                <span className="mt-1 text-[10px] font-semibold">
+                  {title}
+                </span>
+              )}
+            </div>
           ) : (
             <div className="flex flex-col items-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white">

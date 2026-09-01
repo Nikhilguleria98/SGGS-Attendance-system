@@ -159,21 +159,7 @@ export default function ManageTeachers() {
 
       if (data.success) {
         toast.success(`Teacher ${isEdit ? "updated" : "added"} successfully`);
-        
-        // Optimistically update the state using the server's processed response
-        if (data.data) {
-          setTeachers(prev => {
-            if (isEdit) {
-              return prev.map(t => t._id === data.data._id ? data.data : t);
-            } else {
-              return [data.data, ...prev];
-            }
-          });
-        } else {
-          // Fallback just in case
-          fetchData();
-        }
-        
+        await fetchData();
         setIsModalOpen(false);
       } else {
         toast.error(data.message || "Failed to save teacher");

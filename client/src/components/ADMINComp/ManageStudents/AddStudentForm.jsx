@@ -78,6 +78,10 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
 
   const processSave = () => {
     const finalData = { ...formData };
+    if (!initialData && finalData.password && finalData.password.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
     if (!finalData.password) {
       delete finalData.password;
     }
@@ -160,7 +164,8 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
                 <input 
                   type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} 
                   required={!initialData}
-                  placeholder={initialData ? "Leave blank to keep" : "Enter password"} 
+                  minLength={8}
+                  placeholder={initialData ? "Leave blank to keep" : "Min. 8 characters"} 
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#162b4a] pr-10" 
                 />
                 <button
@@ -224,12 +229,12 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Group <span className="text-red-500">*</span>
+                Section <span className="text-red-500">*</span>
               </label>
               <select name="group" value={formData.group} onChange={handleChange} required
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
               >
-                <option value="">Select group</option>
+                <option value="">Select section</option>
                 {groups.map(g => (
                   <option key={g._id} value={g.name}>{g.name}</option>
                 ))}

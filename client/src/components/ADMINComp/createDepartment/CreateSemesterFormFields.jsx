@@ -6,6 +6,7 @@ const CreateSemesterFormFields = ({ onSubmitSuccess, initialData }) => {
   const [formData, setFormData] = useState({
     number: initialData ? initialData.number : "",
     name: initialData ? initialData.name : "",
+    isActive: initialData ? initialData.isActive : true,
   });
 
   React.useEffect(() => {
@@ -13,6 +14,7 @@ const CreateSemesterFormFields = ({ onSubmitSuccess, initialData }) => {
       setFormData({
         number: initialData.number || "",
         name: initialData.name || "",
+        isActive: initialData.isActive !== undefined ? initialData.isActive : true,
       });
     }
   }, [initialData]);
@@ -67,6 +69,7 @@ const CreateSemesterFormFields = ({ onSubmitSuccess, initialData }) => {
         body: JSON.stringify({
           number: Number(formData.number),
           name: formData.name || `Semester ${formData.number}`,
+          isActive: formData.isActive,
         }),
       });
 
@@ -90,7 +93,7 @@ const CreateSemesterFormFields = ({ onSubmitSuccess, initialData }) => {
 
   const resetForm = () => {
     setIsSuccess(false);
-    setFormData({ number: "", name: "" });
+    setFormData({ number: "", name: "", isActive: true });
   };
 
   return (
@@ -186,6 +189,37 @@ const CreateSemesterFormFields = ({ onSubmitSuccess, initialData }) => {
               </div>
             </div>
           )}
+
+          {/* Status Toggle */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-gray-800 tracking-wide">
+              Status
+            </label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, isActive: true }))}
+                className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all ${
+                  formData.isActive
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-gray-200 text-gray-500 hover:border-gray-300"
+                }`}
+              >
+                Active
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData((prev) => ({ ...prev, isActive: false }))}
+                className={`px-4 py-2 rounded-xl text-sm font-medium border-2 transition-all ${
+                  !formData.isActive
+                    ? "border-red-500 bg-red-50 text-red-700"
+                    : "border-gray-200 text-gray-500 hover:border-gray-300"
+                }`}
+              >
+                Inactive
+              </button>
+            </div>
+          </div>
 
           <motion.button
             whileHover={!isLoading ? { scale: 1.01, translateY: -1 } : {}}

@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { Shield, Key, Edit2, Save, X } from 'lucide-react';
+import { Shield, Key, Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const AccountSecurity = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
-    if (!password || password.length < 8) return alert("Password must be at least 8 characters");
+    if (!password || password.length < 8) {
+      return toast.error("Password must be at least 8 characters");
+    }
+    if (password !== confirmPassword) {
+      return toast.error("Passwords do not match");
+    }
     setIsSaving(true);
     const token = localStorage.getItem("token");
     try {
@@ -16,13 +24,17 @@ const AccountSecurity = ({ user }) => {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ password })
       });
-      if (response.ok) {
+      const data = await response.json();
+      if (data.success) {
         setIsEditing(false);
         setPassword("");
-        alert("Password updated successfully!");
+        setConfirmPassword("");
+        toast.success("Password updated successfully!");
+      } else {
+        toast.error(data.message || "Failed to update password");
       }
     } catch (e) {
-      alert("Failed to update password");
+      toast.error("Failed to update password");
     } finally {
       setIsSaving(false);
     }
@@ -38,42 +50,86 @@ const AccountSecurity = ({ user }) => {
       </div>
       
       <div className="space-y-6">
-        <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 relative">
-          {!isEditing && (
-            <button onClick={() => setIsEditing(true)} className="absolute top-4 right-4 text-gray-400 hover:text-[#00529b]">
-              <Edit2 size={16} />
-            </button>
-          )}
-          <div className="flex items-start gap-4">
-            <div className="p-2 bg-white rounded-lg border border-gray-100 text-gray-400 mt-1">
+        {/* Current Password Display */}
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-white rounded-lg border border-gray-100 text-gray-400">
               <Key size={18} />
             </div>
-            <div className="flex-1">
+            <div>
               <p className="text-sm font-semibold text-gray-700">Password</p>
-              {isEditing ? (
-                <div className="mt-2 space-y-2">
-                  <input 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter new password"
-                    className="w-full px-3 py-2 border rounded-md outline-none focus:border-[#00529b]"
-                  />
-                  <div className="flex gap-2">
-                    <button onClick={handleSave} disabled={isSaving} className="bg-[#162b4a] text-white px-3 py-1 rounded text-sm hover:bg-[#0f1d33]">
-                      {isSaving ? 'Saving...' : 'Save'}
-                    </button>
-                    <button onClick={() => setIsEditing(false)} className="bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm hover:bg-gray-300">
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-gray-500 font-mono mt-1 text-lg">••••••••</p>
-              )}
+              <p className="text-gray-500 font-mono mt-0.5 text-lg">••••••••</p>
             </div>
           </div>
+          {!isEditing && (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#00529b] hover:bg-[#003d73] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-[#00529b]/20"
+            >
+              <Key size={16} />
+              Update Password
+            </button>
+          )}
         </div>
+
+        {/* Edit Form */}
+        {isEditing && (
+          <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter new password (min 8 characters)"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#00529b]/20 focus:border-[#00529b]"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  className="w-full px-4 py-2.5 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#00529b]/20 focus:border-[#00529b]"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button 
+                onClick={handleSave} 
+                disabled={isSaving}
+                className="px-5 py-2.5 bg-[#00529b] hover:bg-[#003d73] text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-[#00529b]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSaving ? 'Saving...' : 'Save Password'}
+              </button>
+              <button 
+                onClick={() => { setIsEditing(false); setPassword(""); setConfirmPassword(""); }} 
+                className="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl text-sm transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

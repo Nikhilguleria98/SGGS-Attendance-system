@@ -42,7 +42,6 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Section Name is required.";
-    else if (!/^[A-Za-z]+$/.test(formData.name.trim())) newErrors.name = "Section Name must contain only alphabetic characters.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -81,6 +80,7 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
       console.error(err);
       setIsLoading(false);
       setErrors({ form: err.message || "Failed to create section. Please try again." });
+      setErrors({ form: err.message || "Failed to create section. Please try again." });
     }
   };
 
@@ -103,7 +103,9 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
               <CheckCircle2 className="w-10 h-10" />
             </motion.div>
             <h3 className="text-xl font-bold text-gray-900 mb-1">{initialData ? "Section Updated!" : "Section Created!"}</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">{initialData ? "Section Updated!" : "Section Created!"}</h3>
             <p className="text-gray-500 text-sm">
+              {initialData ? "The section has been updated successfully." : "The section has been added successfully."}
               {initialData ? "The section has been updated successfully." : "The section has been added successfully."}
             </p>
 
@@ -142,6 +144,7 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
           <div className="flex flex-col gap-2">
             <label htmlFor="name" className="text-sm font-semibold text-gray-800 tracking-wide">
               Section Name
+              Section Name
             </label>
             <div className="relative">
               <input
@@ -152,8 +155,6 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter Section Name (e.g., A)"
-                pattern="[A-Za-z]+"
-                title="Section name must contain only alphabetic characters"
                 className={`w-full px-4 py-3 rounded-xl border bg-gray-50/50 text-gray-900 placeholder-gray-400 focus:bg-white focus:ring-4 transition-all duration-200 outline-none ${
                   errors.name
                     ? "border-red-300 focus:ring-red-500/10 focus:border-red-500"
@@ -211,8 +212,10 @@ const CreateSectionFormFields = ({ onSubmitSuccess, initialData }) => {
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span>{initialData ? "Updating Section..." : "Creating Section..."}</span>
+                <span>{initialData ? "Updating Section..." : "Creating Section..."}</span>
               </>
             ) : (
+              <span>{initialData ? "Update Section" : "Create Section"}</span>
               <span>{initialData ? "Update Section" : "Create Section"}</span>
             )}
           </motion.button>

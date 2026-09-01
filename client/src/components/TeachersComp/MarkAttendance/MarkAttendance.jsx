@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AttendanceFilters from './AttendanceFilters';
 import AttendanceStats from './AttendanceStats';
 import AttendanceTable from './AttendanceTable';
-import { Users, UsersIcon, Save, Ban } from 'lucide-react';
+import { Users, UsersIcon, Save, Ban, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const MarkAttendance = () => {
@@ -21,9 +21,10 @@ const MarkAttendance = () => {
   const [attendanceData, setAttendanceData] = useState({});
   const [stats, setStats] = useState({ total: 0, present: 0, absent: 0 });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedInfo, setSubmittedInfo] = useState(null);
 
   useEffect(() => {
-    // Fetch students when assignment changes
     const fetchStudents = async () => {
       if (!filters.assignment) {
         setStudents([]);
@@ -44,12 +45,13 @@ const MarkAttendance = () => {
           const fetchedStudents = data.data;
           setStudents(fetchedStudents);
           
-          // Initialize attendance
           const initialData = {};
           fetchedStudents.forEach((student) => {
             initialData[student._id] = 'present';
           });
           setAttendanceData(initialData);
+          setSubmitted(false);
+          setSubmittedInfo(null);
         }
       } catch (err) {
         console.error("Failed to fetch students", err);
@@ -74,6 +76,7 @@ const MarkAttendance = () => {
       ...prev,
       [studentId]: status
     }));
+    setSubmitted(false);
   };
 
   const markAll = (status) => {
@@ -82,6 +85,7 @@ const MarkAttendance = () => {
       newData[s._id] = status;
     });
     setAttendanceData(newData);
+    setSubmitted(false);
   };
 
   const submitAttendance = async () => {
@@ -102,7 +106,6 @@ const MarkAttendance = () => {
     const token = localStorage.getItem("token");
 
     try {
-      // Create an array of promises for each student
       const promises = students.map(student => {
         const attendanceDateTime = new Date(filters.date);
         attendanceDateTime.setUTCHours(parseInt(filters.lecture), 0, 0, 0);
@@ -140,6 +143,12 @@ const MarkAttendance = () => {
       if (failCount > 0) {
         toast.error(`${successCount} attendance records saved. ${failCount} failed.`);
       } else {
+        setSubmitted(true);
+        setSubmittedInfo({
+          count: successCount,
+          date: filters.date,
+          lecture: filters.lecture
+        });
         toast.success(`${successCount} attendance records saved successfully!`);
       }
     } catch (err) {
@@ -157,6 +166,25 @@ const MarkAttendance = () => {
           <h1 className="text-3xl font-bold text-[#162b4a] mb-2">Mark Attendance</h1>
           <p className="text-gray-500">Select an assignment and mark attendance</p>
         </div>
+
+        {/* Success Banner */}
+        {submitted && submittedInfo && (
+          <div className="mb-6 flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <CheckCircle2 className="text-green-600 flex-shrink-0" size={24} />
+            <div>
+              <p className="font-semibold text-green-800">Attendance Submitted Successfully!</p>
+              <p className="text-sm text-green-600">
+                {submittedInfo.count} records saved for Lecture {submittedInfo.lecture} on {new Date(submittedInfo.date).toLocaleDateString()}
+              </p>
+            </div>
+            <button 
+              onClick={() => setSubmitted(false)}
+              className="ml-auto text-green-600 hover:text-green-800 text-sm font-medium"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <AttendanceFilters filters={filters} setFilters={setFilters} />
         
@@ -200,12 +228,25 @@ const MarkAttendance = () => {
           <button 
             onClick={submitAttendance}
             disabled={isSubmitting || students.length === 0}
-            className={`flex items-center gap-2 px-8 py-3 rounded-lg font-medium shadow-sm transition-colors ${
-              isSubmitting ? "bg-gray-400 cursor-not-allowed text-white" : "bg-[#1d4ed8] hover:bg-blue-800 text-white"
+            className={`flex items-center gap-2 px-8 py-3 rounded-lg font-medium shadow-sm transition-all ${
+              submitted 
+                ? "bg-green-600 text-white cursor-default" 
+                : isSubmitting 
+                  ? "bg-gray-400 cursor-not-allowed text-white" 
+                  : "bg-[#1d4ed8] hover:bg-blue-800 text-white"
             }`}
           >
-            <Save size={20} />
-            {isSubmitting ? "Saving..." : "Submit Attendance"}
+            {submitted ? (
+              <>
+                <CheckCircle2 size={20} />
+                Attendance Submitted
+              </>
+            ) : (
+              <>
+                <Save size={20} />
+                {isSubmitting ? "Saving..." : "Submit Attendance"}
+              </>
+            )}
           </button>
         </div>
         
