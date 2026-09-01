@@ -15,6 +15,7 @@ import DeleteConfirmationModal from "../../ADMINComp/Common/DeleteConfirmationMo
 
 const StudentList = () => {
   const [search, setSearch] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
   const [students, setStudents] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [batches, setBatches] = useState([]);
@@ -46,7 +47,7 @@ const StudentList = () => {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -86,9 +87,13 @@ const StudentList = () => {
 
   const filteredStudents = useMemo(() => students.filter(student => {
     const name = student.firstName + " " + (student.lastName || "");
-    return name.toLowerCase().includes(search.toLowerCase()) || 
-           (student.rollNo && student.rollNo.toLowerCase().includes(search.toLowerCase()));
-  }), [students, search]);
+    const matchesSearch = name.toLowerCase().includes(search.toLowerCase()) || 
+                          (student.rollNo && student.rollNo.toLowerCase().includes(search.toLowerCase()));
+    
+    const matchesSection = !selectedSection || student.section === selectedSection;
+    
+    return matchesSearch && matchesSection;
+  }), [students, search, selectedSection]);
 
   const handleEdit = (student) => {
     setStudentToEdit(student);
@@ -171,7 +176,7 @@ const StudentList = () => {
         initialData={studentToEdit}
         departments={departments}
         batches={batches}
-        groups={sections}
+        sections={sections}
         isSaving={isSaving}
       />
     );
@@ -215,8 +220,15 @@ const StudentList = () => {
           />
         </div>
         <div className="relative w-[270px]">
-          <select className="appearance-none w-full h-12 rounded-xl border border-[#CBD5E1] bg-white px-5 text-[15px] text-slate-700 outline-none cursor-pointer focus:border-blue-500 focus:ring-4 focus:ring-blue-100">
-            <option>All Sections</option>
+          <select 
+            value={selectedSection}
+            onChange={(e) => setSelectedSection(e.target.value)}
+            className="appearance-none w-full h-12 rounded-xl border border-[#CBD5E1] bg-white px-5 text-[15px] text-slate-700 outline-none cursor-pointer focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+          >
+            <option value="">All Sections</option>
+            {sections.map((s) => (
+              <option key={s._id} value={s.name}>Section {s.name}</option>
+            ))}
           </select>
           <ChevronDown
             size={18}

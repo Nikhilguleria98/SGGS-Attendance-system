@@ -53,7 +53,7 @@ export default function ManageTeachers() {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -230,7 +230,7 @@ export default function ManageTeachers() {
         onSave={handleSaveTeacher}
         departments={departments}
         batches={batches}
-        groups={sections}
+        sections={sections}
         isSaving={isSaving}
       />
     </div>

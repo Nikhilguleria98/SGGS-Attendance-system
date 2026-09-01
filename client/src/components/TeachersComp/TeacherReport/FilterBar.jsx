@@ -36,7 +36,7 @@ const FilterBar = ({ filters, setFilters, onChange, availableData = [] }) => {
           fetchAPI("/departments"),
           fetchAPI("/semesters"),
           fetchAPI("/batches"),
-          fetchAPI("/groups"),
+          fetchAPI("/sections"),
           fetchAPI("/subjects"),
         ]);
         

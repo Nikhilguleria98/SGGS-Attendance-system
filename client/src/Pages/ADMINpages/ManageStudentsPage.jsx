@@ -58,7 +58,7 @@ export default function ManageStudentsPage() {
         fetch(`${import.meta.env.VITE_API_URL}/batches`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, {
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -204,7 +204,7 @@ export default function ManageStudentsPage() {
             initialData={studentToEdit}
             departments={departments}
             batches={batches}
-            groups={sections}
+            sections={sections}
             isSaving={isSaving}
           />
         ) : (
@@ -220,9 +220,9 @@ export default function ManageStudentsPage() {
               batch={batch}
               setBatch={setBatch}
               batches={batches}
-              group={section}
-              setGroup={setSection}
-              groups={sections}
+              section={section}
+              setSection={setSection}
+              sections={sections}
             />
             
             {isLoading ? (

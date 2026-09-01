@@ -3,7 +3,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DeleteConfirmationModal from '../Common/DeleteConfirmationModal';
 
-const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batches = [], groups = [], isSaving }) => {
+const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batches = [], sections = [], isSaving }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,7 +13,7 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
     gender: '',
     department: '',
     batch: '',
-    group: '',
+    section: '',
     semester: ''
   });
 
@@ -59,7 +59,7 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
         gender: initialData.gender || '',
         department: typeof initialData.department === 'object' ? initialData.department?._id : initialData.department || '',
         batch: initialData.batch || initialData.batches?.[0] || '',
-        group: initialData.group || initialData.section || initialData.groups?.[0] || '',
+        section: initialData.section || initialData.group || initialData.sections?.[0] || initialData.groups?.[0] || '',
         semester: mappedSemester
       });
     } else if (departments.length > 0) {
@@ -231,12 +231,12 @@ const AddStudentForm = ({ onCancel, onSave, initialData, departments = [], batch
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Section <span className="text-red-500">*</span>
               </label>
-              <select name="group" value={formData.group} onChange={handleChange} required
+              <select name="section" value={formData.section} onChange={handleChange} required
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:border-[#162b4a]"
               >
                 <option value="">Select section</option>
-                {groups.map(g => (
-                  <option key={g._id} value={g.name}>{g.name}</option>
+                {sections.map(s => (
+                  <option key={s._id} value={s.name}>{s.name}</option>
                 ))}
               </select>
             </div>

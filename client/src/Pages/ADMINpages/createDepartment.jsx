@@ -44,16 +44,16 @@ const CreateDepartment = () => {
     setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const [deptRes, batchRes, groupRes, subjectRes, semesterRes] = await Promise.all([
+      const [deptRes, batchRes, sectionRes, subjectRes, semesterRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/departments`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/batches`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${import.meta.env.VITE_API_URL}/groups`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/sections`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/subjects`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`${import.meta.env.VITE_API_URL}/semesters`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
 
       const [deptData, batchData, sectionData, subjectData, semesterData] = await Promise.all([
-        deptRes.json(), batchRes.json(), groupRes.json(), subjectRes.json(), semesterRes.json()
+        deptRes.json(), batchRes.json(), sectionRes.json(), subjectRes.json(), semesterRes.json()
       ]);
 
       if (deptData.success) setDepartments(deptData.data);
@@ -114,7 +114,7 @@ const CreateDepartment = () => {
     setIsDeleting(true);
     try {
       const token = localStorage.getItem("token");
-      const endpoint = type === "batch" ? "batches" : type === "semester" ? "semesters" : type === "section" ? "groups" : `${type}s`;
+      const endpoint = type === "batch" ? "batches" : type === "semester" ? "semesters" : type === "section" ? "sections" : `${type}s`;
       const url = `${import.meta.env.VITE_API_URL}/${endpoint}/${item._id}`;
       const res = await fetch(url, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) {
@@ -233,7 +233,7 @@ const CreateDepartment = () => {
             )}
             {activeTab === "sections" && (
               <SectionTable 
-                groups={sections} 
+                sections={sections} 
                 onEdit={(section) => { setEditData(section); setIsSectionModalOpen(true); }}
                 onDelete={(section) => handleDeleteItem("section", section)}
               />

@@ -18,7 +18,7 @@ export default function StudentDashboard() {
         });
         const data = await res.json();
         if (data.success && data.data) {
-          setSummaries(data.data);
+          setSummaries(data.data.subjects || []);
         }
       } catch (err) {
         console.error("Failed to fetch attendance data", err);

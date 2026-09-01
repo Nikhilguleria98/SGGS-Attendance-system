@@ -25,7 +25,7 @@ export default function TeacherTable({ teachers, departments, onEdit, onDelete }
           ) : (
             teachers.map((teacher, index) => (
               <TeacherRow
-                key={teacher.id}
+                key={teacher._id}
                 teacher={teacher}
                 departments={departments}
                 index={index}

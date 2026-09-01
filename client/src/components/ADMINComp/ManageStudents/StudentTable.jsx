@@ -33,7 +33,7 @@ const StudentTable = ({
           ) : (
             students.map((student, index) => (
               <StudentRow
-                key={student.id}
+                key={student._id}
                 student={student}
                 index={index}
                 onEdit={onEdit}

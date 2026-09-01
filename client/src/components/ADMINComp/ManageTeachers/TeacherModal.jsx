@@ -136,6 +136,14 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
   };
 
   const handleSubmit = () => {
+    // Validation: ensure at least one section selected per assignment
+    for (const [index, assignment] of assignments.entries()) {
+      if (!assignment.sections || assignment.sections.length === 0) {
+        toast.error(`Please select at least one section for assignment ${index + 1}`);
+        return;
+      }
+    }
+
     const allSubjects = [...new Set(assignments.flatMap(a => a.subjects))];
     const allBatches = [...new Set(assignments.flatMap(a => a.batches).filter(Boolean))];
     const allSections = [...new Set(assignments.flatMap(a => a.sections).filter(Boolean))];
@@ -274,9 +282,9 @@ export default function TeacherModal({ isOpen, onClose, initialData, onSave, dep
                       </td>
                       <td className="py-3 px-2">
                         <MultiSelect 
-                          options={groups.map(g => ({ label: g.name, value: g.name }))}
-                          selected={assignment.groups}
-                          onChange={(val) => updateAssignment(assignment.id, 'groups', val)}
+                          options={sections.map(s => ({ label: s.name, value: s.name }))}
+                          selected={assignment.sections}
+                          onChange={(val) => updateAssignment(assignment.id, 'sections', val)}
                           placeholder="Select sections"
                         />
                       </td>
