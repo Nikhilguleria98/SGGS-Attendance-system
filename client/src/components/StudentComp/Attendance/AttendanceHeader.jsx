@@ -1,4 +1,4 @@
-import { FiCalendar, FiChevronDown } from "react-icons/fi";
+import { Calendar, ChevronDown } from "lucide-react";
 
 export default function AttendanceHeader() {
   return (
@@ -51,7 +51,7 @@ export default function AttendanceHeader() {
             <option>Semester 5</option>
           </select>
 
-          <FiChevronDown
+          <ChevronDown
             className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
           />
 
@@ -61,7 +61,7 @@ export default function AttendanceHeader() {
 
         <div className="relative">
 
-          <FiCalendar
+          <Calendar
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
           />
 
@@ -91,7 +91,7 @@ export default function AttendanceHeader() {
             <option>2023-24</option>
           </select>
 
-          <FiChevronDown
+          <ChevronDown
             className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
           />
 
